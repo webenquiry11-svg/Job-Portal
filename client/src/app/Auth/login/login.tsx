@@ -1,17 +1,51 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaMicrosoft, FaTimes } from 'react-icons/fa';
+import { useLoginMutation } from '@/features/authApi';
+import { useRouter } from 'next/navigation';
 
 interface LoginModalProps {
   onClose: () => void;
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
+  const router = useRouter();
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [successMessage, setSuccessMessage] = useState('');
+  const [login, { isLoading }] = useLoginMutation();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const result = await login(formData).unwrap();
+      localStorage.setItem('profile', JSON.stringify({ ...result }));
+      setSuccessMessage('Login successful! Welcome back.');
+      console.log('Login success:', result);
+      setTimeout(() => {
+        onClose();
+        if (result?.result?.role === 'employer') {
+          router.push('/employer/dashboard');
+        } else {
+          router.push('/dashboard');
+        }
+      }, 1500);
+    } catch (error) {
+      console.error('Login failed:', error);
+      alert('Invalid credentials');
+    }
+  };
+
   // Common Styles matching register.tsx
-  const inputClass = "mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm";
+  const inputClass = "mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent transition-all duration-200 text-sm";
   const labelClass = "block text-sm font-semibold text-gray-700 mb-1.5";
-  const btnPrimary = "w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-blue-600/20 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:-translate-y-0.5";
-  const socialBtn = "w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 transform hover:-translate-y-0.5";
+  const btnPrimary = "w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-violet-500/20 text-sm font-bold text-white bg-[#7C3AED] hover:bg-[#6D28D9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7C3AED] transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed";
+  const socialBtn = "w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5";
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-all duration-300">
@@ -20,8 +54,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
           <FaTimes size={24} />
         </button>
         
+        {successMessage && (
+          <div className="mb-6 p-4 bg-green-100 border border-green-200 text-green-700 rounded-xl text-sm font-semibold text-center animate-fade-in-down">
+            {successMessage}
+          </div>
+        )}
+
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Welcome Back</h2>
+          <h2 className="text-2xl font-bold text-[#121212]">Welcome Back</h2>
           <p className="text-sm text-gray-500 mt-2">Please sign in to your account.</p>
         </div>
 
@@ -42,29 +82,29 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
           <span className="border-b border-gray-200 w-1/5 lg:w-1/4"></span>
         </div>
 
-        <form className="mt-8 space-y-5">
+        <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="email" className={labelClass}>Email address</label>
-            <input id="email" name="email" type="email" autoComplete="email" placeholder="john@example.com" required className={inputClass} />
+            <input id="email" name="email" type="email" autoComplete="email" placeholder="john@example.com" required className={inputClass} value={formData.email} onChange={handleChange} />
           </div>
           <div>
             <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700">Password</label>
-                <a href="#" className="text-xs font-semibold text-blue-600 hover:text-blue-500">Forgot password?</a>
+                <label htmlFor="password" className={labelClass}>Password</label>
+                <a href="#" className="text-xs font-semibold text-[#7C3AED] hover:text-[#6D28D9]">Forgot password?</a>
             </div>
-            <input id="password" name="password" type="password" autoComplete="current-password" placeholder="••••••••" required className={inputClass} />
+            <input id="password" name="password" type="password" autoComplete="current-password" placeholder="••••••••" required className={inputClass} value={formData.password} onChange={handleChange} />
           </div>
           
           <div className="pt-2">
-            <button type="submit" className={btnPrimary}>
-              Sign in
+            <button type="submit" className={btnPrimary} disabled={isLoading}>
+              {isLoading ? 'Signing in...' : 'Sign in'}
             </button>
           </div>
         </form>
 
         <p className="mt-8 text-center text-xs text-gray-500">
             Don't have an account?{' '}
-            <button className="font-bold text-blue-600 hover:text-blue-500 transition-colors">
+            <button className="font-bold text-[#7C3AED] hover:text-[#6D28D9] transition-colors">
             Sign up
             </button>
         </p>
