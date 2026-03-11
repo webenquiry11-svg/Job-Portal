@@ -13,7 +13,12 @@ import {
   FaUserCircle,
   FaSignOutAlt,
   FaChartLine,
-  FaEllipsisH
+  FaEllipsisH,
+  FaArrowUp,
+  FaArrowDown,
+  FaRegEye,
+  FaRegCommentDots,
+  FaCheck
 } from 'react-icons/fa';
 import { MdDashboard, MdMessage, MdSettings, MdWork } from 'react-icons/md';
 
@@ -96,12 +101,12 @@ const EmployerDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 md:ml-72 flex flex-col">
+      <main className="flex-1 md:ml-72 flex flex-col min-w-0">
         {/* Header */}
         <header className="sticky top-0 z-30 bg-gray-50/90 backdrop-blur-md px-6 py-4 lg:px-10 border-b border-gray-200/50 flex flex-col md:flex-row md:justify-between md:items-center gap-4 transition-all duration-300">
           <div>
             <h1 className="text-2xl font-bold text-[#121212]">Dashboard</h1>
-            <p className="text-sm text-gray-500 mt-1">Welcome back, <span className="font-semibold text-[#121212]">{user.name}</span>! Here's your daily overview.</p>
+            <p className="text-sm text-gray-500 mt-1">Welcome back, <span className="font-semibold text-[#121212]">{user?.name}</span>! Here's your daily overview.</p>
           </div>
           <div className="flex items-center gap-4">
             <button className="p-2.5 bg-white border border-gray-200 rounded-full text-gray-400 hover:text-[#7C3AED] hover:border-violet-100 hover:shadow-md transition-all relative">
@@ -110,10 +115,10 @@ const EmployerDashboard = () => {
             </button>
             <div className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
                <div className="w-9 h-9 bg-[#7C3AED] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-inner">
-                 {user.name?.charAt(0).toUpperCase() || 'A'}
+                 {user?.name?.charAt(0).toUpperCase() || 'A'}
                </div>
                <div className="hidden sm:block text-left">
-                 <p className="text-sm font-bold text-[#121212] leading-none group-hover:text-[#7C3AED] transition-colors">{user.companyName || 'Star Publicity'}</p>
+                 <p className="text-sm font-bold text-[#121212] leading-none group-hover:text-[#7C3AED] transition-colors">{user?.companyName || 'Star Publicity'}</p>
                  <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wide mt-0.5">Employer</p>
                </div>
             </div>
@@ -124,7 +129,7 @@ const EmployerDashboard = () => {
         <div className="p-6 lg:p-10 flex-1">
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard 
             icon={<FaBriefcase />} 
             label="Total Jobs Posted" 
@@ -159,9 +164,13 @@ const EmployerDashboard = () => {
           />
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Recent Jobs */}
-          <div className="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          <div className="lg:col-span-3 space-y-8">
+            {/* Applicants Overview Chart */}
+            <ApplicantsChart />
+
+            {/* Recent Jobs */}
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
             <div className="flex justify-between items-center mb-8">
               <div>
                 <h2 className="text-xl font-bold text-[#121212]">Recent Job Postings</h2>
@@ -196,10 +205,12 @@ const EmployerDashboard = () => {
                  Post a New Job
                </button>
             </div>
+            </div>
           </div>
 
-          {/* Recent Activity / Candidates */}
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 flex flex-col">
+          <div className="lg:col-span-2 space-y-8">
+            {/* Recent Activity / Candidates */}
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 flex flex-col">
              <div className="flex justify-between items-center mb-8">
               <div>
                 <h2 className="text-xl font-bold text-[#121212]">Recent Applicants</h2>
@@ -218,13 +229,79 @@ const EmployerDashboard = () => {
             <button className="w-full mt-6 py-3 bg-gray-50 text-gray-600 font-bold rounded-xl hover:bg-gray-100 transition-colors text-sm">
                 View All Applications
             </button>
+            </div>
+
+            {/* Action Items */}
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+              <h2 className="text-xl font-bold text-[#121212]">Action Items</h2>
+              <p className="text-sm text-gray-500 mb-6">Your to-do list for today.</p>
+              <div className="space-y-2">
+                <ToDoItem text="Review 5 new applications for 'Software Engineer'" checked={true} />
+                <ToDoItem text="Schedule interview with Michael Chen" />
+                <ToDoItem text="Finalize offer for Sarah Johnson" />
+                <ToDoItem text="Post new 'UX Designer' role" />
+              </div>
+            </div>
           </div>
+        </div>
+
+        {/* Application Tracking Board */}
+        <div className="mt-10">
+          <div className="flex justify-between items-end mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-[#121212]">Application Tracker</h2>
+              <p className="text-sm text-gray-500">Drag and drop candidates to update their status.</p>
+            </div>
+            <button className="text-sm font-bold text-[#7C3AED] hover:text-[#6D28D9] flex items-center gap-2">
+              View All <FaArrowUp className="rotate-45" />
+            </button>
+          </div>
+          <KanbanBoard />
         </div>
         </div>
       </main>
     </div>
   );
 };
+
+const ApplicantsChart = () => (
+  <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+    <div className="flex justify-between items-center mb-4">
+      <div>
+        <h2 className="text-xl font-bold text-[#121212]">Applicants Overview</h2>
+        <p className="text-sm text-gray-500">Visual representation of applicants over time.</p>
+      </div>
+      <select className="text-xs font-medium bg-gray-100 border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]">
+        <option>Last 7 days</option>
+        <option>Last 30 days</option>
+        <option>Last 90 days</option>
+      </select>
+    </div>
+    <div className="h-64 w-full relative">
+      {/* Chart Grid Lines */}
+      <div className="absolute top-0 left-0 w-full h-full grid grid-rows-4">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="border-b border-dashed border-gray-100"></div>
+        ))}
+      </div>
+      {/* Chart SVG */}
+      <svg className="absolute top-0 left-0 w-full h-full" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#7C3AED" stopOpacity={0.2}/>
+            <stop offset="95%" stopColor="#7C3AED" stopOpacity={0}/>
+          </linearGradient>
+        </defs>
+        <path d="M0,100 C40,80 80,120 120,100 S200,60 240,80 S320,140 360,120 S440,50 480,60 S560,100 600,90"
+          fill="url(#chartGradient)"
+          stroke="#7C3AED"
+          strokeWidth="3"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
+    </div>
+  </div>
+);
 
 // Sub-components for cleaner code
 
@@ -252,8 +329,10 @@ const StatCard = ({ icon, label, value, color, trend, trendUp }: any) => (
         {icon}
       </div>
       {trend && (
-          <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${trendUp === true ? 'bg-green-100 text-green-600' : trendUp === false ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-500'}`}>
-              {trend}
+          <span className={`text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 ${trendUp === true ? 'bg-green-100 text-green-600' : trendUp === false ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-500'}`}>
+              {trendUp === true && <FaArrowUp />}
+              {trendUp === false && <FaArrowDown />}
+              <span>{trend}</span>
           </span>
       )}
     </div>
@@ -297,8 +376,123 @@ const CandidateRow = ({ name, role, time, avatar, color }: any) => (
       <h4 className="font-bold text-[#121212] text-sm truncate group-hover:text-[#7C3AED] transition-colors">{name}</h4>
       <p className="text-xs font-medium text-gray-400 truncate">Applied for <span className="text-gray-600">{role}</span></p>
     </div>
-    <span className="text-[10px] font-bold text-gray-300 whitespace-nowrap">{time}</span>
+    <div className="flex items-center gap-1">
+      <span className="text-[10px] font-bold text-gray-400 whitespace-nowrap group-hover:opacity-0 transition-opacity">{time}</span>
+      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity absolute right-3">
+        <button className="p-2 rounded-lg hover:bg-gray-200"><FaRegEye className="text-gray-500 text-sm" /></button>
+        <button className="p-2 rounded-lg hover:bg-gray-200"><FaRegCommentDots className="text-gray-500 text-sm" /></button>
+      </div>
+    </div>
   </div>
 );
+
+const ToDoItem = ({ text, checked = false }: { text: string, checked?: boolean }) => (
+  <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
+    <div className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 ${checked ? 'bg-[#7C3AED] border-[#7C3AED]' : 'border-2 border-gray-300'}`}>
+      {checked && <FaCheck className="text-white text-xs" />}
+    </div>
+    <p className={`text-sm flex-1 ${checked ? 'text-gray-400 line-through' : 'text-gray-700 font-medium'}`}>
+      {text}
+    </p>
+  </div>
+);
+
+const KanbanBoard = () => {
+  const [candidates, setCandidates] = useState([
+    { id: '1', name: 'Alice Freeman', role: 'Frontend Dev', status: 'Applied', avatar: 'A' },
+    { id: '2', name: 'Bob Smith', role: 'Backend Dev', status: 'AI Screened', avatar: 'B' },
+    { id: '3', name: 'Charlie Brown', role: 'Designer', status: 'Interview', avatar: 'C' },
+    { id: '4', name: 'David Lee', role: 'Manager', status: 'Offered', avatar: 'D' },
+    { id: '5', name: 'Eva Green', role: 'Tester', status: 'On Hold', avatar: 'E' },
+    { id: '6', name: 'Frank White', role: 'DevOps', status: 'Rejected', avatar: 'F' },
+    { id: '7', name: 'Grace Liu', role: 'Frontend Dev', status: 'Applied', avatar: 'G' },
+  ]);
+
+  const onDrop = (id: string, newStatus: string) => {
+    setCandidates((prev) => prev.map(c => c.id === id ? { ...c, status: newStatus } : c));
+  };
+
+  const columns = [
+    { id: 'Applied', title: 'Applied', color: 'border-gray-300' },
+    { id: 'AI Screened', title: 'AI Screened', color: 'border-[#7C3AED]' },
+    { id: 'Interview', title: 'Interview', color: 'border-[#FACC15]' },
+    { id: 'Offered', title: 'Offered', color: 'border-[#7C3AED]' }, // Using primary color for success as green isn't in strict palette, or could revert to green if preferred
+    { id: 'On Hold', title: 'On Hold', color: 'border-gray-400' },
+    { id: 'Rejected', title: 'Rejected', color: 'border-[#EF4444]' },
+  ];
+
+  return (
+    <div className="flex gap-6 overflow-x-auto pb-4">
+      {columns.map(col => (
+        <KanbanColumn 
+          key={col.id} 
+          status={col.id} 
+          title={col.title} 
+          color={col.color}
+          candidates={candidates.filter(c => c.status === col.id)} 
+          onDrop={onDrop} 
+        />
+      ))}
+    </div>
+  );
+};
+
+const KanbanColumn = ({ status, title, color, candidates, onDrop }: any) => {
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    const id = e.dataTransfer.getData('id');
+    onDrop(id, status);
+  };
+
+  return (
+    <div 
+      onDragOver={handleDragOver} 
+      onDrop={handleDrop}
+      className={`w-[280px] flex-shrink-0 bg-gray-50/50 rounded-2xl border-t-4 ${color} p-4 flex flex-col h-[500px]`}
+    >
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-bold text-[#121212] text-sm">{title}</h3>
+        <span className="bg-white text-xs font-bold px-2 py-0.5 rounded text-gray-500 shadow-sm">{candidates.length}</span>
+      </div>
+      <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-1">
+        {candidates.map((c: any) => <KanbanCard key={c.id} candidate={c} />)}
+      </div>
+    </div>
+  );
+};
+
+const KanbanCard = ({ candidate }: any) => {
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData('id', candidate.id);
+  };
+
+  return (
+    <div 
+      draggable 
+      onDragStart={handleDragStart}
+      className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group"
+    >
+      <div className="flex items-center gap-3">
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm ${candidate.status === 'Rejected' ? 'bg-[#EF4444]' : candidate.status === 'Interview' ? 'bg-[#FACC15]' : 'bg-[#7C3AED]'}`}>
+          {candidate.avatar}
+        </div>
+        <div>
+          <h4 className="font-bold text-[#121212] text-sm group-hover:text-[#7C3AED] transition-colors">{candidate.name}</h4>
+          <p className="text-xs text-gray-400">{candidate.role}</p>
+        </div>
+      </div>
+      <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-50">
+         <span className="text-[10px] text-gray-400 font-medium">2d ago</span>
+         <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button className="text-gray-400 hover:text-[#7C3AED]"><FaRegCommentDots size={12} /></button>
+            <button className="text-gray-400 hover:text-[#7C3AED]"><FaEllipsisH size={12} /></button>
+         </div>
+      </div>
+    </div>
+  );
+};
 
 export default EmployerDashboard;
