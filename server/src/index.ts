@@ -11,7 +11,25 @@ const app = express();
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+
+// Define allowed origins for CORS
+const allowedOrigins = [
+  'http://localhost:3000',                 // Local frontend
+  'https://job-portal-ta5n.onrender.com'  // Deployed frontend
+];
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests) and from whitelisted origins
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes
