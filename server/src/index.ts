@@ -46,4 +46,6 @@ mongoose.connect(CONNECTION_URL)
     } else {
       console.log("💡 Hint: Make sure MongoDB is running locally on port 27017, or set a valid MONGO_URI in your .env file.");
     }
+    // Exit process with failure code so the deployment platform knows it failed and can restart/log it
+    process.exit(1);
   });
