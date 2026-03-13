@@ -46,3 +46,21 @@ export const login = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+export const updateProfile = async (req: Request, res: Response) => {
+  try {
+    const { _id, ...updates } = req.body;
+
+    if (!_id) return res.status(400).json({ message: "User ID is required" });
+
+    const updatedUser = await AuthModel.findByIdAndUpdate(_id, updates, { new: true });
+
+    if (!updatedUser) return res.status(404).json({ message: "User not found" });
+
+    const token = jwt.sign({ email: updatedUser.email, id: updatedUser._id, role: updatedUser.role }, process.env.JWT_SECRET || 'test', { expiresIn: '1h' });
+
+    res.status(200).json({ result: updatedUser, token });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};

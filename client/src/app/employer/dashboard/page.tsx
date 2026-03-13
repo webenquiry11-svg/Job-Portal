@@ -21,12 +21,14 @@ import {
   FaCheck
 } from 'react-icons/fa';
 import { MdDashboard, MdMessage, MdSettings, MdWork } from 'react-icons/md';
+import CompanyProfile from '../Profile/page';
 
 const EmployerDashboard = () => {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isLoading, setIsLoading] = useState(true);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   useEffect(() => {
     // Check for authentication and role
@@ -105,7 +107,7 @@ const EmployerDashboard = () => {
         {/* Header */}
         <header className="sticky top-0 z-30 bg-gray-50/90 backdrop-blur-md px-6 py-4 lg:px-10 border-b border-gray-200/50 flex flex-col md:flex-row md:justify-between md:items-center gap-4 transition-all duration-300">
           <div>
-            <h1 className="text-2xl font-bold text-[#121212]">Dashboard</h1>
+            <h1 className="text-2xl font-bold text-[#121212]">{activeTab === 'profile' ? 'Company Profile' : 'Dashboard'}</h1>
             <p className="text-sm text-gray-500 mt-1">Welcome back, <span className="font-semibold text-[#121212]">{user?.name}</span>! Here's your daily overview.</p>
           </div>
           <div className="flex items-center gap-4">
@@ -113,14 +115,36 @@ const EmployerDashboard = () => {
               <FaBell size={18} />
               <span className="absolute top-2 right-2.5 w-2 h-2 bg-[#EF4444] rounded-full border-2 border-white"></span>
             </button>
-            <div className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
-               <div className="w-9 h-9 bg-[#7C3AED] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-inner">
-                 {user?.name?.charAt(0).toUpperCase() || 'A'}
-               </div>
-               <div className="hidden sm:block text-left">
-                 <p className="text-sm font-bold text-[#121212] leading-none group-hover:text-[#7C3AED] transition-colors">{user?.companyName || 'Star Publicity'}</p>
-                 <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wide mt-0.5">Employer</p>
-               </div>
+            <div className="relative">
+              <button 
+                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group focus:outline-none"
+              >
+                 <div className="w-9 h-9 bg-[#7C3AED] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-inner">
+                   {user?.name?.charAt(0).toUpperCase() || 'A'}
+                 </div>
+                 <div className="hidden sm:block text-left">
+                   <p className="text-sm font-bold text-[#121212] leading-none group-hover:text-[#7C3AED] transition-colors">{user?.companyName || 'Star Publicity'}</p>
+                   <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wide mt-0.5">Employer</p>
+                 </div>
+              </button>
+
+              {isProfileMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsProfileMenuOpen(false)}></div>
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 animate-fade-in-up transform origin-top-right">
+                    <div className="px-4 py-3 border-b border-gray-50 mb-1">
+                      <p className="text-sm font-bold text-[#121212]">{user?.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                    </div>
+                    <button onClick={() => { setActiveTab('profile'); setIsProfileMenuOpen(false); }} className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#7C3AED] transition-colors flex items-center gap-3"><FaUserCircle className="text-lg" /> Company Profile</button>
+                    <button onClick={() => { setActiveTab('settings'); setIsProfileMenuOpen(false); }} className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#7C3AED] transition-colors flex items-center gap-3"><MdSettings className="text-lg" /> Settings</button>
+                    <div className="border-t border-gray-50 mt-1 pt-1">
+                      <button onClick={handleLogout} className="w-full text-left px-4 py-2.5 text-sm text-[#EF4444] hover:bg-red-50 transition-colors flex items-center gap-3 font-medium"><FaSignOutAlt className="text-lg" /> Logout</button>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </header>
@@ -128,8 +152,14 @@ const EmployerDashboard = () => {
         {/* Scrollable Content */}
         <div className="p-6 lg:p-10 flex-1">
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {activeTab === 'profile' ? (
+          <CompanyProfile user={user} setUser={setUser} />
+        ) : (
+          <>
+          {/* Dashboard Content */}
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard 
             icon={<FaBriefcase />} 
             label="Total Jobs Posted" 
@@ -257,7 +287,9 @@ const EmployerDashboard = () => {
             </button>
           </div>
           <KanbanBoard />
-        </div>
+          </div>
+          </>
+        )}
         </div>
       </main>
     </div>
@@ -422,7 +454,7 @@ const KanbanBoard = () => {
   ];
 
   return (
-    <div className="flex gap-6 overflow-x-auto pb-4">
+    <div className="grid grid-cols-6 gap-2 w-full">
       {columns.map(col => (
         <KanbanColumn 
           key={col.id} 
@@ -451,13 +483,13 @@ const KanbanColumn = ({ status, title, color, candidates, onDrop }: any) => {
     <div 
       onDragOver={handleDragOver} 
       onDrop={handleDrop}
-      className={`w-[280px] flex-shrink-0 bg-gray-50/50 rounded-2xl border-t-4 ${color} p-4 flex flex-col h-[500px]`}
+      className={`min-w-0 bg-gray-50/50 rounded-2xl border-t-4 ${color} p-3 flex flex-col h-[500px] border-l border-r border-b border-gray-100/50`}
     >
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold text-[#121212] text-sm">{title}</h3>
-        <span className="bg-white text-xs font-bold px-2 py-0.5 rounded text-gray-500 shadow-sm">{candidates.length}</span>
+        <h3 className="font-bold text-[#121212] text-xs truncate">{title}</h3>
+        <span className="bg-white text-[10px] font-bold px-1.5 py-0.5 rounded text-gray-500 shadow-sm">{candidates.length}</span>
       </div>
-      <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-1">
+      <div className="flex-1 overflow-y-auto space-y-2 custom-scrollbar pr-1">
         {candidates.map((c: any) => <KanbanCard key={c.id} candidate={c} />)}
       </div>
     </div>
@@ -473,15 +505,18 @@ const KanbanCard = ({ candidate }: any) => {
     <div 
       draggable 
       onDragStart={handleDragStart}
-      className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group"
+      className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group transition-all"
     >
-      <div className="flex items-center gap-3">
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm ${candidate.status === 'Rejected' ? 'bg-[#EF4444]' : candidate.status === 'Interview' ? 'bg-[#FACC15]' : 'bg-[#7C3AED]'}`}>
-          {candidate.avatar}
+      <div className="flex flex-col gap-2">
+        <div className="flex items-start justify-between">
+            <div className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[10px] font-bold shadow-sm ${candidate.status === 'Rejected' ? 'bg-[#EF4444]' : candidate.status === 'Interview' ? 'bg-[#FACC15]' : 'bg-[#7C3AED]'}`}>
+            {candidate.avatar}
+            </div>
+            <span className="text-[9px] text-gray-400 font-medium">2d</span>
         </div>
         <div>
-          <h4 className="font-bold text-[#121212] text-sm group-hover:text-[#7C3AED] transition-colors">{candidate.name}</h4>
-          <p className="text-xs text-gray-400">{candidate.role}</p>
+          <h4 className="font-bold text-[#121212] text-xs group-hover:text-[#7C3AED] transition-colors truncate">{candidate.name}</h4>
+          <p className="text-[10px] text-gray-400 truncate">{candidate.role}</p>
         </div>
       </div>
       <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-50">

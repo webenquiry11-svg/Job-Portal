@@ -16,7 +16,14 @@ export const authApi = apiSlice.injectEndpoints({
         body,
       })
     }),
+    updateProfile: builder.mutation({
+      query: (body) => ({
+        url: '/auth/update',
+        method: 'PATCH',
+        body,
+      }),
+    }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation } = authApi;
+export const { useRegisterMutation, useLoginMutation, useUpdateProfileMutation } = authApi;
