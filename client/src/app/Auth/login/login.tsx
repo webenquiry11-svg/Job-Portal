@@ -42,14 +42,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
   };
 
   // Common Styles matching register.tsx
-  const inputClass = "mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent transition-all duration-200 text-sm";
+  const inputClass = "mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F172A] focus:border-transparent transition-all duration-200 text-sm";
   const labelClass = "block text-sm font-semibold text-gray-700 mb-1.5";
-  const btnPrimary = "w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-violet-500/20 text-sm font-bold text-white bg-[#7C3AED] hover:bg-[#6D28D9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7C3AED] transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed";
+  const btnPrimary = "w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-slate-900/20 text-sm font-bold text-white bg-[#0F172A] hover:bg-[#1E293B] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0F172A] transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed";
   const socialBtn = "w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5";
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-all duration-300">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative animate-fade-in-up">
+      <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-md relative animate-fade-in-up">
         <button onClick={onClose} className="absolute top-5 right-5 text-gray-400 hover:text-gray-800 transition-colors z-10">
           <FaTimes size={24} />
         </button>
@@ -90,7 +90,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
           <div>
             <div className="flex items-center justify-between mb-1.5">
                 <label htmlFor="password" className={labelClass}>Password</label>
-                <a href="#" className="text-xs font-semibold text-[#7C3AED] hover:text-[#6D28D9]">Forgot password?</a>
+                <a href="#" className="text-xs font-semibold text-[#0F172A] hover:text-[#1E293B]">Forgot password?</a>
             </div>
             <input id="password" name="password" type="password" autoComplete="current-password" placeholder="••••••••" required className={inputClass} value={formData.password} onChange={handleChange} />
           </div>
@@ -104,7 +104,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
 
         <p className="mt-8 text-center text-xs text-gray-500">
             Don't have an account?{' '}
-            <button className="font-bold text-[#7C3AED] hover:text-[#6D28D9] transition-colors">
+            <button className="font-bold text-[#0F172A] hover:text-[#1E293B] transition-colors">
             Sign up
             </button>
         </p>

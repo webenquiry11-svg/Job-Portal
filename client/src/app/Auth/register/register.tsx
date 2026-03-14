@@ -67,9 +67,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
   const progress = Math.min((step / totalSteps) * 100, 100);
 
   // Common Styles
-  const inputClass = "mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent transition-all duration-200 text-sm";
+  const inputClass = "mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F172A] focus:border-transparent transition-all duration-200 text-sm";
   const labelClass = "block text-sm font-semibold text-gray-700 mb-1.5";
-  const btnPrimary = "w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-violet-500/20 text-sm font-bold text-white bg-[#7C3AED] hover:bg-[#6D28D9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7C3AED] transition-all duration-200 transform hover:-translate-y-0.5";
+  const btnPrimary = "w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-slate-900/20 text-sm font-bold text-white bg-[#0F172A] hover:bg-[#1E293B] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0F172A] transition-all duration-200 transform hover:-translate-y-0.5";
   const btnDisabled = "w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-none text-sm font-bold text-white bg-gray-400 cursor-not-allowed transition-all duration-200";
 
   const renderStep1 = () => (
@@ -103,7 +103,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
       </form>
       <p className="mt-6 text-center text-xs text-gray-500">
         Already have an account?{' '}
-        <button className="font-bold text-[#7C3AED] hover:text-[#6D28D9] transition-colors">
+        <button className="font-bold text-[#0F172A] hover:text-[#1E293B] transition-colors">
           Sign in
         </button>
       </p>
@@ -120,17 +120,17 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div
           onClick={() => { setRole('seeker'); handleNext(); }}
-          className="p-6 border-2 border-gray-100 rounded-2xl text-center cursor-pointer hover:border-violet-600 hover:bg-violet-50/50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
+          className="p-6 border-2 border-gray-100 rounded-2xl text-center cursor-pointer hover:border-slate-800 hover:bg-slate-50/50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
         >
-          <div className="w-16 h-16 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-[#7C3AED] transition-colors duration-300"><FaUser className="text-2xl text-[#7C3AED] group-hover:text-white transition-colors duration-300" /></div>
+          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-[#0F172A] transition-colors duration-300"><FaUser className="text-2xl text-[#0F172A] group-hover:text-white transition-colors duration-300" /></div>
           <h3 className="font-bold text-lg text-[#121212] mb-2">I'm a Job Seeker</h3>
           <p className="text-xs text-gray-500 leading-relaxed">Find your next role, connect with companies, and build your career.</p>
         </div>
         <div
           onClick={() => { setRole('employer'); handleNext(); }}
-          className="p-6 border-2 border-gray-100 rounded-2xl text-center cursor-pointer hover:border-violet-600 hover:bg-violet-50/50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
+          className="p-6 border-2 border-gray-100 rounded-2xl text-center cursor-pointer hover:border-slate-800 hover:bg-slate-50/50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
         >
-          <div className="w-16 h-16 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-[#7C3AED] transition-colors duration-300"><FaBuilding className="text-2xl text-[#7C3AED] group-hover:text-white transition-colors duration-300" /></div>
+          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-[#0F172A] transition-colors duration-300"><FaBuilding className="text-2xl text-[#0F172A] group-hover:text-white transition-colors duration-300" /></div>
           <h3 className="font-bold text-lg text-[#121212] mb-2">I'm an Employer</h3>
           <p className="text-xs text-gray-500 leading-relaxed">Hire top talent, post job openings, and manage your team.</p>
         </div>
@@ -211,11 +211,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
         </div>
         <div>
           <label htmlFor="resume" className={labelClass}>Upload your Resume</label>
-          <div className="mt-1 flex justify-center px-6 pt-8 pb-8 border-2 border-gray-200 border-dashed rounded-xl hover:border-violet-500 hover:bg-violet-50 transition-all duration-300 cursor-pointer group">
+          <div className="mt-1 flex justify-center px-6 pt-8 pb-8 border-2 border-gray-200 border-dashed rounded-xl hover:border-slate-700 hover:bg-slate-50 transition-all duration-300 cursor-pointer group">
             <div className="space-y-1 text-center">
-              <FaCloudUploadAlt className="mx-auto h-12 w-12 text-gray-400 group-hover:text-violet-500 transition-colors" />
+              <FaCloudUploadAlt className="mx-auto h-12 w-12 text-gray-400 group-hover:text-slate-600 transition-colors" />
               <div className="flex text-sm text-gray-600">
-                <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-[#7C3AED] hover:text-[#6D28D9] focus-within:outline-none">
+                <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-[#0F172A] hover:text-[#1E293B] focus-within:outline-none">
                   <span>Upload a file</span>
                   <input id="file-upload" name="file-upload" type="file" className="sr-only" />
                 </label>
@@ -225,13 +225,13 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
             </div>
           </div>
         </div>
-        <div className="flex items-center p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-violet-300 transition-colors">
+        <div className="flex items-center p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-slate-300 transition-colors">
           <input
             id="robot-check-seeker"
             type="checkbox"
             checked={isRobotChecked}
             onChange={(e) => setIsRobotChecked(e.target.checked)}
-            className="h-5 w-5 text-[#7C3AED] focus:ring-[#7C3AED] border-gray-300 rounded cursor-pointer transition-all"
+            className="h-5 w-5 text-[#0F172A] focus:ring-[#0F172A] border-gray-300 rounded cursor-pointer transition-all"
           />
           <label htmlFor="robot-check-seeker" className="ml-3 block text-sm text-gray-700 cursor-pointer select-none">
             I am not a robot
@@ -289,13 +289,13 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
           <label htmlFor="description" className={labelClass}>Company Description</label>
           <textarea id="description" name="description" rows={3} placeholder="Briefly describe your company..." className={inputClass} value={formData.description} onChange={handleChange}></textarea>
         </div>
-        <div className="flex items-center p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-violet-300 transition-colors">
+        <div className="flex items-center p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-slate-300 transition-colors">
           <input
             id="robot-check-employer"
             type="checkbox"
             checked={isRobotChecked}
             onChange={(e) => setIsRobotChecked(e.target.checked)}
-            className="h-5 w-5 text-[#7C3AED] focus:ring-[#7C3AED] border-gray-300 rounded cursor-pointer transition-all"
+            className="h-5 w-5 text-[#0F172A] focus:ring-[#0F172A] border-gray-300 rounded cursor-pointer transition-all"
           />
           <label htmlFor="robot-check-employer" className="ml-3 block text-sm text-gray-700 cursor-pointer select-none">
             I am not a robot
@@ -337,12 +337,12 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]">
         {/* Progress Bar */}
         <div className="relative h-1.5 bg-gray-100 w-full">
-           <div className="absolute top-0 left-0 h-full bg-[#7C3AED] transition-all duration-500 ease-out" style={{ width: `${progress}%` }}></div>
+           <div className="absolute top-0 left-0 h-full bg-[#0F172A] transition-all duration-500 ease-out" style={{ width: `${progress}%` }}></div>
         </div>
         <button onClick={onClose} className="absolute top-5 right-5 text-gray-400 hover:text-gray-800 transition-colors z-10">
           <FaTimes size={24} />
         </button>
-        <div className="p-8 overflow-y-auto custom-scrollbar">
+        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
           {successMessage ? (
             <div className="flex flex-col items-center justify-center py-10 animate-fade-in-up">
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">

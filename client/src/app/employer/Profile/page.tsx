@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FaBuilding, FaGlobe, FaMapMarkerAlt, FaUsers, FaEnvelope, FaPhone, FaCamera, FaPen, FaSave, FaCheckCircle, FaEye, FaEdit, FaLinkedin, FaTwitter, FaFacebook } from 'react-icons/fa';
+import { FaBuilding, FaGlobe, FaMapMarkerAlt, FaUsers, FaEnvelope, FaPhone, FaCamera, FaPen, FaSave, FaCheckCircle, FaEye, FaEdit, FaLinkedin, FaTwitter, FaFacebook, FaPlus, FaTrash } from 'react-icons/fa';
 import { useUpdateProfileMutation } from '@/features/authApi';
 
 const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
-  const [isPublicView, setIsPublicView] = useState(false);
+  const [isPublicView, setIsPublicView] = useState(true);
   const [formData, setFormData] = useState({
     companyName: user?.companyName || '',
     website: user?.website || '',
@@ -17,6 +17,12 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
     email: user?.email || '',
     phone: user?.phone || '',
     description: user?.description || '',
+    followers: user?.followers || '789K',
+    commitments: user?.commitments || [
+        { title: 'Career growth and learning', desc: 'There is no one-size-fits-all career path: here everyone is empowered to own their growth journey. Thoughtworkers come from a variety of traditional and non-traditional tech backgrounds including career changers...' },
+        { title: 'Diversity, equity, and inclusion', desc: 'We aspire to be an employer of choice for all and diversity helps power our collective impact.' },
+        { title: 'Social impact', desc: 'Technologists have a unique role to play in advocating for how technology should benefit the common good.' }
+    ],
   });
 
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
@@ -24,6 +30,24 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleCommitmentChange = (index: number, field: string, value: string) => {
+    const updatedCommitments = [...formData.commitments];
+    updatedCommitments[index] = { ...updatedCommitments[index], [field]: value };
+    setFormData({ ...formData, commitments: updatedCommitments });
+  };
+
+  const addCommitment = () => {
+    setFormData({
+      ...formData,
+      commitments: [...formData.commitments, { title: '', desc: '' }]
+    });
+  };
+
+  const removeCommitment = (index: number) => {
+    const updatedCommitments = formData.commitments.filter((_: any, i: number) => i !== index);
+    setFormData({ ...formData, commitments: updatedCommitments });
   };
 
   const handleSubmit = async () => {
@@ -47,13 +71,13 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
       <div className="max-w-6xl mx-auto space-y-6 animate-fade-in-up">
         {/* Banner & Header */}
         <div className="relative rounded-3xl overflow-hidden shadow-xl bg-white border border-gray-100 group">
-          <div className="h-48 bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#6D28D9] relative overflow-hidden">
+          <div className="h-48 bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#334155] relative overflow-hidden">
               <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
           </div>
           
           <div className="px-8 pb-8 pt-16 relative">
               <div className="absolute -top-12 left-8 p-1.5 bg-white rounded-2xl shadow-lg">
-                  <div className="w-28 h-28 bg-gray-100 rounded-xl flex items-center justify-center text-4xl font-bold text-[#7C3AED] relative overflow-hidden border border-gray-100">
+                  <div className="w-28 h-28 bg-gray-100 rounded-xl flex items-center justify-center text-4xl font-bold text-[#0F172A] relative overflow-hidden border border-gray-100">
                     {formData.companyName.charAt(0).toUpperCase()}
                   </div>
               </div>
@@ -68,14 +92,16 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                           <span className="w-1 h-1 rounded-full bg-gray-300"></span>
                           <span>{formData.location || 'San Francisco, CA'}</span>
                           <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                          <span>{formData.followers} followers</span>
+                          <span className="w-1 h-1 rounded-full bg-gray-300"></span>
                           <span>{formData.companySize}</span>
                       </div>
                   </div>
                   <button 
                       onClick={() => setIsPublicView(false)}
-                      className="px-6 py-2.5 bg-[#121212] hover:bg-black text-white font-bold rounded-full transition-all shadow-lg shadow-gray-500/20 text-sm flex items-center gap-2 shrink-0"
+                      className="px-6 py-2.5 bg-[#121212] hover:bg-black text-white font-bold rounded-full transition-all shadow-lg shadow-slate-900/20 text-sm flex items-center gap-2 shrink-0"
                   >
-                      <FaEdit /> Back to Edit Mode
+                      <FaEdit /> Edit Profile
                   </button>
               </div>
           </div>
@@ -83,7 +109,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
           {/* Navigation Tabs */}
           <div className="px-8 border-t border-gray-100 flex items-center gap-8 overflow-x-auto">
             {['Home', 'About', 'Posts', 'Jobs', 'Life', 'People'].map((tab, i) => (
-                <button key={tab} className={`py-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${i === 1 ? 'border-[#7C3AED] text-[#7C3AED]' : 'border-transparent text-gray-500 hover:text-[#121212]'}`}>
+                <button key={tab} className={`py-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${i === 1 ? 'border-[#0F172A] text-[#0F172A]' : 'border-transparent text-gray-500 hover:text-[#121212]'}`}>
                     {tab}
                 </button>
             ))}
@@ -106,13 +132,9 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                 <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
                     <h3 className="text-xl font-bold text-[#121212] mb-6">Commitments</h3>
                     <div className="space-y-6">
-                        {[
-                            { title: 'Career growth and learning', desc: 'There is no one-size-fits-all career path: here everyone is empowered to own their growth journey.' },
-                            { title: 'Diversity, equity, and inclusion', desc: 'We aspire to be an employer of choice for all and diversity helps power our collective impact.' },
-                            { title: 'Social impact', desc: 'Technologists have a unique role to play in advocating for how technology should benefit the common good.' }
-                        ].map((item, i) => (
+                        {formData.commitments.map((item: any, i: number) => (
                             <div key={i} className="flex gap-4">
-                                <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center shrink-0 text-[#7C3AED]">
+                                <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 text-[#0F172A]">
                                     <FaBuilding />
                                 </div>
                                 <div>
@@ -131,7 +153,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                     <div className="space-y-5">
                         <div>
                             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Website</h4>
-                            <a href={formData.website} target="_blank" className="text-[#7C3AED] font-semibold hover:underline text-sm truncate block">{formData.website || 'http://www.thoughtworks.com'}</a>
+                            <a href={formData.website} target="_blank" className="text-[#0F172A] font-semibold hover:underline text-sm truncate block">{formData.website || 'http://www.thoughtworks.com'}</a>
                         </div>
                         <div>
                             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Industry</h4>
@@ -163,7 +185,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
     <div className="max-w-5xl mx-auto space-y-8 animate-fade-in-up">
       {/* Banner & Header */}
       <div className="relative rounded-3xl overflow-hidden shadow-xl bg-white border border-gray-100 group">
-        <div className="h-48 bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#6D28D9] relative overflow-hidden">
+        <div className="h-48 bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#334155] relative overflow-hidden">
             <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
             <div className="absolute bottom-4 right-6">
                 <button className="bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-white/30 transition-all">
@@ -174,7 +196,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
         
         <div className="px-8 pb-8 pt-16 relative">
             <div className="absolute -top-16 left-8 p-1.5 bg-white rounded-3xl shadow-lg">
-                <div className="w-32 h-32 bg-gray-100 rounded-2xl flex items-center justify-center text-5xl font-bold text-[#7C3AED] relative overflow-hidden group/avatar cursor-pointer">
+                <div className="w-32 h-32 bg-gray-100 rounded-2xl flex items-center justify-center text-5xl font-bold text-[#0F172A] relative overflow-hidden group/avatar cursor-pointer">
                 {formData.companyName.charAt(0).toUpperCase()}
                     <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity">
                         <FaCamera className="text-white text-2xl mb-1" />
@@ -186,9 +208,10 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 ml-36 md:ml-36">
                 <div>
                     <h1 className="text-3xl font-bold text-[#121212]">{formData.companyName || 'Your Company Name'}</h1>
+                    <p className="text-lg text-gray-600 max-w-2xl leading-relaxed mt-1">{formData.tagline || 'Add a tagline to describe your company'}</p>
                     <div className="flex items-center gap-4 mt-2 text-sm text-gray-500 font-medium">
-                        <span className="flex items-center gap-1.5"><FaBuilding className="text-[#7C3AED]" /> {formData.industry || 'Tech Industry'}</span>
-                        <span className="flex items-center gap-1.5"><FaMapMarkerAlt className="text-[#7C3AED]" /> {formData.location || 'Location'}</span>
+                        <span className="flex items-center gap-1.5"><FaBuilding className="text-[#0F172A]" /> {formData.industry || 'Tech Industry'}</span>
+                        <span className="flex items-center gap-1.5"><FaMapMarkerAlt className="text-[#0F172A]" /> {formData.location || 'Location'}</span>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -199,14 +222,14 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                     )}
                     <button 
                         onClick={() => setIsPublicView(true)}
-                        className="px-4 py-3 bg-white border border-gray-200 text-gray-600 font-bold rounded-xl transition-all text-sm flex items-center gap-2 hover:bg-gray-50 hover:text-[#121212]"
+                        className="px-4 py-3 bg-white border border-gray-200 text-gray-600 font-bold rounded-xl transition-all text-sm flex items-center gap-2 hover:bg-slate-50 hover:text-[#121212]"
                     >
                         <FaEye /> View as Public
                     </button>
                     <button 
                         onClick={handleSubmit} 
                         disabled={isLoading}
-                        className="px-6 py-3 bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-bold rounded-xl transition-all shadow-lg shadow-violet-500/20 text-sm flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:translate-y-0"
+                        className="px-6 py-3 bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold rounded-xl transition-all shadow-lg shadow-slate-900/20 text-sm flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:translate-y-0"
                     >
                         {isLoading ? 'Saving...' : <><FaSave /> Save Changes</>}
                     </button>
@@ -221,36 +244,36 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
         <div className="lg:col-span-2 space-y-8">
             <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
                 <h3 className="text-lg font-bold text-[#121212] mb-6 flex items-center gap-2">
-                    <span className="w-1 h-6 bg-[#7C3AED] rounded-full"></span>
+                    <span className="w-1 h-6 bg-[#0F172A] rounded-full"></span>
                     Company Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Company Name</label>
                         <div className="relative">
-                            <input type="text" name="companyName" value={formData.companyName} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/50 focus:border-[#7C3AED] transition-all text-sm font-medium" placeholder="e.g. TechCorp" />
+                            <input type="text" name="companyName" value={formData.companyName} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium" placeholder="e.g. TechCorp" />
                         </div>
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Tagline</label>
-                        <input type="text" name="tagline" value={formData.tagline} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/50 focus:border-[#7C3AED] transition-all text-sm font-medium" placeholder="e.g. Global tech consultancy..." />
+                        <input type="text" name="tagline" value={formData.tagline} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium" placeholder="e.g. Global tech consultancy..." />
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Website</label>
                         <div className="relative group">
-                            <FaGlobe className="absolute left-4 top-4 text-gray-400 group-focus-within:text-[#7C3AED] transition-colors" />
-                            <input type="text" name="website" value={formData.website} onChange={handleChange} className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/50 focus:border-[#7C3AED] transition-all text-sm font-medium" placeholder="https://..." />
+                            <FaGlobe className="absolute left-4 top-4 text-gray-400 group-focus-within:text-[#0F172A] transition-colors" />
+                            <input type="text" name="website" value={formData.website} onChange={handleChange} className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium" placeholder="https://..." />
                         </div>
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Industry</label>
-                        <input type="text" name="industry" value={formData.industry} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/50 focus:border-[#7C3AED] transition-all text-sm font-medium" placeholder="e.g. Software Development" />
+                        <input type="text" name="industry" value={formData.industry} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium" placeholder="e.g. Software Development" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Company Size</label>
                         <div className="relative group">
-                            <FaUsers className="absolute left-4 top-4 text-gray-400 group-focus-within:text-[#7C3AED] transition-colors" />
-                            <select name="companySize" value={formData.companySize} onChange={handleChange} className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/50 focus:border-[#7C3AED] transition-all text-sm font-medium appearance-none cursor-pointer">
+                            <FaUsers className="absolute left-4 top-4 text-gray-400 group-focus-within:text-[#0F172A] transition-colors" />
+                            <select name="companySize" value={formData.companySize} onChange={handleChange} className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium appearance-none cursor-pointer">
                                 <option>1-10 employees</option>
                                 <option>11-50 employees</option>
                                 <option>51-200 employees</option>
@@ -259,15 +282,47 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                             </select>
                         </div>
                     </div>
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Followers Count</label>
+                        <input type="text" name="followers" value={formData.followers} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium" placeholder="e.g. 10K" />
+                    </div>
                 </div>
                 
                 <div className="mt-6 space-y-2">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">About Company</label>
-                    <textarea name="description" value={formData.description} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/50 focus:border-[#7C3AED] transition-all text-sm font-medium resize-none min-h-[150px]" placeholder="Tell potential candidates about your mission, vision, and culture..."></textarea>
+                    <textarea name="description" value={formData.description} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium resize-none min-h-[150px]" placeholder="Tell potential candidates about your mission, vision, and culture..."></textarea>
                 </div>
                 <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Specialties</label>
-                    <textarea name="specialties" value={formData.specialties} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/50 focus:border-[#7C3AED] transition-all text-sm font-medium resize-none min-h-[100px]" placeholder="e.g. Agile Development, AI, Cloud Computing..."></textarea>
+                    <textarea name="specialties" value={formData.specialties} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium resize-none min-h-[100px]" placeholder="e.g. Agile Development, AI, Cloud Computing..."></textarea>
+                </div>
+
+                <div className="mt-8 border-t border-gray-100 pt-8">
+                    <div className="flex justify-between items-center mb-6">
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Company Commitments</label>
+                        <button onClick={addCommitment} className="text-xs font-bold text-[#0F172A] hover:text-[#1E293B] flex items-center gap-1">
+                            <FaPlus size={10} /> Add New
+                        </button>
+                    </div>
+                    <div className="space-y-6">
+                        {formData.commitments.map((item: any, index: number) => (
+                            <div key={index} className="bg-gray-50 p-4 rounded-xl border border-gray-200 relative group">
+                                <button onClick={() => removeCommitment(index)} className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors">
+                                    <FaTrash size={12} />
+                                </button>
+                                <div className="space-y-3">
+                                    <div>
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">Title</label>
+                                        <input type="text" value={item.title} onChange={(e) => handleCommitmentChange(index, 'title', e.target.value)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 text-sm" placeholder="Commitment Title" />
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">Description</label>
+                                        <textarea value={item.desc} onChange={(e) => handleCommitmentChange(index, 'desc', e.target.value)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 text-sm resize-none min-h-[80px]" placeholder="Description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

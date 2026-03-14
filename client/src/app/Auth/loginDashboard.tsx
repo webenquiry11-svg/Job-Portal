@@ -69,15 +69,15 @@ const LoginDashboard = () => {
       {/* Hero Section */}
       <div className="bg-white min-h-[calc(100vh-80px)] flex items-center relative overflow-hidden text-[#121212]">
 
-        <div className="container mx-auto px-8 md:px-16 lg:px-32 py-12 lg:py-20 grid lg:grid-cols-2 gap-16 items-center relative z-10">
+        <div className="container mx-auto px-6 md:px-12 py-12 lg:py-20 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center relative z-10">
         {/* Left Side */}
         <div className="text-center lg:text-left space-y-8 max-w-2xl mx-auto lg:mx-0">
           <div className="space-y-4">
-            <h1 className="text-5xl md:text-6xl font-extrabold text-[#121212] leading-tight tracking-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#121212] leading-tight tracking-tight">
               Find The Job That <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7C3AED] to-[#6D28D9]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0F172A] to-[#1E293B]">
                 {displayText}
-                <span className="text-[#7C3AED] animate-pulse">|</span>
+                <span className="text-[#0F172A] animate-pulse">|</span>
               </span>
             </h1>
             <p className="text-lg text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
@@ -112,7 +112,7 @@ const LoginDashboard = () => {
           </div>
 
           <p className="text-xs text-gray-500 text-center lg:text-left pt-4">
-            By continuing, you agree to our <a href="#" className="underline hover:text-[#7C3AED]">Terms of Service</a> and <a href="#" className="underline hover:text-[#7C3AED]">Privacy Policy</a>.
+            By continuing, you agree to our <a href="#" className="underline hover:text-[#0F172A]">Terms of Service</a> and <a href="#" className="underline hover:text-[#0F172A]">Privacy Policy</a>.
           </p>
         </div>
 
@@ -127,9 +127,9 @@ const LoginDashboard = () => {
 
       {/* Trusted Companies Section (New) */}
       <div className="bg-white py-12 border-b border-gray-100">
-        <div className="container mx-auto px-8 md:px-16 lg:px-32">
+        <div className="container mx-auto px-6 md:px-12">
             <p className="text-center text-gray-500 text-sm font-semibold uppercase tracking-wider mb-8">Trusted by leading companies</p>
-            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+            <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 md:gap-x-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
                 <div className="text-xl font-bold flex items-center gap-2 text-gray-500"><FaBuilding /> Acme Corp</div>
                 <div className="text-xl font-bold flex items-center gap-2 text-gray-500"><FaBuilding /> Global Tech</div>
                 <div className="text-xl font-bold flex items-center gap-2 text-gray-500"><FaBuilding /> Future Inc</div>
@@ -141,7 +141,7 @@ const LoginDashboard = () => {
 
       {/* Features Section (Enhanced) */}
       <div className="bg-gray-50 py-24">
-        <div className="container mx-auto px-8 md:px-16 lg:px-32">
+        <div className="container mx-auto px-6 md:px-12">
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-4">How It Works</h2>
                 <p className="text-lg text-gray-600 max-w-2xl mx-auto">Finding your dream job is easier than ever with our streamlined process.</p>
@@ -149,8 +149,8 @@ const LoginDashboard = () => {
             
             <div className="grid md:grid-cols-3 gap-8">
                 <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#7C3AED] to-[#6D28D9] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                    <div className="w-14 h-14 bg-violet-100 text-[#7C3AED] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                    <div className="w-14 h-14 bg-slate-100 text-[#0F172A] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                         <FaSearch size={24} />
                     </div>
                     <h3 className="text-xl font-bold text-[#121212] mb-3">1. Search Jobs</h3>
@@ -180,18 +180,18 @@ const LoginDashboard = () => {
       
       {/* Popular Categories Section */}
       <div className="bg-white py-24">
-          <div className="container mx-auto px-8 md:px-16 lg:px-32">
+          <div className="container mx-auto px-6 md:px-12">
               <div className="text-center mb-16">
                   <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-4">Popular Categories</h2>
                   <p className="text-lg text-gray-600 max-w-2xl mx-auto">Explore thousands of jobs in the most in-demand industries.</p>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   {[
-                      { name: 'Development', count: '1.2k+ Jobs', icon: <FaBriefcase />, color: 'bg-violet-100 text-[#7C3AED]' },
+                      { name: 'Development', count: '1.2k+ Jobs', icon: <FaBriefcase />, color: 'bg-slate-100 text-[#0F172A]' },
                       { name: 'Design', count: '800+ Jobs', icon: <FaFileAlt />, color: 'bg-amber-100 text-[#FACC15]' },
                       { name: 'Marketing', count: '600+ Jobs', icon: <FaSearch />, color: 'bg-red-100 text-[#EF4444]' },
                       { name: 'Management', count: '400+ Jobs', icon: <FaUsers />, color: 'bg-gray-100 text-gray-600' },
-                      { name: 'Finance', count: '300+ Jobs', icon: <FaBuilding />, color: 'bg-violet-100 text-[#7C3AED]' },
+                      { name: 'Finance', count: '300+ Jobs', icon: <FaBuilding />, color: 'bg-slate-100 text-[#0F172A]' },
                       { name: 'Customer Service', count: '900+ Jobs', icon: <FaHeadset />, color: 'bg-amber-100 text-[#FACC15]' },
                       { name: 'Health Care', count: '500+ Jobs', icon: <FaBriefcase />, color: 'bg-red-100 text-[#EF4444]' },
                       { name: 'Sales', count: '700+ Jobs', icon: <FaBell />, color: 'bg-gray-100 text-gray-600' },
@@ -200,7 +200,7 @@ const LoginDashboard = () => {
                           <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4 transition-transform duration-300 group-hover:scale-110 ${cat.color}`}>
                               {cat.icon}
                           </div>
-                          <h3 className="font-bold text-[#121212] text-lg mb-1 group-hover:text-[#7C3AED] transition-colors">{cat.name}</h3>
+                          <h3 className="font-bold text-[#121212] text-lg mb-1 group-hover:text-[#0F172A] transition-colors">{cat.name}</h3>
                           <p className="text-sm text-gray-500">{cat.count}</p>
                       </div>
                   ))}
@@ -210,19 +210,19 @@ const LoginDashboard = () => {
 
       {/* Featured Jobs Section */}
       <div className="bg-gray-50 py-24">
-        <div className="container mx-auto px-8 md:px-16 lg:px-32">
+        <div className="container mx-auto px-6 md:px-12">
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-4">Featured Jobs</h2>
                 <p className="text-lg text-gray-600 max-w-2xl mx-auto">Know your worth and find the job that fits your life.</p>
             </div>
             <div className="grid md:grid-cols-2 gap-6">
                 {[
-                    { title: 'Senior Software Engineer', company: 'TechCorp', type: 'Full Time', location: 'Remote', salary: '$120k - $150k', logo: 'T', color: 'bg-[#7C3AED]', tags: ['Engineering', 'Senior'] },
+                    { title: 'Senior Software Engineer', company: 'TechCorp', type: 'Full Time', location: 'Remote', salary: '$120k - $150k', logo: 'T', color: 'bg-[#0F172A]', tags: ['Engineering', 'Senior'] },
                     { title: 'Product Designer', company: 'CreativeStudio', type: 'Part Time', location: 'New York', salary: '$80k - $100k', logo: 'C', color: 'bg-[#FACC15]', tags: ['Design', 'Creative'] },
                     { title: 'Marketing Manager', company: 'GrowthInc', type: 'Full Time', location: 'London', salary: '$90k - $110k', logo: 'G', color: 'bg-[#EF4444]', tags: ['Marketing', 'Management'] },
                     { title: 'Data Analyst', company: 'DataFlow', type: 'Contract', location: 'Remote', salary: '$60k - $80k', logo: 'D', color: 'bg-[#121212]', tags: ['Data', 'Analysis'] },
                 ].map((job, idx) => (
-                    <div key={idx} className="bg-white rounded-2xl p-8 border border-gray-100 hover:border-violet-200 hover:shadow-2xl transition-all duration-300 group cursor-pointer relative overflow-hidden">
+                    <div key={idx} className="bg-white rounded-2xl p-8 border border-gray-100 hover:border-slate-200 hover:shadow-2xl transition-all duration-300 group cursor-pointer relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity transform translate-x-4 -translate-y-4">
                            <div className={`text-9xl font-bold text-[#121212]`}>{job.logo}</div>
                         </div>
@@ -234,11 +234,11 @@ const LoginDashboard = () => {
                                         {job.logo}
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-xl text-[#121212] group-hover:text-[#7C3AED] transition-colors mb-1">{job.title}</h3>
+                                        <h3 className="font-bold text-xl text-[#121212] group-hover:text-[#0F172A] transition-colors mb-1">{job.title}</h3>
                                         <p className="text-gray-500 font-medium text-sm">{job.company}</p>
                                     </div>
                                 </div>
-                                <span className="bg-violet-50 text-[#7C3AED] text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide border border-violet-100">{job.type}</span>
+                                <span className="bg-slate-50 text-[#0F172A] text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide border border-slate-200">{job.type}</span>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4 mb-6">
@@ -253,7 +253,7 @@ const LoginDashboard = () => {
                                         <span key={i} className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition-colors">#{tag}</span>
                                     ))}
                                 </div>
-                                <button className="text-[#7C3AED] font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
+                                <button className="text-[#0F172A] font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
                                     Apply Now <FaArrowRight />
                                 </button>
                             </div>
@@ -262,14 +262,14 @@ const LoginDashboard = () => {
                 ))}
             </div>
              <div className="text-center mt-12">
-                <button className="px-8 py-3.5 border-2 border-gray-200 text-gray-700 font-bold rounded-full hover:border-[#7C3AED] hover:text-[#7C3AED] hover:bg-violet-50 transition-all duration-300">View All Jobs</button>
+                <button className="px-8 py-3.5 border-2 border-gray-200 text-gray-700 font-bold rounded-full hover:border-[#0F172A] hover:text-[#0F172A] hover:bg-slate-50 transition-all duration-300">View All Jobs</button>
               </div>
           </div>
       </div>
 
       {/* Testimonials Section (New) */}
       <div className="bg-white py-24 relative">
-        <div className="container mx-auto px-8 md:px-16 lg:px-32">
+        <div className="container mx-auto px-6 md:px-12">
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-4">What Our Users Say</h2>
                 <p className="text-lg text-gray-600 max-w-2xl mx-auto">Don't just take our word for it. Hear from people who have found success.</p>
@@ -278,14 +278,14 @@ const LoginDashboard = () => {
                 {/* Card 1 */}
                 <div className="bg-gray-50 p-8 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex flex-col">
                     <div className="mb-6">
-                        <FaQuoteLeft className="text-violet-100 text-4xl" />
+                        <FaQuoteLeft className="text-slate-200 text-4xl" />
                     </div>
                     <p className="text-gray-600 italic mb-6 flex-grow leading-relaxed">"I found my dream job within a week of signing up. The process was incredibly smooth and the company recommendations were spot on."</p>
                     <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
-                        <div className="w-10 h-10 bg-[#7C3AED] rounded-full flex items-center justify-center text-white font-bold shadow-md text-sm">SJ</div>
+                        <div className="w-10 h-10 bg-[#0F172A] rounded-full flex items-center justify-center text-white font-bold shadow-md text-sm">SJ</div>
                         <div>
                             <h4 className="font-bold text-[#121212] text-sm">Sarah Johnson</h4>
-                            <p className="text-xs text-[#7C3AED] font-medium">Software Engineer</p>
+                            <p className="text-xs text-[#0F172A] font-medium">Software Engineer</p>
                         </div>
                     </div>
                 </div>
@@ -325,11 +325,11 @@ const LoginDashboard = () => {
 
       {/* CTA Section (New) */}
       <div className="py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[#7C3AED] z-0"></div>
-          <div className="container mx-auto px-8 md:px-16 lg:px-32 text-center relative z-10">
+          <div className="absolute inset-0 bg-[#0F172A] z-0"></div>
+          <div className="container mx-auto px-6 md:px-12 text-center relative z-10">
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Ready to Start Your Career Journey?</h2>
-              <p className="text-violet-200 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">Join thousands of professionals who have advanced their careers with JobPortal. Create your account today.</p>
-              <button className="bg-white text-[#7C3AED] font-bold py-4 px-10 rounded-full shadow-xl hover:bg-violet-50 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
+              <p className="text-slate-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">Join thousands of professionals who have advanced their careers with JobPortal. Create your account today.</p>
+              <button className="bg-white text-[#0F172A] font-bold py-4 px-10 rounded-full shadow-xl hover:bg-slate-100 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
                   Get Started Now
               </button>
           </div>
