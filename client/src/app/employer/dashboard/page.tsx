@@ -478,7 +478,7 @@ const KanbanBoard = () => {
   ];
 
   return (
-    <div className="flex gap-4 overflow-x-auto pb-4 -mx-6 lg:-mx-10 px-6 lg:px-10">
+    <div className="flex gap-3 overflow-x-auto pb-4 w-full">
       {columns.map(col => (
         <KanbanColumn 
           key={col.id} 
@@ -507,13 +507,13 @@ const KanbanColumn = ({ status, title, color, candidates, onDrop }: any) => {
     <div 
       onDragOver={handleDragOver} 
       onDrop={handleDrop}
-      className={`w-72 flex-shrink-0 bg-gray-50/50 rounded-2xl border-t-4 ${color} p-4 flex flex-col h-[500px]`}
+      className={`flex-1 min-w-[150px] bg-gray-50/50 rounded-2xl border-t-4 ${color} p-3 flex flex-col h-[500px]`}
     >
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold text-[#121212] text-sm">{title}</h3>
-        <span className="bg-white text-xs font-bold px-2 py-0.5 rounded text-gray-500 shadow-sm">{candidates.length}</span>
+        <h3 className="font-bold text-[#121212] text-xs lg:text-sm truncate pr-2">{title}</h3>
+        <span className="bg-white text-xs font-bold px-1.5 py-0.5 rounded text-gray-500 shadow-sm">{candidates.length}</span>
       </div>
-      <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-1">
+      <div className="flex-1 overflow-y-auto space-y-2.5 custom-scrollbar pr-1">
         {candidates.map((c: any) => <KanbanCard key={c.id} candidate={c} />)}
       </div>
     </div>
@@ -529,15 +529,15 @@ const KanbanCard = ({ candidate }: any) => {
     <div 
       draggable 
       onDragStart={handleDragStart}
-      className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group"
+      className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group"
     >
-      <div className="flex items-center gap-3">
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm ${candidate.status === 'Rejected' ? 'bg-[#EF4444]' : candidate.status === 'Interview' ? 'bg-[#FACC15]' : 'bg-[#0F172A]'}`}>
+      <div className="flex items-center gap-2 lg:gap-3">
+        <div className={`w-7 h-7 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm flex-shrink-0 ${candidate.status === 'Rejected' ? 'bg-[#EF4444]' : candidate.status === 'Interview' ? 'bg-[#FACC15]' : 'bg-[#0F172A]'}`}>
           {candidate.avatar}
         </div>
-        <div>
-          <h4 className="font-bold text-[#121212] text-sm group-hover:text-[#0F172A] transition-colors">{candidate.name}</h4>
-          <p className="text-xs text-gray-400">{candidate.role}</p>
+        <div className="min-w-0">
+          <h4 className="font-bold text-[#121212] text-xs lg:text-sm group-hover:text-[#0F172A] transition-colors truncate">{candidate.name}</h4>
+          <p className="text-[10px] lg:text-xs text-gray-400 truncate">{candidate.role}</p>
         </div>
       </div>
     </div>
