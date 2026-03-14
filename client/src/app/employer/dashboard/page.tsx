@@ -455,13 +455,13 @@ const ToDoItem = ({ text, checked = false }: { text: string, checked?: boolean }
 
 const KanbanBoard = () => {
   const [candidates, setCandidates] = useState([
-    { id: '1', name: 'Alice Freeman', role: 'Frontend Dev', status: 'Applied', avatar: 'A' },
-    { id: '2', name: 'Bob Smith', role: 'Backend Dev', status: 'AI Screened', avatar: 'B' },
-    { id: '3', name: 'Charlie Brown', role: 'Designer', status: 'Interview', avatar: 'C' },
-    { id: '4', name: 'David Lee', role: 'Manager', status: 'Offered', avatar: 'D' },
-    { id: '5', name: 'Eva Green', role: 'Tester', status: 'On Hold', avatar: 'E' },
-    { id: '6', name: 'Frank White', role: 'DevOps', status: 'Rejected', avatar: 'F' },
-    { id: '7', name: 'Grace Liu', role: 'Frontend Dev', status: 'Applied', avatar: 'G' },
+    { id: '1', name: 'Alice Freeman', role: 'Frontend Dev', status: 'Applied', avatar: 'A', match: 92 },
+    { id: '2', name: 'Bob Smith', role: 'Backend Dev', status: 'AI Screened', avatar: 'B', match: 85 },
+    { id: '3', name: 'Charlie Brown', role: 'Designer', status: 'Interview', avatar: 'C', match: 78 },
+    { id: '4', name: 'David Lee', role: 'Manager', status: 'Offered', avatar: 'D', match: 95 },
+    { id: '5', name: 'Eva Green', role: 'Tester', status: 'On Hold', avatar: 'E', match: 64 },
+    { id: '6', name: 'Frank White', role: 'DevOps', status: 'Rejected', avatar: 'F', match: 45 },
+    { id: '7', name: 'Grace Liu', role: 'Frontend Dev', status: 'Applied', avatar: 'G', match: 88 },
   ]);
 
   const onDrop = (id: string, newStatus: string) => {
@@ -529,16 +529,22 @@ const KanbanCard = ({ candidate }: any) => {
     <div 
       draggable 
       onDragStart={handleDragStart}
-      className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group"
+      className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group flex flex-col gap-2.5"
     >
       <div className="flex items-center gap-2 lg:gap-3">
         <div className={`w-7 h-7 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm flex-shrink-0 ${candidate.status === 'Rejected' ? 'bg-[#EF4444]' : candidate.status === 'Interview' ? 'bg-[#FACC15]' : 'bg-[#0F172A]'}`}>
           {candidate.avatar}
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h4 className="font-bold text-[#121212] text-xs lg:text-sm group-hover:text-[#0F172A] transition-colors truncate">{candidate.name}</h4>
           <p className="text-[10px] lg:text-xs text-gray-400 truncate">{candidate.role}</p>
         </div>
+      </div>
+      <div className="flex justify-between items-center bg-gray-50 p-1.5 rounded-lg border border-gray-100/50">
+          <span className="text-[10px] font-bold text-gray-500">AI Match</span>
+          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${candidate.match >= 80 ? 'bg-green-100 text-green-700' : candidate.match >= 60 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
+              {candidate.match}%
+          </span>
       </div>
     </div>
   );
