@@ -32,7 +32,7 @@ const Footer = () => {
             <ul className="space-y-4 text-sm">
               <li><Link href="/jobs" className="hover:text-[#0F172A] transition-colors flex items-center gap-2 group"><span className="w-1.5 h-1.5 bg-[#0F172A] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>Browse Jobs</Link></li>
               <li><Link href="/companies" className="hover:text-[#0F172A] transition-colors flex items-center gap-2 group"><span className="w-1.5 h-1.5 bg-[#0F172A] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>Browse Companies</Link></li>
-              <li><Link href="/dashboard" className="hover:text-[#0F172A] transition-colors flex items-center gap-2 group"><span className="w-1.5 h-1.5 bg-[#0F172A] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>Candidate Dashboard</Link></li>
+              <li><Link href="/Condidate/Dashboard" className="hover:text-[#0F172A] transition-colors flex items-center gap-2 group"><span className="w-1.5 h-1.5 bg-[#0F172A] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>Candidate Dashboard</Link></li>
               <li><Link href="/saved-jobs" className="hover:text-[#0F172A] transition-colors flex items-center gap-2 group"><span className="w-1.5 h-1.5 bg-[#0F172A] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>Saved Jobs</Link></li>
             </ul>
           </div>

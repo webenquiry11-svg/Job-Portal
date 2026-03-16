@@ -3,12 +3,14 @@
 import React, { useState } from 'react';
 import { FaTimes, FaUser, FaBuilding, FaArrowLeft, FaCloudUploadAlt, FaCheck } from 'react-icons/fa';
 import { useRegisterMutation } from '@/features/authApi';
+import { useRouter } from 'next/navigation';
 
 interface RegisterModalProps {
   onClose: () => void;
 }
 
 const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [role, setRole] = useState<'seeker' | 'employer' | null>(null);
   const [isRobotChecked, setIsRobotChecked] = useState(false);
@@ -52,6 +54,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
       console.log('Registration success:', result);
       setTimeout(() => {
         onClose();
+        if (role === 'employer') {
+          router.push('/employer/dashboard');
+        } else {
+          router.push('/Condidate/Dashboard');
+        }
       }, 2000);
     } catch (error) {
       console.error('Failed to register:', error);

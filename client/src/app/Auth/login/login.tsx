@@ -32,8 +32,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
         if (result?.result?.role === 'employer') {
           router.push('/employer/dashboard');
         } else {
-          router.push('/dashboard');
-        }
+          router.push('/Condidate/Dashboard');
+        } 
       }, 1500);
     } catch (error) {
       console.error('Login failed:', error);
