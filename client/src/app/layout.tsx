@@ -1,8 +1,8 @@
 import { StoreProvider } from '@/store/StoreProvider';
 import './globals.css';
 import Navbar from './Navbar/page';
-import Footer from './Footer/page';
 import FooterHost from './FooterHost';
+
 
 export const metadata = {
   title: 'Job Portal',

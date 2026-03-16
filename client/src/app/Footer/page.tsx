@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram, FaPaperPlane, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 
+
 const Footer = () => {
   return (
     <footer className="bg-white text-gray-700 pt-20 pb-10 border-t border-gray-100">

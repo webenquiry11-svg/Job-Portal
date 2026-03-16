@@ -13,7 +13,7 @@ const Navbar = () => {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  if (pathname?.startsWith('/employer/dashboard') || pathname?.startsWith('/candidate/dashboard') || pathname?.startsWith('/dashboard')) {
+  if (pathname?.startsWith('/employer/dashboard') || pathname?.startsWith('/Condidate/Dashboard') || pathname?.startsWith('/dashboard')) {
     return null;
   }
 
