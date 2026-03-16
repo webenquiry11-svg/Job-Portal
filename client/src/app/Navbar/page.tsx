@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import LoginModal from '../Auth/login/login';
-import RegisterModal from '../Auth/register/page';
+import RegisterModal from '../Auth/register/register';
 import { FaBriefcase, FaBars, FaTimes } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
 
@@ -13,7 +13,7 @@ const Navbar = () => {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  if (pathname?.startsWith('/employer/dashboard') || pathname?.startsWith('/Condidate/Dashboard') || pathname?.startsWith('/dashboard')) {
+  if (pathname?.startsWith('/employer/dashboard') || pathname?.startsWith('/candidate/dashboard') || pathname?.startsWith('/dashboard')) {
     return null;
   }
 
