@@ -18,6 +18,7 @@ import {
   FaEye
 } from 'react-icons/fa';
 import { MdDashboard, MdMenu, MdSettings } from 'react-icons/md';
+import CandidateProfile from '../CondidateProfile/page';
 
 const CandidateDashboard = () => {
   const router = useRouter();
@@ -207,7 +208,9 @@ const CandidateDashboard = () => {
             </div>
           )}
 
-          {activeTab !== 'dashboard' && (
+          {activeTab === 'profile' && <CandidateProfile user={user} setUser={setUser} />}
+
+          {activeTab !== 'dashboard' && activeTab !== 'profile' && (
              <div className="flex flex-col items-center justify-center h-64 bg-white rounded-3xl border border-gray-100 shadow-sm animate-fade-in-up">
                <FaBriefcase className="text-6xl text-slate-200 mb-4" />
                <h2 className="text-xl font-bold text-[#121212] capitalize">{activeTab.replace('-', ' ')}</h2>
