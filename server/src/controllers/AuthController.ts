@@ -54,6 +54,17 @@ export const updateProfile = async (req: Request, res: Response) => {
 
     if (!_id || _id === 'undefined' || _id === 'null') return res.status(400).json({ message: "Valid User ID is required" });
 
+    const existingUser = await AuthModel.findById(_id);
+    if (!existingUser) return res.status(404).json({ message: "User not found" });
+
+    if (updates.email && updates.email !== existingUser.email) {
+      updates.isEmailVerified = false;
+    }
+
+    if (updates.phone && updates.phone !== existingUser.phone) {
+      updates.isPhoneVerified = false;
+    }
+
     if (req.files) {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
       if (files.profilePicture?.length) {

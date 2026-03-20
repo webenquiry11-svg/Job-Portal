@@ -64,6 +64,12 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
   };
 
   const handleRequestOtp = async (type: 'email' | 'phone') => {
+    if (type === 'email' && formData.email !== user.email) {
+      return toast.error("Please save your profile first to verify your new email.");
+    }
+    if (type === 'phone' && formData.phone !== user.phone) {
+      return toast.error("Please save your profile first to verify your new phone number.");
+    }
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
       const res = await fetch(`${API_URL}/auth/request-otp`, {
