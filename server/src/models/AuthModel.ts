@@ -22,6 +22,7 @@ export interface IAuth extends Document {
   followers?: string;
   commitments?: { title: string; desc: string }[];
   profilePicture?: string;
+  coverImage?: string;
 }
 
 const authSchema = new mongoose.Schema({
@@ -55,6 +56,7 @@ const authSchema = new mongoose.Schema({
     desc: { type: String }
   }],
   profilePicture: { type: String },
+  coverImage: { type: String },
 }, { timestamps: true });
 
 export default mongoose.model<IAuth>('Auth', authSchema);

@@ -53,8 +53,24 @@ export const updateProfile = async (req: Request, res: Response) => {
 
     if (!_id || _id === 'undefined' || _id === 'null') return res.status(400).json({ message: "Valid User ID is required" });
 
-    if (req.file) {
+    if (req.files) {
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      if (files.profilePicture?.length) {
+        updates.profilePicture = files.profilePicture[0].path;
+      }
+      if (files.coverImage?.length) {
+        updates.coverImage = files.coverImage[0].path;
+      }
+    } else if (req.file) {
       updates.profilePicture = req.file.path;
+    }
+
+    if (typeof updates.commitments === 'string') {
+      try {
+        updates.commitments = JSON.parse(updates.commitments);
+      } catch (e) {
+        console.error("Failed to parse commitments JSON");
+      }
     }
 
     const updatedUser = await AuthModel.findByIdAndUpdate(_id, updates, { returnDocument: 'after' });
