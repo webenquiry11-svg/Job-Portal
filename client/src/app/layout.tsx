@@ -2,6 +2,7 @@ import { StoreProvider } from '@/store/StoreProvider';
 import './globals.css';
 import Navbar from './Navbar/page';
 import FooterHost from './FooterHost';
+import { Toaster } from 'react-hot-toast';
 
 
 export const metadata = {
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body className="bg-gray-50 text-[#121212]">
         <StoreProvider>
+          <Toaster position="top-center" />
           <div className="flex flex-col min-h-screen">
             <Navbar />
             <main className="flex-grow">{children}</main>

@@ -2,10 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaEdit, FaSave, FaFileAlt } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 
 const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [profileFile, setProfileFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     headline: '',
@@ -38,31 +41,52 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setProfileFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+      if (!user?._id) {
+        toast.error("Error: User ID is missing. Please try logging in again.");
+        setIsSaving(false);
+        return;
+      }
+
+      const formDataToSend = new FormData();
+      formDataToSend.append('_id', user?._id);
+      Object.entries(formData).forEach(([key, value]) => {
+        formDataToSend.append(key, value);
+      });
+      if (profileFile) {
+        formDataToSend.append('profilePicture', profileFile);
+      }
+
       const response = await fetch(`${API_URL}/auth/update`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          _id: user?._id,
-          ...formData
-        }),
+        body: formDataToSend,
       });
-      const data = await response.json();
+      const dataRes = await response.json();
       if (response.ok) {
         setIsEditing(false);
         const profile = JSON.parse(localStorage.getItem('profile') || '{}');
-        localStorage.setItem('profile', JSON.stringify({ ...profile, result: data.result, token: data.token || profile.token }));
-        if (setUser) setUser(data.result);
+        localStorage.setItem('profile', JSON.stringify({ ...profile, result: dataRes.result, token: dataRes.token || profile.token }));
+        if (setUser) setUser(dataRes.result);
+        toast.success("Profile saved successfully!");
       } else {
-        alert(data.message || 'Failed to save profile');
+        console.error("Backend Error:", dataRes);
+        toast.error(`Upload Failed: ${dataRes.message}`);
       }
     } catch (error) {
       console.error('Error saving profile:', error);
+      toast.error("An error occurred while saving.");
     } finally {
       setIsSaving(false);
     }
@@ -82,9 +106,20 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
         {/* Main Info */}
         <div className="px-6 md:px-10 pb-8 relative">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-6 -mt-12 sm:-mt-16 gap-4">
-             <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-full p-1.5 shadow-lg relative flex-shrink-0">
-                <div className="w-full h-full bg-slate-100 rounded-full flex items-center justify-center text-3xl md:text-5xl font-bold text-[#0F172A]">
-                   {formData.name?.charAt(0).toUpperCase() || 'U'}
+             <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-full p-1.5 shadow-lg relative flex-shrink-0 group">
+                <div className="w-full h-full bg-slate-100 rounded-full flex items-center justify-center text-3xl md:text-5xl font-bold text-[#0F172A] overflow-hidden relative">
+                   {previewUrl || user?.profilePicture ? (
+                     <img src={previewUrl || user?.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+                   ) : (
+                     formData.name?.charAt(0).toUpperCase() || 'U'
+                   )}
+                   {isEditing && (
+                     <label className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                       <FaEdit className="text-white text-xl md:text-2xl mb-1" />
+                       <span className="text-white text-[10px] md:text-xs font-medium">Change</span>
+                       <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+                     </label>
+                   )}
                 </div>
              </div>
              <button 
@@ -111,9 +146,9 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
           </div>
 
           <div className="flex flex-wrap gap-3 md:gap-4 mt-6">
-             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100"><FaMapMarkerAlt className="text-[#0F172A]" /> {isEditing ? <input name="location" value={formData.location} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-24 md:w-32" /> : formData.location}</div>
-             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100"><FaEnvelope className="text-[#0F172A]" /> {isEditing ? <input name="email" value={formData.email} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-32 md:w-48" /> : formData.email}</div>
-             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100"><FaPhone className="text-[#0F172A]" /> {isEditing ? <input name="phone" value={formData.phone} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-28" /> : formData.phone}</div>
+             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none"><FaMapMarkerAlt className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="location" value={formData.location} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-24 md:w-32" /> : <span className="truncate">{formData.location}</span>}</div>
+             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none"><FaEnvelope className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="email" value={formData.email} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-32 md:w-48" /> : <span className="truncate">{formData.email}</span>}</div>
+             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none"><FaPhone className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="phone" value={formData.phone} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-28" /> : <span className="truncate">{formData.phone}</span>}</div>
           </div>
         </div>
       </div>

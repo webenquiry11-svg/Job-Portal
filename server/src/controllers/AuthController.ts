@@ -51,7 +51,11 @@ export const updateProfile = async (req: Request, res: Response) => {
   try {
     const { _id, ...updates } = req.body;
 
-    if (!_id) return res.status(400).json({ message: "User ID is required" });
+    if (!_id || _id === 'undefined' || _id === 'null') return res.status(400).json({ message: "Valid User ID is required" });
+
+    if (req.file) {
+      updates.profilePicture = req.file.path;
+    }
 
     const updatedUser = await AuthModel.findByIdAndUpdate(_id, updates, { new: true });
 
@@ -60,7 +64,8 @@ export const updateProfile = async (req: Request, res: Response) => {
     const token = jwt.sign({ email: updatedUser.email, id: updatedUser._id, role: updatedUser.role }, process.env.JWT_SECRET || 'test', { expiresIn: '1h' });
 
     res.status(200).json({ result: updatedUser, token });
-  } catch (error) {
-    res.status(500).json({ message: "Something went wrong" });
+  } catch (error: any) {
+    console.error("Profile Update Error:", error);
+    res.status(500).json({ message: "Database update failed", error: error?.message || "Unknown error" });
   }
 };

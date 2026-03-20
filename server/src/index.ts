@@ -3,9 +3,10 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import mongoose from 'mongoose';
+import path from 'path';
 import authRoutes from './routes/AuthRoute';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const app = express();
 
@@ -46,6 +47,12 @@ app.get('/', (req: Request, res: Response) => {
 
 const CONNECTION_URL = process.env.MONGO_URI || 'mongodb://localhost:27017/jobportal';
 const PORT = process.env.PORT || 5000;
+
+if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+  console.log("❌ WARNING: Cloudinary credentials are MISSING in your server/.env file!");
+} else {
+  console.log("✅ Cloudinary credentials found.");
+}
 
 mongoose.connect(CONNECTION_URL)
   .then(() => app.listen(PORT, () => {

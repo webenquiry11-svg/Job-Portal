@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { FaTimes, FaUser, FaBuilding, FaArrowLeft, FaCloudUploadAlt, FaCheck } from 'react-icons/fa';
 import { useRegisterMutation } from '@/features/authApi';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface RegisterModalProps {
   onClose: () => void;
@@ -43,7 +44,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
   const handleSubmit = async () => {
     if (!isRobotChecked) return;
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
@@ -62,7 +63,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
       }, 2000);
     } catch (error) {
       console.error('Failed to register:', error);
-      alert('Registration failed. Please try again.');
+      toast.error('Registration failed. Please try again.');
     }
   };
 
@@ -180,7 +181,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
       </button>
       <h2 className="text-2xl font-bold text-center mb-6 text-[#121212]">Experience & Education</h2>
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleNext(); }}>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label htmlFor="experience" className={labelClass}>Experience</label>
             <select id="experience" name="experience" className={inputClass} value={formData.experience} onChange={handleChange}>
@@ -278,7 +279,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
           <label htmlFor="phone-employer" className={labelClass}>Phone Number</label>
           <input id="phone-employer" name="phone" type="tel" placeholder="+1 (555) 000-0000" className={inputClass} value={formData.phone} onChange={handleChange} />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label htmlFor="industry" className={labelClass}>Industry</label>
             <input id="industry" name="industry" type="text" placeholder="e.g. Technology" className={inputClass} value={formData.industry} onChange={handleChange} />

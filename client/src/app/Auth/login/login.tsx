@@ -5,6 +5,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { FaMicrosoft, FaTimes } from 'react-icons/fa';
 import { useLoginMutation } from '@/features/authApi';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface LoginModalProps {
   onClose: () => void;
@@ -37,7 +38,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
       }, 1500);
     } catch (error) {
       console.error('Login failed:', error);
-      alert('Invalid credentials');
+      toast.error('Invalid credentials');
     }
   };
 

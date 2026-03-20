@@ -18,7 +18,7 @@ import {
   FaEye
 } from 'react-icons/fa';
 import { MdDashboard, MdMenu, MdSettings } from 'react-icons/md';
-import CandidateProfile from '../CondidateProfile/page';
+import CandidateProfile from '../../Condidate/CondidateProfile/page';
 
 const CandidateDashboard = () => {
   const router = useRouter();
@@ -95,13 +95,13 @@ const CandidateDashboard = () => {
         
         <nav className="flex-1 px-4 space-y-2 overflow-y-auto py-4 custom-scrollbar">
           <p className={`px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 transition-all duration-300 ${isSidebarCollapsed ? 'md:hidden' : ''}`}>Menu</p>
-          <SidebarItem icon={<MdDashboard />} label="Dashboard" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} collapsed={isSidebarCollapsed} />
-          <SidebarItem icon={<FaBookmark />} label="Saved Jobs" active={activeTab === 'saved'} onClick={() => setActiveTab('saved')} collapsed={isSidebarCollapsed} />
-          <SidebarItem icon={<FaBriefcase />} label="My Applications" active={activeTab === 'applications'} onClick={() => setActiveTab('applications')} badge="3" collapsed={isSidebarCollapsed} />
+          <SidebarItem icon={<MdDashboard />} label="Dashboard" active={activeTab === 'dashboard'} onClick={() => { setActiveTab('dashboard'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
+          <SidebarItem icon={<FaBookmark />} label="Saved Jobs" active={activeTab === 'saved'} onClick={() => { setActiveTab('saved'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
+          <SidebarItem icon={<FaBriefcase />} label="My Applications" active={activeTab === 'applications'} onClick={() => { setActiveTab('applications'); setIsSidebarOpen(false); }} badge="3" collapsed={isSidebarCollapsed} />
           
           <p className={`px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:hidden' : ''}`}>Account</p>
-          <SidebarItem icon={<FaUserCircle />} label="My Profile" active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} collapsed={isSidebarCollapsed} />
-          <SidebarItem icon={<MdSettings />} label="Settings" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} collapsed={isSidebarCollapsed} />
+          <SidebarItem icon={<FaUserCircle />} label="My Profile" active={activeTab === 'profile'} onClick={() => { setActiveTab('profile'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
+          <SidebarItem icon={<MdSettings />} label="Settings" active={activeTab === 'settings'} onClick={() => { setActiveTab('settings'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
         </nav>
 
         <div className={`p-4 border-t border-gray-50 transition-all duration-300 ${isSidebarCollapsed ? 'md:m-2 md:p-2 m-4' : 'm-4'}`}>
@@ -132,8 +132,8 @@ const CandidateDashboard = () => {
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                 className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group focus:outline-none"
               >
-                 <div className="w-9 h-9 bg-[#0F172A] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-inner">
-                   {user?.name?.charAt(0).toUpperCase() || 'U'}
+                 <div className="w-9 h-9 bg-[#0F172A] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-inner overflow-hidden">
+                   {user?.profilePicture ? <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" /> : user?.name?.charAt(0).toUpperCase() || 'U'}
                  </div>
                  <div className="hidden sm:block text-left">
                    <p className="text-sm font-bold text-[#121212] leading-none group-hover:text-[#0F172A] transition-colors">{user?.name || 'Candidate'}</p>
