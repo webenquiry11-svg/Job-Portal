@@ -57,7 +57,7 @@ export const updateProfile = async (req: Request, res: Response) => {
       updates.profilePicture = req.file.path;
     }
 
-    const updatedUser = await AuthModel.findByIdAndUpdate(_id, updates, { new: true });
+    const updatedUser = await AuthModel.findByIdAndUpdate(_id, updates, { returnDocument: 'after' });
 
     if (!updatedUser) return res.status(404).json({ message: "User not found" });
 

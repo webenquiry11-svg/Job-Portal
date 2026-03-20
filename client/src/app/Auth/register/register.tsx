@@ -15,7 +15,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
   const [step, setStep] = useState(1);
   const [role, setRole] = useState<'seeker' | 'employer' | null>(null);
   const [isRobotChecked, setIsRobotChecked] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
   const [register, { isLoading }] = useRegisterMutation();
 
   const [formData, setFormData] = useState({
@@ -51,7 +50,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
     try {
       const result = await register({ ...formData, role }).unwrap();
       localStorage.setItem('profile', JSON.stringify({ ...result }));
-      setSuccessMessage('Registration successful! Welcome aboard.');
+      toast.success('Registration successful! Welcome aboard.');
       console.log('Registration success:', result);
       setTimeout(() => {
         onClose();
@@ -351,17 +350,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
           <FaTimes size={24} />
         </button>
         <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
-          {successMessage ? (
-            <div className="flex flex-col items-center justify-center py-10 animate-fade-in-up">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-                <FaCheck className="text-3xl text-green-500" />
-              </div>
-              <h3 className="text-2xl font-bold text-[#121212] mb-2">Success!</h3>
-              <p className="text-gray-500 text-center">{successMessage}</p>
-            </div>
-          ) : (
-            renderCurrentStep()
-          )}
+          {renderCurrentStep()}
         </div>
       </div>
     </div>

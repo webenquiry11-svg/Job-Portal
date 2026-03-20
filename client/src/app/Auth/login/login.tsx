@@ -14,7 +14,6 @@ interface LoginModalProps {
 const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
   const router = useRouter();
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [successMessage, setSuccessMessage] = useState('');
   const [login, { isLoading }] = useLoginMutation();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +25,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
     try {
       const result = await login(formData).unwrap();
       localStorage.setItem('profile', JSON.stringify({ ...result }));
-      setSuccessMessage('Login successful! Welcome back.');
+      toast.success('Login successful! Welcome back.');
       console.log('Login success:', result);
       setTimeout(() => {
         onClose();
@@ -54,12 +53,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
         <button onClick={onClose} className="absolute top-5 right-5 text-gray-400 hover:text-gray-800 transition-colors z-10">
           <FaTimes size={24} />
         </button>
-        
-        {successMessage && (
-          <div className="mb-6 p-4 bg-green-100 border border-green-200 text-green-700 rounded-xl text-sm font-semibold text-center animate-fade-in-down">
-            {successMessage}
-          </div>
-        )}
 
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-[#121212]">Welcome Back</h2>
