@@ -23,6 +23,11 @@ export interface IAuth extends Document {
   commitments?: { title: string; desc: string }[];
   profilePicture?: string;
   coverImage?: string;
+  isEmailVerified?: boolean;
+  isPhoneVerified?: boolean;
+  showContact?: boolean;
+  emailOtp?: string;
+  phoneOtp?: string;
 }
 
 const authSchema = new mongoose.Schema({
@@ -57,6 +62,11 @@ const authSchema = new mongoose.Schema({
   }],
   profilePicture: { type: String },
   coverImage: { type: String },
+  isEmailVerified: { type: Boolean, default: false },
+  isPhoneVerified: { type: Boolean, default: false },
+  showContact: { type: Boolean, default: true },
+  emailOtp: { type: String },
+  phoneOtp: { type: String },
 }, { timestamps: true });
 
 export default mongoose.model<IAuth>('Auth', authSchema);

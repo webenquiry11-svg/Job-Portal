@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaEdit, FaSave, FaFileAlt, FaPen } from 'react-icons/fa';
+import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaEdit, FaSave, FaFileAlt, FaPen, FaCheckCircle } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
@@ -11,6 +11,8 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null);
+  const [otpType, setOtpType] = useState<'email' | 'phone' | null>(null);
+  const [otp, setOtp] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     headline: '',
@@ -20,7 +22,8 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
     about: '',
     skills: '',
     experience: '',
-    education: ''
+    education: '',
+    showContact: true
   });
 
   useEffect(() => {
@@ -34,7 +37,8 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
         about: user.about || 'Write a brief summary about your professional background and career goals.',
         skills: user.skills || 'React, TypeScript, Node.js', // Dummy default if empty
         experience: user.experience || 'Not specified',
-        education: user.education || 'Not specified'
+        education: user.education || 'Not specified',
+        showContact: user.showContact !== false
       });
     }
   }, [user]);
@@ -59,6 +63,40 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
     }
   };
 
+  const handleRequestOtp = async (type: 'email' | 'phone') => {
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const res = await fetch(`${API_URL}/auth/request-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _id: user._id, type })
+      });
+      const data = await res.json();
+      if (res.ok) { toast.success(data.message); setOtpType(type); } 
+      else toast.error(data.message || 'Failed to send OTP');
+    } catch (err) { toast.error('Server error'); }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!otp) return toast.error('Enter the OTP');
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const res = await fetch(`${API_URL}/auth/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _id: user._id, type: otpType, otp })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(data.message);
+        const profile = JSON.parse(localStorage.getItem('profile') || '{}');
+        localStorage.setItem('profile', JSON.stringify({ ...profile, result: data.result, token: profile.token }));
+        if (setUser) setUser(data.result);
+        setOtpType(null); setOtp('');
+      } else toast.error(data.message || 'Invalid OTP');
+    } catch (err) { toast.error('Server error'); }
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     try {
@@ -73,7 +111,7 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
       const formDataToSend = new FormData();
       formDataToSend.append('_id', user?._id);
       Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value);
+        formDataToSend.append(key, String(value));
       });
       if (profileFile) {
         formDataToSend.append('profilePicture', profileFile);
@@ -110,6 +148,24 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 animate-fade-in-up">
+
+      {/* OTP Modal */}
+      {otpType && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-sm relative animate-fade-in-up">
+            <h3 className="text-xl font-bold text-[#121212] mb-2">Verify {otpType === 'email' ? 'Email Address' : 'Phone Number'}</h3>
+            <p className="text-sm text-gray-500 mb-6">We've generated a 6-digit OTP. <strong>Check your backend terminal console!</strong></p>
+            <input type="text" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)} 
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A] mb-4 text-center tracking-[0.5em] font-bold text-lg"
+              maxLength={6}
+            />
+            <div className="flex gap-3">
+              <button onClick={() => { setOtpType(null); setOtp(''); }} className="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors">Cancel</button>
+              <button onClick={handleVerifyOtp} className="flex-1 py-3 bg-[#0F172A] text-white font-bold rounded-xl hover:bg-[#1E293B] transition-colors shadow-lg">Verify</button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Profile Header Card */}
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
@@ -170,11 +226,23 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
              )}
           </div>
 
-          <div className="flex flex-wrap gap-3 md:gap-4 mt-6">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 mt-6">
              <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none"><FaMapMarkerAlt className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="location" value={formData.location} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-24 md:w-32" /> : <span className="truncate">{formData.location}</span>}</div>
-             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none"><FaEnvelope className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="email" value={formData.email} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-32 md:w-48" /> : <span className="truncate">{formData.email}</span>}</div>
-             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none"><FaPhone className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="phone" value={formData.phone} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-28" /> : <span className="truncate">{formData.phone}</span>}</div>
+             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none">
+                <FaEnvelope className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="email" value={formData.email} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-32 md:w-48" /> : <span className="truncate">{formData.email}</span>}
+                {!isEditing && (user?.isEmailVerified ? <FaCheckCircle className="text-green-500 ml-1" title="Verified"/> : <button onClick={()=>handleRequestOtp('email')} className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded ml-1 hover:bg-blue-200">Verify</button>)}
+             </div>
+             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none">
+                <FaPhone className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="phone" value={formData.phone} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-28" /> : <span className="truncate">{formData.phone}</span>}
+                {!isEditing && (user?.isPhoneVerified ? <FaCheckCircle className="text-green-500 ml-1" title="Verified"/> : <button onClick={()=>handleRequestOtp('phone')} className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded ml-1 hover:bg-blue-200">Verify</button>)}
+             </div>
           </div>
+          {isEditing && (
+              <label className="flex items-center gap-2 text-xs text-gray-500 mt-4 cursor-pointer">
+                  <input type="checkbox" name="showContact" checked={formData.showContact} onChange={(e) => setFormData({...formData, showContact: e.target.checked})} className="rounded text-[#0F172A] focus:ring-[#0F172A] w-4 h-4" />
+                  Make my phone number visible to recruiters
+              </label>
+          )}
         </div>
       </div>
 

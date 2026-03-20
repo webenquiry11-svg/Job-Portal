@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { FaBuilding, FaGlobe, FaMapMarkerAlt, FaUsers, FaEnvelope, FaPhone, FaCamera, FaPen, FaSave, FaCheckCircle, FaEye, FaEdit, FaLinkedin, FaTwitter, FaFacebook, FaPlus, FaTrash } from 'react-icons/fa';
 
 const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
@@ -17,6 +18,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
     phone: user?.phone || '',
     description: user?.description || '',
     followers: user?.followers || '789K',
+    showContact: user?.showContact !== false,
     commitments: user?.commitments || [
         { title: 'Career growth and learning', desc: 'There is no one-size-fits-all career path: here everyone is empowered to own their growth journey. Thoughtworkers come from a variety of traditional and non-traditional tech backgrounds including career changers...' },
         { title: 'Diversity, equity, and inclusion', desc: 'We aspire to be an employer of choice for all and diversity helps power our collective impact.' },
@@ -30,6 +32,8 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
   const [profilePreviewUrl, setProfilePreviewUrl] = useState<string | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null);
+  const [otpType, setOtpType] = useState<'email' | 'phone' | null>(null);
+  const [otp, setOtp] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -69,6 +73,40 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
     }
   };
 
+  const handleRequestOtp = async (type: 'email' | 'phone') => {
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const res = await fetch(`${API_URL}/auth/request-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _id: user._id, type })
+      });
+      const data = await res.json();
+      if (res.ok) { toast.success(data.message); setOtpType(type); } 
+      else toast.error(data.message || 'Failed to send OTP');
+    } catch (err) { toast.error('Server error'); }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!otp) return toast.error('Enter the OTP');
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const res = await fetch(`${API_URL}/auth/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _id: user._id, type: otpType, otp })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(data.message);
+        const profile = JSON.parse(localStorage.getItem('profile') || '{}');
+        localStorage.setItem('profile', JSON.stringify({ ...profile, result: data.result, token: profile.token }));
+        if (setUser) setUser(data.result);
+        setOtpType(null); setOtp('');
+      } else toast.error(data.message || 'Invalid OTP');
+    } catch (err) { toast.error('Server error'); }
+  };
+
   const handleSubmit = async () => {
     setIsSaving(true);
     try {
@@ -80,7 +118,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
         if (key === 'commitments') {
           formDataToSend.append(key, JSON.stringify(value));
         } else {
-          formDataToSend.append(key, value as string);
+          formDataToSend.append(key, String(value));
         }
       });
       if (profileFile) formDataToSend.append('profilePicture', profileFile);
@@ -214,6 +252,12 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Headquarters</h4>
                             <p className="text-[#121212] font-semibold text-sm">{formData.location}</p>
                         </div>
+                        {user?.showContact !== false && (
+                        <div>
+                            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Phone</h4>
+                            <p className="text-[#121212] font-semibold text-sm">{formData.phone}</p>
+                        </div>
+                        )}
                         <div>
                             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Specialties</h4>
                             <p className="text-gray-600 text-sm leading-relaxed">
@@ -230,6 +274,25 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 animate-fade-in-up">
+
+      {/* OTP Modal */}
+      {otpType && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 z-[60]">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-sm relative animate-fade-in-up">
+            <h3 className="text-xl font-bold text-[#121212] mb-2">Verify {otpType === 'email' ? 'Email' : 'Phone'}</h3>
+            <p className="text-sm text-gray-500 mb-6">We've generated a 6-digit OTP. <strong>Check your backend terminal console!</strong></p>
+            <input type="text" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)} 
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A] mb-4 text-center tracking-[0.5em] font-bold text-lg"
+              maxLength={6}
+            />
+            <div className="flex gap-3">
+              <button onClick={() => { setOtpType(null); setOtp(''); }} className="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors">Cancel</button>
+              <button onClick={handleVerifyOtp} className="flex-1 py-3 bg-[#0F172A] text-white font-bold rounded-xl hover:bg-[#1E293B] transition-colors shadow-lg">Verify</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Banner & Header */}
       <div className="relative rounded-3xl overflow-hidden shadow-xl bg-white border border-gray-100 group">
         <div 
@@ -392,18 +455,28 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                 </h3>
                 <div className="space-y-6">
                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Email Address</label>
+                        <div className="flex justify-between items-center">
+                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Email Address</label>
+                            {user?.isEmailVerified ? <span className="text-[10px] text-green-600 font-bold flex items-center gap-1"><FaCheckCircle/> Verified</span> : <button onClick={() => handleRequestOtp('email')} className="text-[10px] text-blue-600 font-bold hover:underline">Verify Now</button>}
+                        </div>
                         <div className="relative group">
                             <FaEnvelope className="absolute left-4 top-4 text-gray-400 group-focus-within:text-[#FACC15] transition-colors" />
                             <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium" placeholder="contact@company.com" />
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Phone Number</label>
+                        <div className="flex justify-between items-center">
+                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Phone Number</label>
+                            {user?.isPhoneVerified ? <span className="text-[10px] text-green-600 font-bold flex items-center gap-1"><FaCheckCircle/> Verified</span> : <button onClick={() => handleRequestOtp('phone')} className="text-[10px] text-blue-600 font-bold hover:underline">Verify Now</button>}
+                        </div>
                         <div className="relative group">
                             <FaPhone className="absolute left-4 top-4 text-gray-400 group-focus-within:text-[#FACC15] transition-colors" />
                             <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium" placeholder="+1 (555) 000-0000" />
                         </div>
+                        <label className="flex items-center gap-2 text-xs text-gray-500 mt-2 cursor-pointer pt-1">
+                            <input type="checkbox" name="showContact" checked={formData.showContact} onChange={(e) => setFormData({...formData, showContact: e.target.checked})} className="rounded text-[#0F172A] focus:ring-[#0F172A]" />
+                            Show phone number on public profile
+                        </label>
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Location</label>

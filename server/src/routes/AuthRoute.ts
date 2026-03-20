@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, updateProfile } from '../controllers/AuthController';
+import { register, login, updateProfile, requestOtp, verifyOtp } from '../controllers/AuthController';
 import upload from '../middleware/uploadMiddleware';
 
 const router = express.Router();
@@ -18,5 +18,7 @@ router.patch('/update', (req, res, next) => {
     next();
   });
 }, updateProfile);
+router.post('/request-otp', requestOtp);
+router.post('/verify-otp', verifyOtp);
 
 export default router;
