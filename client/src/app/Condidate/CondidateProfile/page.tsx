@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaEdit, FaSave, FaFileAlt } from 'react-icons/fa';
+import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaEdit, FaSave, FaFileAlt, FaPen } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
@@ -9,6 +9,8 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     headline: '',
@@ -49,6 +51,14 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
     }
   };
 
+  const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setCoverFile(file);
+      setCoverPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     try {
@@ -67,6 +77,9 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
       });
       if (profileFile) {
         formDataToSend.append('profilePicture', profileFile);
+      }
+      if (coverFile) {
+        formDataToSend.append('coverImage', coverFile);
       }
 
       const response = await fetch(`${API_URL}/auth/update`, {
@@ -101,7 +114,19 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
       {/* Profile Header Card */}
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
         {/* Cover Photo */}
-        <div className="h-32 md:h-48 bg-gradient-to-r from-[#0F172A] to-slate-700 relative"></div>
+        <div 
+          className="h-32 md:h-48 bg-gradient-to-r from-[#0F172A] to-slate-700 relative bg-cover bg-center"
+          style={{ backgroundImage: (coverPreviewUrl || user?.coverImage) ? `url(${coverPreviewUrl || user?.coverImage})` : undefined }}
+        >
+           {isEditing && (
+             <div className="absolute bottom-4 right-6">
+                 <label className="cursor-pointer bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-white/30 transition-all shadow-sm">
+                     <FaPen /> Edit Cover
+                     <input type="file" accept="image/*" className="hidden" onChange={handleCoverChange} />
+                 </label>
+             </div>
+           )}
+        </div>
         
         {/* Main Info */}
         <div className="px-6 md:px-10 pb-8 relative">
