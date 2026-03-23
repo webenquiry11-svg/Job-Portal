@@ -28,6 +28,7 @@ export interface IAuth extends Document {
   showContact?: boolean;
   emailOtp?: string;
   phoneOtp?: string;
+  gstNumber?: string;
 }
 
 const authSchema = new mongoose.Schema({
@@ -63,6 +64,7 @@ const authSchema = new mongoose.Schema({
   profilePicture: { type: String },
   coverImage: { type: String },
   isEmailVerified: { type: Boolean, default: false },
+  gstNumber: { type: String },
   isPhoneVerified: { type: Boolean, default: false },
   showContact: { type: Boolean, default: true },
   emailOtp: { type: String },

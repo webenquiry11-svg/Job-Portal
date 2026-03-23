@@ -160,7 +160,7 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-sm relative animate-fade-in-up">
             <h3 className="text-xl font-bold text-[#121212] mb-2">Verify {otpType === 'email' ? 'Email Address' : 'Phone Number'}</h3>
-            <p className="text-sm text-gray-500 mb-6">We've generated a 6-digit OTP. <strong>Check your backend terminal console!</strong></p>
+            <p className="text-sm text-gray-500 mb-6">We've sent a 6-digit OTP to your {otpType === 'email' ? 'email' : 'phone number'}.</p>
             <input type="text" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)} 
               className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A] mb-4 text-center tracking-[0.5em] font-bold text-lg"
               maxLength={6}

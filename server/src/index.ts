@@ -54,6 +54,12 @@ if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !pr
   console.log("✅ Cloudinary credentials found.");
 }
 
+if (!process.env.EMAIL_APP_PASSWORD) {
+  console.log("❌ WARNING: EMAIL_APP_PASSWORD is MISSING in your server/.env file! Email OTPs will fail.");
+} else {
+  console.log("✅ Email credentials found.");
+}
+
 mongoose.connect(CONNECTION_URL)
   .then(() => app.listen(PORT, () => {
     console.log(`
