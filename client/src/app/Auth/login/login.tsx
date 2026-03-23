@@ -35,9 +35,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
           router.push('/Condidate/Dashboard');
         } 
       }, 1500);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login failed:', error);
-      toast.error('Invalid credentials');
+      toast.error(error?.data?.message || error?.error || 'Invalid credentials');
     }
   };
 
