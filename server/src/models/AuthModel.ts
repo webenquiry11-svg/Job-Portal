@@ -26,6 +26,8 @@ export interface IAuth extends Document {
   isEmailVerified?: boolean;
   isPhoneVerified?: boolean;
   showContact?: boolean;
+  gstVerificationStatus?: 'none' | 'pending' | 'approved' | 'rejected';
+  gstVerifiedBy?: mongoose.Types.ObjectId; // Admin user ID
   emailOtp?: string;
   phoneOtp?: string;
   gstNumber?: string;
@@ -64,6 +66,8 @@ const authSchema = new mongoose.Schema({
   profilePicture: { type: String },
   coverImage: { type: String },
   isEmailVerified: { type: Boolean, default: false },
+  gstVerificationStatus: { type: String, enum: ['none', 'pending', 'approved', 'rejected'], default: 'none' },
+  gstVerifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Auth' }, // Reference to Admin user
   gstNumber: { type: String },
   isPhoneVerified: { type: Boolean, default: false },
   showContact: { type: Boolean, default: true },

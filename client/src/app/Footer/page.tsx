@@ -1,9 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
 import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram, FaPaperPlane, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { usePathname } from 'next/navigation';
 
 
 const Footer = () => {
+  const pathname = usePathname();
+
+  if (pathname?.startsWith('/Admin')) {
+    return null;
+  }
+
   return (
     <footer className="bg-white text-gray-700 pt-20 pb-10 border-t border-gray-100">
       <div className="container mx-auto px-6 md:px-12">

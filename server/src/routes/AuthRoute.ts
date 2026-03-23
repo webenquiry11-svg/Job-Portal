@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, updateProfile, requestOtp, verifyOtp, sendAdminOtp, verifyAdminOtp } from '../controllers/AuthController';
+import { register, login, updateProfile, requestOtp, verifyOtp, sendAdminOtp, verifyAdminOtp, requestGstVerification, getPendingGstVerifications, updateGstVerificationStatus } from '../controllers/AuthController';
 import upload from '../middleware/uploadMiddleware';
 
 const router = express.Router();
@@ -22,5 +22,8 @@ router.post('/request-otp', requestOtp);
 router.post('/verify-otp', verifyOtp);
 router.post('/admin/send-otp', sendAdminOtp);
 router.post('/admin/verify-otp', verifyAdminOtp);
+router.post('/employer/request-gst-verification', requestGstVerification);
+router.get('/admin/gst-verifications/pending', getPendingGstVerifications);
+router.patch('/admin/gst-verifications/update-status', updateGstVerificationStatus);
 
 export default router;

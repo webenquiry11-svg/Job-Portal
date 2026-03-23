@@ -3,6 +3,7 @@ import AuthModel from '../models/AuthModel';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
+import mongoose from 'mongoose';
 import twilio from 'twilio';
 
 export const register = async (req: Request, res: Response) => {
@@ -66,6 +67,10 @@ export const updateProfile = async (req: Request, res: Response) => {
       updates.isPhoneVerified = false;
     }
 
+    if (updates.gstNumber && updates.gstNumber !== existingUser.gstNumber) {
+      updates.gstVerificationStatus = 'none'; // Reset status if GST number changes
+    }
+
 
     if (req.files) {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
@@ -102,8 +107,8 @@ export const updateProfile = async (req: Request, res: Response) => {
     console.error("Profile Update Error:", error);
     res.status(500).json({ message: "Database update failed", error: error?.message || "Unknown error" });
   }
-
 };
+
 
 export const requestOtp = async (req: Request, res: Response) => {
   try {
@@ -202,7 +207,76 @@ export const verifyOtp = async (req: Request, res: Response) => {
   }
 };
 
-// --- ADMIN OTP LOGIC ---
+// --- GST Verification Logic ---
+export const requestGstVerification = async (req: Request, res: Response) => {
+  try {
+    const { employerId, gstNumber } = req.body;
+
+    if (!employerId || !gstNumber) {
+      return res.status(400).json({ message: "Employer ID and GST Number are required." });
+    }
+
+    const employer = await AuthModel.findById(employerId);
+    if (!employer) {
+      return res.status(404).json({ message: "Employer not found." });
+    }
+
+    // Update GST number and set status to pending
+    employer.gstNumber = gstNumber;
+    employer.gstVerificationStatus = 'pending';
+    employer.gstVerifiedBy = undefined; // Clear previous admin if any
+    await employer.save();
+
+    // TODO: Notify admin about new pending GST verification
+    console.log(`Admin Notification: Employer ${employer.companyName || employer.name} (${employerId}) requested GST verification for ${gstNumber}.`);
+
+    res.status(200).json({ message: "GST verification request submitted successfully.", gstVerificationStatus: 'pending' });
+  } catch (error: any) {
+    console.error("Request GST Verification Error:", error);
+    res.status(500).json({ message: "Failed to submit GST verification request.", error: error.message });
+  }
+};
+
+export const getPendingGstVerifications = async (req: Request, res: Response) => {
+  try {
+    const pendingVerifications = await AuthModel.find({ role: 'employer', gstVerificationStatus: 'pending' })
+      .select('companyName gstNumber email phone location'); // Select relevant fields
+
+    res.status(200).json({ pendingVerifications });
+  } catch (error: any) {
+    console.error("Get Pending GST Verifications Error:", error);
+    res.status(500).json({ message: "Failed to fetch pending GST verifications.", error: error.message });
+  }
+};
+
+export const updateGstVerificationStatus = async (req: Request, res: Response) => {
+  try {
+    const { employerId, status, adminId } = req.body; // status can be 'approved' or 'rejected'
+
+    if (!employerId || !status || !adminId) {
+      return res.status(400).json({ message: "Employer ID, status, and Admin ID are required." });
+    }
+    if (!['approved', 'rejected'].includes(status)) {
+      return res.status(400).json({ message: "Invalid status. Must be 'approved' or 'rejected'." });
+    }
+
+    const employer = await AuthModel.findById(employerId);
+    if (!employer) {
+      return res.status(404).json({ message: "Employer not found." });
+    }
+
+    employer.gstVerificationStatus = status;
+    employer.gstVerifiedBy = new mongoose.Types.ObjectId(adminId); // Assuming adminId is a valid ObjectId
+    await employer.save();
+
+    res.status(200).json({ message: `GST verification ${status} for ${employer.companyName || employer.name}.`, employer });
+  } catch (error: any) {
+    console.error("Update GST Verification Status Error:", error);
+    res.status(500).json({ message: "Failed to update GST verification status.", error: error.message });
+  }
+};
+
+// --- ADMIN OTP LOGIC (Existing) ---
 const adminOtps = new Map<string, string>(); // In-memory store for admin OTPs
 
 export const sendAdminOtp = async (req: Request, res: Response) => {

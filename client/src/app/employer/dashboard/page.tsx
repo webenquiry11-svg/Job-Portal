@@ -173,7 +173,7 @@ const EmployerDashboard = () => {
         <div className="p-6 lg:p-10 flex-1">
 
         {activeTab === 'profile' ? (
-          <CompanyProfile user={user} setUser={setUser}/>
+          <CompanyProfile user={user} setUser={setUser} />
         ) : (
           <>
           {/* Dashboard Content */}
