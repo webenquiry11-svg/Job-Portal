@@ -19,10 +19,15 @@ import {
   FaRegEye,
   FaRegCommentDots,
   FaCheck,
-  FaChevronLeft
+  FaChevronLeft,
+  FaTimes,
+  FaArrowRight,
+  FaArrowLeft
 } from 'react-icons/fa';
 import { MdDashboard, MdMenu, MdMessage, MdSettings, MdWork } from 'react-icons/md';
 import CompanyProfile from '../Profile/page';
+import { useGetJobsByEmployerQuery, usePostJobMutation } from '@/features/jobapi';
+import toast from 'react-hot-toast';
 
 const EmployerDashboard = () => {
   const router = useRouter();
@@ -32,6 +37,12 @@ const EmployerDashboard = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isJobModalOpen, setIsJobModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<any>(null);
+
+  const { data: jobs = [], isLoading: isLoadingJobs } = useGetJobsByEmployerQuery(user?._id, {
+    skip: !user?._id,
+  });
 
   useEffect(() => {
     // Check for authentication and role
@@ -127,7 +138,7 @@ const EmployerDashboard = () => {
             <button onClick={() => setIsSidebarOpen(true)} className="md:hidden p-2.5 -ml-2 text-gray-500 hover:text-[#0F172A] hover:bg-slate-50 rounded-full">
                 <MdMenu size={22} />
             </button>
-            <h1 className="text-2xl font-bold text-[#121212]">{activeTab === 'profile' ? 'Company Profile' : 'Dashboard'}</h1>
+            <h1 className="text-2xl font-bold text-[#121212]">{activeTab === 'profile' ? 'Company Profile' : activeTab === 'jobs' ? 'My Jobs' : 'Dashboard'}</h1>
           </div>
           <p className="text-sm text-gray-500 hidden md:block">Welcome back, <span className="font-semibold text-[#121212]">{user?.companyName || user?.name}</span>! Here's your daily overview.</p>
           <div className="flex items-center gap-4">
@@ -174,6 +185,55 @@ const EmployerDashboard = () => {
 
         {activeTab === 'profile' ? (
           <CompanyProfile user={user} setUser={setUser} />
+        ) : activeTab === 'jobs' ? (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h2 className="text-2xl font-bold text-[#121212]">My Jobs</h2>
+                <p className="text-sm text-gray-500">Manage all your posted jobs and create new ones.</p>
+              </div>
+              <button onClick={() => setIsJobModalOpen(true)} className="px-6 py-3 bg-[#0F172A] text-white font-bold rounded-xl hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg shadow-slate-900/20 hover:-translate-y-0.5">
+                <FaPlus className="text-sm" /> Post a New Job
+              </button>
+            </div>
+            
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-left text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                      <th className="pb-4 pl-2">Job Title</th>
+                      <th className="pb-4">Applicants</th>
+                      <th className="pb-4">Status</th>
+                      <th className="pb-4">Posted Date</th>
+                      <th className="pb-4"></th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {jobs.length > 0 ? (
+                      jobs.map((job: any) => (
+                        <JobRow 
+                          key={job._id}
+                          title={job.title} 
+                          type={job.workMode} 
+                          apps="0" 
+                          status={job.status || 'Active'} 
+                          date={new Date(job.createdAt).toLocaleDateString()} 
+                          onClick={() => setSelectedJob(job)}
+                        />
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={5} className="py-8 text-center text-gray-500">
+                          No jobs posted yet.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         ) : (
           <>
           {/* Dashboard Content */}
@@ -183,7 +243,7 @@ const EmployerDashboard = () => {
           <StatCard 
             icon={<FaBriefcase />} 
             label="Total Jobs Posted" 
-            value="12" 
+            value={isLoadingJobs ? "..." : jobs.length.toString()} 
             trend="+2 this week" 
             trendUp={true}
             color="bg-slate-100 text-[#0F172A]" 
@@ -199,7 +259,7 @@ const EmployerDashboard = () => {
           <StatCard 
             icon={<FaFileAlt />} 
             label="Active Jobs" 
-            value="5" 
+            value={isLoadingJobs ? "..." : jobs.filter((j: any) => j.status !== 'Closed').length.toString()} 
             trend="Same as last week" 
             trendUp={null}
             color="bg-red-100 text-[#EF4444]" 
@@ -226,7 +286,7 @@ const EmployerDashboard = () => {
                 <h2 className="text-xl font-bold text-[#121212]">Recent Job Postings</h2>
                 <p className="text-sm text-gray-500">Manage your active job listings</p>
               </div>
-              <button className="text-sm font-bold text-[#0F172A] hover:text-[#1E293B] hover:bg-slate-50 px-4 py-2 rounded-lg transition-colors">View All</button>
+              <button onClick={() => setActiveTab('jobs')} className="text-sm font-bold text-[#0F172A] hover:text-[#1E293B] hover:bg-slate-50 px-4 py-2 rounded-lg transition-colors">View All</button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -240,20 +300,27 @@ const EmployerDashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  <JobRow title="Senior Software Engineer" type="Full Time" apps="45" status="Active" date="2 days ago" />
-                  <JobRow title="Product Designer" type="Remote" apps="28" status="Active" date="5 days ago" />
-                  <JobRow title="Marketing Manager" type="Full Time" apps="12" status="Closed" date="1 week ago" />
-                  <JobRow title="Frontend Developer" type="Contract" apps="63" status="Active" date="2 weeks ago" />
+                  {jobs.length > 0 ? (
+                    jobs.slice(0, 5).map((job: any) => (
+                      <JobRow 
+                        key={job._id}
+                        title={job.title} 
+                        type={job.workMode} 
+                        apps="0" 
+                        status={job.status || 'Active'} 
+                        date={new Date(job.createdAt).toLocaleDateString()} 
+                        onClick={() => setSelectedJob(job)}
+                      />
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className="py-8 text-center text-gray-500">
+                        No jobs posted yet.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
-            </div>
-            <div className="mt-8">
-               <button className="w-full py-4 border-2 border-dashed border-gray-200 rounded-2xl text-gray-500 font-bold hover:border-slate-500 hover:text-[#0F172A] hover:bg-slate-50/50 transition-all flex items-center justify-center gap-2 group">
-                 <div className="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-slate-200 flex items-center justify-center transition-colors">
-                    <FaPlus className="text-sm" />
-                 </div>
-                 Post a New Job
-               </button>
             </div>
             </div>
           </div>
@@ -312,6 +379,8 @@ const EmployerDashboard = () => {
         )}
         </div>
       </main>
+      {isJobModalOpen && <JobPostModal onClose={() => setIsJobModalOpen(false)} user={user} />}
+      {selectedJob && <JobDetailsModal job={selectedJob} onClose={() => setSelectedJob(null)} />}
     </div>
   );
 };
@@ -397,8 +466,8 @@ const StatCard = ({ icon, label, value, color, trend, trendUp }: any) => (
   </div>
 );
 
-const JobRow = ({ title, type, apps, status, date }: any) => (
-  <tr className="group hover:bg-blue-50/30 transition-colors">
+const JobRow = ({ title, type, apps, status, date, onClick }: any) => (
+  <tr className="group hover:bg-blue-50/30 transition-colors cursor-pointer" onClick={onClick}>
     <td className="py-5 pl-2">
       <div className="font-bold text-[#121212] group-hover:text-[#0F172A] transition-colors">{title}</div>
       <div className="text-xs font-medium text-gray-400 mt-0.5">{type}</div>
@@ -545,6 +614,315 @@ const KanbanCard = ({ candidate }: any) => {
           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${candidate.match >= 80 ? 'bg-green-100 text-green-700' : candidate.match >= 60 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
               {candidate.match}%
           </span>
+      </div>
+    </div>
+  );
+};
+
+const JobPostModal = ({ onClose, user }: any) => {
+  const [step, setStep] = useState(1);
+  const [skillInput, setSkillInput] = useState('');
+  const [postJob, { isLoading }] = usePostJobMutation();
+
+  const [formData, setFormData] = useState({
+    title: '',
+    industry: '',
+    workMode: 'On-site',
+    location: '',
+    skills: [] as string[],
+    experience: '',
+    salaryMin: '',
+    salaryMax: '',
+    salaryType: 'Annual',
+    description: '',
+    screeningQuestion: '',
+    immediateJoiner: false,
+    contactPreference: 'In-app chat',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData({ ...formData, [name]: checked });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleSkillAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && skillInput.trim() !== '') {
+      e.preventDefault();
+      if (!formData.skills.includes(skillInput.trim())) {
+        setFormData({ ...formData, skills: [...formData.skills, skillInput.trim()] });
+      }
+      setSkillInput('');
+    }
+  };
+
+  const removeSkill = (skillToRemove: string) => {
+    setFormData({ ...formData, skills: formData.skills.filter(skill => skill !== skillToRemove) });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const employerId = user?._id;
+      await postJob({ ...formData, employerId }).unwrap();
+      toast.success('Job Posted & Matched Successfully!');
+      onClose();
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to post job');
+    }
+  };
+
+  const inputClass = "mt-1.5 block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-[#121212] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F172A] focus:border-transparent transition-all duration-200 text-sm";
+  const labelClass = "block text-sm font-semibold text-gray-700";
+
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-all duration-300">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]">
+        
+        <div className="p-6 md:px-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+          <h2 className="text-2xl font-bold text-[#121212] flex items-center gap-3">
+            <div className="bg-[#0F172A] p-2 rounded-xl shadow-md">
+              <FaBriefcase className="text-white text-sm" />
+            </div>
+            Post a New Job
+          </h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-800 transition-colors bg-white p-2 rounded-full border border-gray-200 shadow-sm hover:shadow-md">
+            <FaTimes size={18} />
+          </button>
+        </div>
+
+        <div className="w-full bg-gray-100 h-1.5">
+           <div className="bg-[#0F172A] h-1.5 transition-all duration-300" style={{ width: `${(step / 4) * 100}%` }}></div>
+        </div>
+
+        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 bg-gray-50/30">
+          {step === 1 && (
+            <div className="space-y-5 animate-fade-in">
+              <h3 className="text-xl font-bold text-[#121212] mb-4">Step 1: Role Details</h3>
+              <div>
+                <label className={labelClass}>Job Title</label>
+                <input type="text" name="title" placeholder="e.g., Senior UI Designer" className={inputClass} value={formData.title} onChange={handleChange} />
+              </div>
+              <div>
+                <label className={labelClass}>Industry</label>
+                <select name="industry" className={inputClass} value={formData.industry} onChange={handleChange}>
+                  <option value="">Select Industry</option>
+                  <option value="IT Services">IT Services</option>
+                  <option value="Advertising">Advertising</option>
+                  <option value="General">General</option>
+                </select>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label className={labelClass}>Work Mode</label>
+                  <select name="workMode" className={inputClass} value={formData.workMode} onChange={handleChange}>
+                    <option value="On-site">On-site</option>
+                    <option value="Remote">Remote</option>
+                    <option value="Hybrid">Hybrid</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Location</label>
+                  <input type="text" name="location" placeholder="e.g., New York, NY" className={inputClass} value={formData.location} onChange={handleChange} />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="space-y-5 animate-fade-in">
+              <h3 className="text-xl font-bold text-[#121212] mb-4">Step 2: Skills & Compensation</h3>
+              <div>
+                <label className={labelClass}>Must-Have Skills (Press Enter to add)</label>
+                <div className="mt-1.5 p-2 bg-white border border-gray-200 rounded-xl focus-within:ring-2 focus-within:ring-[#0F172A] transition-all">
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {formData.skills.map((skill, index) => (
+                      <span key={index} className="bg-gray-100 text-[#0F172A] px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2">
+                        {skill} <button onClick={() => removeSkill(skill)} className="text-gray-400 hover:text-red-500"><FaTimes /></button>
+                      </span>
+                    ))}
+                  </div>
+                  <input type="text" placeholder="e.g., Figma, React, Copywriting" className="w-full outline-none text-sm p-1" value={skillInput} onChange={(e) => setSkillInput(e.target.value)} onKeyDown={handleSkillAdd} />
+                </div>
+              </div>
+              <div>
+                <label className={labelClass}>Experience Level</label>
+                <select name="experience" className={inputClass} value={formData.experience} onChange={handleChange}>
+                  <option value="">Select Level</option>
+                  <option value="Entry Level (0-2 Yrs)">Entry Level (0-2 Yrs)</option>
+                  <option value="Mid Level (3-5 Yrs)">Mid Level (3-5 Yrs)</option>
+                  <option value="Senior Level (5+ Yrs)">Senior Level (5+ Yrs)</option>
+                </select>
+              </div>
+              <div>
+                <label className={labelClass}>Salary Range & Frequency</label>
+                <div className="flex flex-col sm:flex-row items-center gap-3 mt-1.5">
+                  <input type="number" name="salaryMin" placeholder="Min (e.g., 50000)" className={inputClass} value={formData.salaryMin} onChange={handleChange} />
+                  <span className="text-gray-400 font-medium hidden sm:block">-</span>
+                  <input type="number" name="salaryMax" placeholder="Max (e.g., 80000)" className={inputClass} value={formData.salaryMax} onChange={handleChange} />
+                  <select name="salaryType" className={`${inputClass} sm:!w-40`} value={formData.salaryType} onChange={handleChange}>
+                    <option value="Annual">Annual</option>
+                    <option value="Monthly">Monthly</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-5 animate-fade-in">
+              <h3 className="text-xl font-bold text-[#121212] mb-1">Step 3: Smart Screening</h3>
+              <p className="text-xs text-gray-500 mb-4">Goal: Ask the questions that prevent "fake" matches.</p>
+              <div>
+                <label className={labelClass}>Job Description</label>
+                <textarea name="description" rows={4} placeholder="Describe the responsibilities, perks, and ideal candidate..." className={`${inputClass} resize-none`} value={formData.description} onChange={handleChange}></textarea>
+              </div>
+              <div>
+                <label className={labelClass}>Screening Question</label>
+                <input type="text" name="screeningQuestion" placeholder="e.g., Share a link to your best AR/VR project." className={inputClass} value={formData.screeningQuestion} onChange={handleChange} />
+              </div>
+              <div className="flex items-center gap-3 pt-2">
+                <input type="checkbox" id="immediate" name="immediateJoiner" className="w-5 h-5 accent-[#0F172A] rounded border-gray-300" checked={formData.immediateJoiner} onChange={handleChange} />
+                <label htmlFor="immediate" className="text-sm font-bold text-[#121212] cursor-pointer">Requires Immediate Joiner (0-15 days notice)?</label>
+              </div>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="space-y-6 animate-fade-in">
+              <h3 className="text-xl font-bold text-[#121212] mb-2">Step 4: Preview & Match</h3>
+              
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 relative shadow-sm">
+                <div className="absolute top-0 right-0 bg-[#FACC15] text-slate-900 text-[10px] font-black tracking-wider px-3 py-1.5 rounded-bl-xl rounded-tr-xl">PREVIEW</div>
+                <h3 className="text-2xl font-bold text-[#0F172A] pr-16">{formData.title || 'Untitled Role'}</h3>
+                <p className="text-sm font-medium text-gray-500 mt-1.5 flex items-center gap-2">
+                  <span className="text-gray-700">{formData.industry || 'Industry'}</span> • <span>{formData.workMode || 'Work Mode'}</span> • <span>{formData.location || 'Location'}</span>
+                </p>
+                
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {formData.skills.length > 0 ? formData.skills.map((s, i) => (
+                    <span key={i} className="px-2.5 py-1 bg-gray-100 border border-gray-200 rounded-lg text-xs font-bold text-[#121212]">{s}</span>
+                  )) : <span className="text-xs text-gray-400 italic">No skills added</span>}
+                </div>
+
+                <div className="mt-5 pt-5 border-t border-gray-100 grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-0.5">Experience</p>
+                    <p className="font-bold text-[#121212]">{formData.experience || 'Not specified'}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-0.5">Salary ({formData.salaryType})</p>
+                    <p className="font-bold text-[#121212]">${formData.salaryMin || '0'} - ${formData.salaryMax || '0'}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className={labelClass}>Candidate Contact Preference</label>
+                <select name="contactPreference" className={inputClass} value={formData.contactPreference} onChange={handleChange}>
+                  <option value="In-app chat">In-app Chat (Recommended)</option>
+                  <option value="Email">Direct Email</option>
+                  <option value="Phone">Phone Call</option>
+                </select>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="p-6 border-t border-gray-100 flex items-center justify-between bg-white rounded-b-3xl">
+          {step > 1 ? (
+            <button onClick={() => setStep(step - 1)} className="px-6 py-3 text-gray-500 font-bold hover:text-[#0F172A] hover:bg-gray-50 rounded-xl transition-all flex items-center gap-2 text-sm">
+              <FaArrowLeft /> Back
+            </button>
+          ) : <div></div>}
+
+          {step < 4 ? (
+            <button onClick={() => setStep(step + 1)} className="px-8 py-3 bg-[#0F172A] text-white font-bold rounded-xl hover:bg-[#1E293B] shadow-lg shadow-slate-900/20 transition-all flex items-center gap-2 transform hover:-translate-y-0.5 text-sm">
+              Next Step <FaArrowRight />
+            </button>
+          ) : (
+            <button onClick={handleSubmit} disabled={isLoading} className="px-8 py-3 bg-[#FACC15] text-slate-900 font-black rounded-xl hover:bg-yellow-400 shadow-lg shadow-yellow-500/30 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+              {isLoading ? 'Posting...' : 'Post & Match'} <FaCheck />
+            </button>
+          )}
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+const JobDetailsModal = ({ job, onClose }: any) => {
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-all duration-300" onClick={onClose}>
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+        
+        <div className="p-6 md:px-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+          <h2 className="text-2xl font-bold text-[#121212] flex items-center gap-3">
+            <div className="bg-[#0F172A] p-2 rounded-xl shadow-md">
+              <FaBriefcase className="text-white text-sm" />
+            </div>
+            Job Details
+          </h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-800 transition-colors bg-white p-2 rounded-full border border-gray-200 shadow-sm hover:shadow-md">
+            <FaTimes size={18} />
+          </button>
+        </div>
+
+        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 bg-white">
+          <h3 className="text-3xl font-bold text-[#0F172A]">{job.title}</h3>
+          <p className="text-sm font-medium text-gray-500 mt-2 flex items-center gap-2">
+            <span className="text-gray-700">{job.industry}</span> • <span>{job.workMode}</span> • <span>{job.location}</span>
+          </p>
+          
+          <div className="flex flex-wrap gap-2 mt-6">
+            {job.skills && job.skills.length > 0 ? job.skills.map((s: string, i: number) => (
+              <span key={i} className="px-3 py-1 bg-gray-100 border border-gray-200 rounded-lg text-sm font-bold text-[#121212]">{s}</span>
+            )) : <span className="text-sm text-gray-400 italic">No skills specified</span>}
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-gray-100 grid grid-cols-2 gap-6 text-sm">
+            <div>
+              <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Experience</p>
+              <p className="font-bold text-[#121212] text-base">{job.experience || 'Not specified'}</p>
+            </div>
+            <div>
+              <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Salary ({job.salaryType})</p>
+              <p className="font-bold text-[#121212] text-base">${job.salaryMin || '0'} - ${job.salaryMax || '0'}</p>
+            </div>
+          </div>
+          
+          <div className="mt-8 pt-6 border-t border-gray-100">
+            <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-2">Job Description</p>
+            <p className="text-gray-700 whitespace-pre-wrap text-sm leading-relaxed">{job.description}</p>
+          </div>
+          
+          {job.screeningQuestion && (
+            <div className="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
+              <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Screening Question</p>
+              <p className="font-semibold text-[#121212] text-sm">{job.screeningQuestion}</p>
+            </div>
+          )}
+          
+          <div className="mt-6 flex items-center gap-4">
+            {job.immediateJoiner && (
+               <span className="px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg text-xs font-bold">Immediate Joiner Required</span>
+            )}
+            <span className="text-xs font-medium text-gray-500">Contact via: <span className="font-bold text-gray-700">{job.contactPreference}</span></span>
+          </div>
+
+        </div>
+
+        <div className="p-6 border-t border-gray-100 flex items-center justify-end bg-gray-50/50 rounded-b-3xl">
+          <button className="px-8 py-3 bg-[#FACC15] text-slate-900 font-black rounded-xl hover:bg-yellow-400 shadow-lg shadow-yellow-500/30 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
+             Apply for this job <FaArrowRight />
+          </button>
+        </div>
+
       </div>
     </div>
   );
