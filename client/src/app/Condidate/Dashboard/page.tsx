@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   FaBriefcase, 
@@ -38,6 +38,7 @@ const CandidateDashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [savedJobIds, setSavedJobIds] = useState<string[]>([]);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery({});
 
@@ -181,6 +182,7 @@ const CandidateDashboard = () => {
                   <FaSearch className="text-gray-400 group-focus-within:text-[#0F172A] transition-colors" />
                 </div>
                 <input 
+                  ref={searchInputRef}
                   type="text" 
                   placeholder="Search jobs by title, skills, or company..." 
                   className="w-full pl-11 pr-12 py-2.5 bg-white border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A] focus:border-transparent transition-all shadow-sm"
@@ -380,7 +382,11 @@ const CandidateDashboard = () => {
                   <div className="col-span-full py-16 flex flex-col items-center justify-center bg-white rounded-3xl border border-dashed border-gray-200">
                     <FaBookmark className="text-5xl text-gray-200 mb-4" />
                     <p className="text-gray-500 font-medium">You haven't saved any jobs yet.</p>
-                    <button onClick={() => setActiveTab('dashboard')} className="mt-4 px-6 py-2 bg-[#0F172A] text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20">Explore Jobs</button>
+                    <button onClick={() => { 
+                      setActiveTab('dashboard'); 
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      setTimeout(() => searchInputRef.current?.focus(), 300);
+                    }} className="mt-4 px-6 py-2 bg-[#0F172A] text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20">Explore Jobs</button>
                   </div>
                 )}
               </div>
