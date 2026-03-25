@@ -19,7 +19,11 @@ export const jobApi = createApi({
       query: (employerId) => `/jobs/employer/${employerId}`,
       providesTags: ['Job'],
     }),
+    getAllJobs: builder.query({
+      query: () => '/jobs/all',
+      providesTags: ['Job'],
+    }),
   }),
 });
 
-export const { usePostJobMutation, useGetJobsByEmployerQuery } = jobApi;
+export const { usePostJobMutation, useGetJobsByEmployerQuery, useGetAllJobsQuery } = jobApi;

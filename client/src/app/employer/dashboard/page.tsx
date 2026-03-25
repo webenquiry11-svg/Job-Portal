@@ -917,12 +917,6 @@ const JobDetailsModal = ({ job, onClose }: any) => {
 
         </div>
 
-        <div className="p-6 border-t border-gray-100 flex items-center justify-end bg-gray-50/50 rounded-b-3xl">
-          <button className="px-8 py-3 bg-[#FACC15] text-slate-900 font-black rounded-xl hover:bg-yellow-400 shadow-lg shadow-yellow-500/30 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
-             Apply for this job <FaArrowRight />
-          </button>
-        </div>
-
       </div>
     </div>
   );

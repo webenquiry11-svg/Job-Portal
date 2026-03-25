@@ -18,6 +18,7 @@ import {
   FaEye
 } from 'react-icons/fa';
 import { MdDashboard, MdMenu, MdSettings } from 'react-icons/md';
+import { useGetAllJobsQuery } from '@/features/jobapi';
 
 const CandidateDashboard = () => {
   const router = useRouter();
@@ -27,6 +28,8 @@ const CandidateDashboard = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery({});
 
   useEffect(() => {
     // Check for authentication and role
@@ -198,9 +201,23 @@ const CandidateDashboard = () => {
                     <h3 className="text-xl font-bold text-[#121212]">Recommended for you</h3>
                   </div>
                   <div className="space-y-4">
-                    <RecommendedJobCard title="Senior React Developer" company="FinTech Solutions" location="Remote" salary="$120k - $150k" tags={['React', 'TypeScript']} logo="F" />
-                    <RecommendedJobCard title="Frontend Engineer" company="HealthCare Plus" location="New York, NY" salary="$90k - $110k" tags={['React', 'Redux']} logo="H" />
-                    <RecommendedJobCard title="Software Developer" company="EcoSystems" location="Remote" salary="$100k - $130k" tags={['Frontend', 'Web']} logo="E" />
+                    {isLoadingJobs ? (
+                      <p className="text-sm text-gray-500 animate-pulse">Loading jobs...</p>
+                    ) : allJobs.length > 0 ? (
+                      allJobs.map((job: any) => (
+                        <RecommendedJobCard 
+                          key={job._id}
+                          title={job.title} 
+                          company={job.employerId?.companyName || job.employerId?.name || 'Company'} 
+                          location={job.location} 
+                          salary={`$${job.salaryMin} - $${job.salaryMax}`} 
+                          tags={job.skills?.slice(0, 3) || []} 
+                          logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} 
+                        />
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-500">No jobs available right now.</p>
+                    )}
                   </div>
                 </div>
               </div>
