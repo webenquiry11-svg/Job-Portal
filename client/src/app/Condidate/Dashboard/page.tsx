@@ -39,6 +39,9 @@ const CandidateDashboard = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [savedJobIds, setSavedJobIds] = useState<string[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [filterIndustry, setFilterIndustry] = useState('');
+  const [filterWorkMode, setFilterWorkMode] = useState('');
+  const [filterExperience, setFilterExperience] = useState('');
 
   const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery({});
 
@@ -97,15 +100,20 @@ const CandidateDashboard = () => {
   };
 
   const filteredJobs = allJobs.filter((job: any) => {
-    if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
-    return (
+    const matchesSearch = !searchQuery || (
       job.title?.toLowerCase().includes(query) ||
       job.employerId?.companyName?.toLowerCase().includes(query) ||
       job.employerId?.name?.toLowerCase().includes(query) ||
       job.skills?.some((s: string) => s.toLowerCase().includes(query)) ||
       job.location?.toLowerCase().includes(query)
     );
+    
+    const matchesIndustry = !filterIndustry || job.industry === filterIndustry;
+    const matchesWorkMode = !filterWorkMode || job.workMode === filterWorkMode;
+    const matchesExperience = !filterExperience || job.experience === filterExperience;
+
+    return matchesSearch && matchesIndustry && matchesWorkMode && matchesExperience;
   });
 
   if (isLoading || !user) {
@@ -211,7 +219,11 @@ const CandidateDashboard = () => {
                     <div className="space-y-4">
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Industry</label>
-                        <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A] transition-all">
+                        <select 
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A] transition-all"
+                          value={filterIndustry}
+                          onChange={(e) => setFilterIndustry(e.target.value)}
+                        >
                           <option value="">All Industries</option>
                           <option value="IT Services">IT Services</option>
                           <option value="Advertising">Advertising</option>
@@ -220,7 +232,11 @@ const CandidateDashboard = () => {
                       </div>
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Work Mode</label>
-                        <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A] transition-all">
+                        <select 
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A] transition-all"
+                          value={filterWorkMode}
+                          onChange={(e) => setFilterWorkMode(e.target.value)}
+                        >
                           <option value="">All Modes</option>
                           <option value="Remote">Remote</option>
                           <option value="On-site">On-site</option>
@@ -229,7 +245,11 @@ const CandidateDashboard = () => {
                       </div>
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Experience Level</label>
-                        <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A] transition-all">
+                        <select 
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A] transition-all"
+                          value={filterExperience}
+                          onChange={(e) => setFilterExperience(e.target.value)}
+                        >
                           <option value="">Any Experience</option>
                           <option value="Entry Level (0-2 Yrs)">Entry Level (0-2 Yrs)</option>
                           <option value="Mid Level (3-5 Yrs)">Mid Level (3-5 Yrs)</option>
@@ -238,7 +258,12 @@ const CandidateDashboard = () => {
                       </div>
                       
                       <div className="pt-2 flex gap-3">
-                        <button onClick={() => setIsFilterOpen(false)} className="flex-1 py-2.5 bg-gray-50 text-gray-600 font-bold text-sm rounded-xl hover:bg-gray-100 transition-colors">
+                        <button onClick={() => {
+                          setFilterIndustry('');
+                          setFilterWorkMode('');
+                          setFilterExperience('');
+                          setIsFilterOpen(false);
+                        }} className="flex-1 py-2.5 bg-gray-50 text-gray-600 font-bold text-sm rounded-xl hover:bg-gray-100 transition-colors">
                           Clear
                         </button>
                         <button onClick={() => setIsFilterOpen(false)} className="flex-1 py-2.5 bg-[#0F172A] text-white font-bold text-sm rounded-xl hover:bg-slate-800 transition-colors shadow-md shadow-slate-900/10">
