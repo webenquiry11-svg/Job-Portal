@@ -6,7 +6,7 @@ import Footer from './Footer/page';
 export default function FooterHost() {
   const pathname = usePathname();
   if (!pathname) return null;
-  if (pathname.startsWith('/employer/dashboard') || pathname.startsWith('/Condidate/Dashboard') || pathname.startsWith('/dashboard')) {
+  if (pathname.startsWith('/employer/dashboard') || pathname.startsWith('/Condidate/Dashboard') || pathname.startsWith('/dashboard') || pathname.startsWith('/employer-profile')) {
     return null;
   }
   return <Footer />;

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
@@ -19,12 +20,17 @@ import {
   FaTimes,
   FaArrowRight,
   FaSearch,
-  FaFilter
+  FaFilter,
+  FaGlobe,
+  FaUsers,
+  FaBuilding,
+  FaPlus,
+  FaCheck
 } from 'react-icons/fa';
 import { MdDashboard, MdMenu, MdSettings } from 'react-icons/md';
 import CandidateProfile from '../../Condidate/CondidateProfile/page';
 import toast from 'react-hot-toast';
-import { useGetAllJobsQuery } from '@/features/jobapi';
+import { useGetAllJobsQuery, useGetCompanyByIdQuery, useGetJobsByEmployerQuery } from '@/features/jobapi';
 
 const CandidateDashboard = () => {
   const router = useRouter();
@@ -35,6 +41,7 @@ const CandidateDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [savedJobIds, setSavedJobIds] = useState<string[]>([]);
@@ -155,6 +162,7 @@ const CandidateDashboard = () => {
         <nav className="flex-1 px-4 space-y-2 overflow-y-auto py-4 custom-scrollbar">
           <p className={`px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 transition-all duration-300 ${isSidebarCollapsed ? 'md:hidden' : ''}`}>Menu</p>
           <SidebarItem icon={<MdDashboard />} label="Dashboard" active={activeTab === 'dashboard'} onClick={() => { setActiveTab('dashboard'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
+          <SidebarItem icon={<FaSearch />} label="Explore Jobs" active={activeTab === 'explore'} onClick={() => { setActiveTab('explore'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
           <SidebarItem icon={<FaBookmark />} label="Saved Jobs" active={activeTab === 'saved'} onClick={() => { setActiveTab('saved'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
           <SidebarItem icon={<FaBriefcase />} label="My Applications" active={activeTab === 'applications'} onClick={() => { setActiveTab('applications'); setIsSidebarOpen(false); }} badge="3" collapsed={isSidebarCollapsed} />
           
@@ -357,18 +365,14 @@ const CandidateDashboard = () => {
                     {isLoadingJobs ? (
                       <p className="text-sm text-gray-500 animate-pulse">Loading jobs...</p>
                     ) : filteredJobs.length > 0 ? (
-                      filteredJobs.map((job: any) => (
+                      filteredJobs.slice(0, 3).map((job: any) => (
                         <RecommendedJobCard 
                           key={job._id}
-                          title={job.title} 
-                          company={job.employerId?.companyName || job.employerId?.name || 'Company'} 
-                          location={job.location} 
-                          salary={`$${job.salaryMin} - $${job.salaryMax}`} 
-                          tags={job.skills?.slice(0, 3) || []} 
-                          logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} 
+                          job={job}
                           onViewDetails={() => setSelectedJob(job)}
                           isSaved={savedJobIds.includes(job._id)}
                           onToggleSave={() => toggleSaveJob(job._id)}
+                          onViewCompany={(id: string) => setSelectedCompanyId(id)}
                         />
                       ))
                     ) : (
@@ -378,6 +382,39 @@ const CandidateDashboard = () => {
                     )}
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'explore' && (
+            <div className="space-y-6 animate-fade-in-up">
+              <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-bold text-[#121212]">Explore All Jobs</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
+                {isLoadingJobs ? (
+                  <p className="text-sm text-gray-500 animate-pulse col-span-full">Loading jobs...</p>
+                ) : filteredJobs.length > 0 ? (
+                  filteredJobs.map((job: any) => (
+                    <RecommendedJobCard 
+                      key={job._id}
+                      job={job}
+                      onViewDetails={() => setSelectedJob(job)}
+                      isSaved={savedJobIds.includes(job._id)}
+                      onToggleSave={() => toggleSaveJob(job._id)}
+                      onViewCompany={(id: string) => setSelectedCompanyId(id)}
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-full py-16 flex flex-col items-center justify-center bg-white rounded-3xl border border-dashed border-gray-200">
+                    <FaSearch className="text-5xl text-gray-200 mb-4" />
+                    <p className="text-gray-500 font-medium">
+                      {searchQuery || filterIndustry || filterWorkMode || filterExperience 
+                        ? "No jobs match your search criteria." 
+                        : "No jobs available right now."}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -392,15 +429,11 @@ const CandidateDashboard = () => {
                   allJobs.filter((job: any) => savedJobIds.includes(job._id)).map((job: any) => (
                     <RecommendedJobCard 
                       key={job._id}
-                      title={job.title} 
-                      company={job.employerId?.companyName || job.employerId?.name || 'Company'} 
-                      location={job.location} 
-                      salary={`$${job.salaryMin} - $${job.salaryMax}`} 
-                      tags={job.skills?.slice(0, 3) || []} 
-                      logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} 
+                      job={job}
                       onViewDetails={() => setSelectedJob(job)}
                       isSaved={true}
                       onToggleSave={() => toggleSaveJob(job._id)}
+                      onViewCompany={(id: string) => setSelectedCompanyId(id)}
                     />
                   ))
                 ) : (
@@ -420,7 +453,7 @@ const CandidateDashboard = () => {
 
           {activeTab === 'profile' && <CandidateProfile user={user} setUser={setUser} />}
 
-          {activeTab !== 'dashboard' && activeTab !== 'profile' && activeTab !== 'saved' && (
+          {activeTab !== 'dashboard' && activeTab !== 'explore' && activeTab !== 'profile' && activeTab !== 'saved' && (
              <div className="flex flex-col items-center justify-center h-64 bg-white rounded-3xl border border-gray-100 shadow-sm animate-fade-in-up">
                <FaBriefcase className="text-6xl text-slate-200 mb-4" />
                <h2 className="text-xl font-bold text-[#121212] capitalize">{activeTab.replace('-', ' ')}</h2>
@@ -430,6 +463,13 @@ const CandidateDashboard = () => {
         </div>
       </main>
       {selectedJob && <JobDetailsModal job={selectedJob} onClose={() => setSelectedJob(null)} />}
+      {selectedCompanyId && (
+        <CompanyProfileModal 
+          companyId={selectedCompanyId} 
+          onClose={() => setSelectedCompanyId(null)} 
+          onJobClick={(job: any) => setSelectedJob(job)} 
+        />
+      )}
     </div>
   );
 }
@@ -498,36 +538,61 @@ const ApplicationRow = ({ title, company, logo, status, date }: any) => {
   );
 };
 
-const RecommendedJobCard = ({ title, company, location, salary, tags, logo, onViewDetails, isSaved, onToggleSave }: any) => (
-  <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group">
+const RecommendedJobCard = ({ job, onViewDetails, isSaved, onToggleSave, onViewCompany }: any) => {
+  const { 
+    title, 
+    employerId, 
+    location, 
+    salaryMin, 
+    salaryMax, 
+    skills 
+  } = job;
+  const company = employerId?.companyName || employerId?.name || 'Company';
+  const logo = company.charAt(0).toUpperCase();
+  const salary = `$${salaryMin} - $${salaryMax}`;
+  const tags = skills?.slice(0, 3) || [];
+
+  const handleCompanyClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (employerId?._id && onViewCompany) {
+      onViewCompany(employerId._id);
+    }
+  };
+
+  return (
+  <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
       <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-lg font-bold text-[#0F172A]">
+          <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-lg font-bold text-[#0F172A] flex-shrink-0">
                   {logo}
               </div>
-              <div>
-                  <h4 className="font-bold text-[#121212] text-sm group-hover:text-[#0F172A] transition-colors">{title}</h4>
-                  <p className="text-xs font-medium text-gray-500">{company}</p>
+              <div className="min-w-0">
+                  <h4 className="font-bold text-[#121212] text-sm group-hover:text-[#0F172A] transition-colors truncate">{title}</h4>
+                  <span onClick={handleCompanyClick} className="text-xs font-medium text-gray-500 hover:underline hover:text-slate-800 transition-colors truncate block cursor-pointer">
+                    {company}
+                  </span>
               </div>
           </div>
-          <button onClick={onToggleSave} className={`transition-colors ${isSaved ? 'text-amber-500 hover:text-amber-600' : 'text-gray-300 hover:text-[#0F172A]'}`}>
+          <button onClick={onToggleSave} className={`transition-colors flex-shrink-0 ml-2 ${isSaved ? 'text-amber-500 hover:text-amber-600' : 'text-gray-300 hover:text-[#0F172A]'}`}>
               <FaBookmark />
           </button>
       </div>
       <div className="flex flex-col gap-2 mb-4">
-          <div className="flex items-center text-xs text-gray-500"><FaMapMarkerAlt className="mr-2" /> {location}</div>
-          <div className="flex items-center text-xs text-gray-500"><FaMoneyBillWave className="mr-2" /> {salary}</div>
+          <div className="flex items-center text-xs text-gray-500"><FaMapMarkerAlt className="mr-2 flex-shrink-0" /> <span className="truncate">{location}</span></div>
+          <div className="flex items-center text-xs text-gray-500"><FaMoneyBillWave className="mr-2 flex-shrink-0" /> {salary}</div>
       </div>
       <div className="flex flex-wrap gap-2 mb-4">
           {tags.map((tag: string, i: number) => (
               <span key={i} className="text-[10px] font-bold px-2 py-1 bg-slate-50 text-slate-600 rounded-md border border-slate-100">{tag}</span>
           ))}
       </div>
-      <button onClick={onViewDetails} className="w-full py-2.5 bg-slate-50 text-[#0F172A] font-bold text-sm rounded-xl hover:bg-[#0F172A] hover:text-white transition-colors border border-slate-100 group-hover:border-[#0F172A]">
-          View Job Details
-      </button>
+      <div className="mt-auto">
+        <button onClick={onViewDetails} className="w-full py-2.5 bg-slate-50 text-[#0F172A] font-bold text-sm rounded-xl hover:bg-[#0F172A] hover:text-white transition-colors border border-slate-100 group-hover:border-[#0F172A]">
+            View Job Details
+        </button>
+      </div>
   </div>
-);
+)};
 
 const JobDetailsModal = ({ job, onClose }: any) => {
   return (
@@ -596,6 +661,142 @@ const JobDetailsModal = ({ job, onClose }: any) => {
           </button>
         </div>
 
+      </div>
+    </div>
+  );
+};
+
+const CompanyProfileModal = ({ companyId, onClose, onJobClick }: any) => {
+  const { data: company, isLoading: isLoadingCompany } = useGetCompanyByIdQuery(companyId, { skip: !companyId });
+  const { data: jobs = [], isLoading: isLoadingJobs } = useGetJobsByEmployerQuery(companyId, { skip: !companyId });
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  const handleFollowToggle = () => {
+    setIsFollowing(!isFollowing);
+    if (!isFollowing) {
+      toast.success(`You are now following ${company?.companyName || 'this company'}`);
+    } else {
+      toast.success(`Unfollowed ${company?.companyName || 'this company'}`);
+    }
+  };
+
+  if (isLoadingCompany) {
+    return (
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+        <FaSpinner className="animate-spin text-4xl text-white" />
+      </div>
+    );
+  }
+
+  if (!company) {
+    return (
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4" onClick={onClose}>
+         <div className="bg-white p-8 rounded-3xl" onClick={e => e.stopPropagation()}>
+           <h2 className="text-xl font-bold">Company not found</h2>
+           <button onClick={onClose} className="mt-4 px-4 py-2 bg-gray-200 font-bold text-sm rounded-xl">Close</button>
+         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-all duration-300" onClick={onClose}>
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+        
+        <div className="overflow-y-auto custom-scrollbar flex-1 bg-gray-50 pb-8">
+          {/* Header/Cover */}
+          <div 
+            className="h-48 md:h-64 bg-gradient-to-r from-[#0F172A] to-slate-800 relative bg-cover bg-center flex-shrink-0"
+            style={{ backgroundImage: company.coverImage ? `url(${company.coverImage})` : undefined }}
+          >
+            <div className="absolute inset-0 bg-black/30"></div>
+            <button onClick={onClose} className="absolute top-4 right-4 bg-black/20 hover:bg-black/40 text-white p-2.5 rounded-full backdrop-blur-md transition-colors z-10">
+              <FaTimes size={18} />
+            </button>
+          </div>
+
+          {/* Profile Info */}
+          <div className="px-6 md:px-10">
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-8 -mt-12 relative z-10">
+              <div className="flex flex-col md:flex-row gap-6 items-start justify-between">
+                <div className="flex flex-col md:flex-row gap-6 items-start flex-1">
+                  <div className="w-24 h-24 md:w-28 md:h-28 bg-white rounded-2xl p-1.5 shadow-lg -mt-16 flex-shrink-0 border border-gray-100">
+                    <div className="w-full h-full bg-slate-50 rounded-xl flex items-center justify-center text-4xl font-bold text-[#0F172A] overflow-hidden">
+                      {company.profilePicture ? (
+                        <img src={company.profilePicture} alt={company.companyName} className="w-full h-full object-cover" />
+                      ) : (
+                        company.companyName?.charAt(0).toUpperCase() || 'C'
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex-1 mt-2 md:mt-0">
+                    <h1 className="text-2xl md:text-3xl font-bold text-[#121212]">{company.companyName}</h1>
+                    <p className="text-gray-500 text-sm md:text-base mt-1 font-medium">{company.tagline || 'Leading the way in innovation.'}</p>
+                    <div className="flex flex-wrap items-center gap-3 mt-4 text-xs font-medium text-gray-500">
+                      {company.location && <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100"><FaMapMarkerAlt className="text-[#0F172A]" /> {company.location}</span>}
+                      {company.industry && <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100"><FaBuilding className="text-[#0F172A]" /> {company.industry}</span>}
+                      {company.companySize && <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100"><FaUsers className="text-[#0F172A]" /> {company.companySize}</span>}
+                      {company.website && <a href={company.website} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[#0F172A] hover:underline bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100"><FaGlobe /> Website</a>}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4 md:mt-0 flex-shrink-0 w-full md:w-auto">
+                  <button 
+                    onClick={handleFollowToggle}
+                    className={`w-full md:w-auto px-6 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm ${
+                      isFollowing 
+                        ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200' 
+                        : 'bg-[#0F172A] text-white hover:bg-slate-800 shadow-lg shadow-slate-900/20'
+                    }`}
+                  >
+                    {isFollowing ? <><FaCheck /> Following</> : <><FaPlus /> Follow Company</>}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 space-y-8">
+                <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+                  <h2 className="text-xl font-bold text-[#121212] mb-4">About Us</h2>
+                  <p className="text-gray-600 leading-relaxed whitespace-pre-wrap text-sm md:text-base">{company.description || 'No description available for this company.'}</p>
+                </div>
+
+                <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+                  <h2 className="text-xl font-bold text-[#121212] mb-6">Open Positions ({jobs.length})</h2>
+                  {isLoadingJobs ? (
+                    <div className="flex items-center justify-center py-8">
+                      <FaSpinner className="animate-spin text-2xl text-gray-300" />
+                    </div>
+                  ) : jobs.length > 0 ? (
+                    <div className="space-y-4">
+                      {jobs.map((job: any) => (
+                        <div key={job._id} className="bg-gray-50 rounded-2xl p-5 border border-gray-100 hover:border-gray-300 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
+                          <div>
+                            <h3 className="font-bold text-[#121212]">{job.title}</h3>
+                            <p className="text-xs text-gray-500 mt-1">{job.location} • {job.workMode} • ${job.salaryMin}-${job.salaryMax}</p>
+                          </div>
+                          <button 
+                            onClick={() => { onClose(); onJobClick(job); }}
+                            className="px-5 py-2 bg-white border border-gray-200 text-[#0F172A] text-sm font-bold rounded-xl hover:bg-gray-100 shadow-sm transition-colors whitespace-nowrap"
+                          >
+                            View Details
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-sm text-center py-4">No open positions at the moment.</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-8">
+                {/* Company Specialties could go here if needed */}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

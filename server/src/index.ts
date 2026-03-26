@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import path from 'path';
 import authRoutes from './routes/AuthRoute';
 import jobRoutes from './routes/jobRoute';
+import companyRoutes from './routes/CompanyRoute';
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
@@ -37,6 +38,7 @@ app.use(express.json());
 // Routes
 app.use('/auth', authRoutes);
 app.use('/jobs', jobRoutes);
+app.use('/company', companyRoutes);
 
 // Basic Route
 app.get('/', (req: Request, res: Response) => {

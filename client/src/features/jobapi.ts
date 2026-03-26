@@ -23,7 +23,17 @@ export const jobApi = createApi({
       query: () => '/jobs/all',
       providesTags: ['Job'],
     }),
+    getCompanyById: builder.query({
+      query: (companyId) => `/company/${companyId}`,
+    }),
+    deleteJob: builder.mutation({
+      query: (jobId) => ({
+        url: `/jobs/${jobId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Job'],
+    }),
   }),
 });
 
-export const { usePostJobMutation, useGetJobsByEmployerQuery, useGetAllJobsQuery } = jobApi;
+export const { usePostJobMutation, useGetJobsByEmployerQuery, useGetAllJobsQuery, useGetCompanyByIdQuery, useDeleteJobMutation } = jobApi;

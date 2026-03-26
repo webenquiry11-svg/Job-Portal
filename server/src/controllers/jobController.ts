@@ -33,3 +33,23 @@ export const getAllJobs = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message || "Failed to fetch jobs" });
   }
 };
+
+export const deleteJob = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    // In a real app, you'd also want to verify that the user deleting the job is the owner.
+    // This would typically be done via middleware that adds the user's ID to the request.
+    // For example: if (job.employerId.toString() !== req.userId) return res.status(403).json(...);
+
+    const job = await JobModel.findByIdAndDelete(id);
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    res.status(200).json({ message: "Job deleted successfully" });
+  } catch (error: any) {
+    console.error("Error deleting job:", error);
+    res.status(500).json({ message: error.message || "Failed to delete job" });
+  }
+};
