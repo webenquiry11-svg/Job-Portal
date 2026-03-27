@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaEdit, FaSave, FaFileAlt, FaPen, FaCheckCircle } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
+export {}; // This ensures the file is treated as a module.
+
 const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
