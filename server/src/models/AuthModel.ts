@@ -19,8 +19,8 @@ export interface IAuth extends Document {
   website?: string;
   description?: string;
   yourRole?: string;
-  followers?: string;
   commitments?: { title: string; desc: string }[];
+  followingCompanies?: mongoose.Types.ObjectId[];
   profilePicture?: string;
   coverImage?: string;
   isEmailVerified?: boolean;
@@ -58,11 +58,11 @@ const authSchema = new mongoose.Schema({
   website: { type: String },
   description: { type: String },
   yourRole: { type: String },
-  followers: { type: String },
   commitments: [{
     title: { type: String },
     desc: { type: String }
   }],
+  followingCompanies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Auth' }],
   profilePicture: { type: String },
   coverImage: { type: String },
   isEmailVerified: { type: Boolean, default: false },

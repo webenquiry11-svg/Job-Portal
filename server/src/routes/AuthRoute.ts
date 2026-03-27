@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, updateProfile, requestOtp, verifyOtp, sendAdminOtp, verifyAdminOtp, requestGstVerification, getPendingGstVerifications, updateGstVerificationStatus } from '../controllers/AuthController';
+import { register, login, updateProfile, requestOtp, verifyOtp, sendAdminOtp, verifyAdminOtp, requestGstVerification, getPendingGstVerifications, updateGstVerificationStatus, toggleFollowCompany, getNotifications, markNotificationsAsRead } from '../controllers/AuthController';
 import upload from '../middleware/uploadMiddleware';
 
 const router = express.Router();
@@ -25,5 +25,12 @@ router.post('/admin/verify-otp', verifyAdminOtp);
 router.post('/employer/request-gst-verification', requestGstVerification);
 router.get('/admin/gst-verifications/pending', getPendingGstVerifications);
 router.patch('/admin/gst-verifications/update-status', updateGstVerificationStatus);
+
+// NOTE: This expects userId in the body. A real app should use auth middleware.
+router.patch('/follow/:companyId', toggleFollowCompany);
+
+// Notification Routes
+router.get('/notifications/:userId', getNotifications);
+router.patch('/notifications/:userId/read', markNotificationsAsRead);
 
 export default router;

@@ -15,7 +15,7 @@ import {
   FaClock,
   FaCheckCircle,
   FaTimesCircle,
-  FaSpinner,
+  FaSpinner, 
   FaEye,
   FaTimes,
   FaArrowRight,
@@ -23,6 +23,7 @@ import {
   FaFilter,
   FaGlobe,
   FaUsers,
+  FaRss,
   FaBuilding,
   FaPlus,
   FaCheck
@@ -30,7 +31,8 @@ import {
 import { MdDashboard, MdMenu, MdSettings } from 'react-icons/md';
 import CandidateProfile from '../../Condidate/CondidateProfile/page';
 import toast from 'react-hot-toast';
-import { useGetAllJobsQuery, useGetCompanyByIdQuery, useGetJobsByEmployerQuery } from '@/features/jobapi';
+import { useGetAllJobsQuery, useGetCompanyByIdQuery, useGetJobsByEmployerQuery, useGetNotificationsQuery, useMarkNotificationsAsReadMutation } from '@/features/jobapi';
+import { useToggleFollowCompanyMutation } from '@/features/authApi';
 
 const CandidateDashboard = () => {
   const router = useRouter();
@@ -50,7 +52,11 @@ const CandidateDashboard = () => {
   const [filterWorkMode, setFilterWorkMode] = useState('');
   const [filterExperience, setFilterExperience] = useState('');
 
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+
   const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery({});
+  const { data: notifications = [] } = useGetNotificationsQuery(user?._id, { skip: !user?._id });
+  const [markNotificationsAsRead] = useMarkNotificationsAsReadMutation();
 
   useEffect(() => {
     // Check for authentication and role
@@ -106,7 +112,24 @@ const CandidateDashboard = () => {
     router.push('/');
   };
 
-  const filteredJobs = allJobs.filter((job: any) => {
+  const unreadCount = notifications.filter((n: any) => !n.isRead).length;
+
+  const handleBellClick = () => {
+    setIsNotificationOpen(!isNotificationOpen);
+    if (!isNotificationOpen && unreadCount > 0) {
+      markNotificationsAsRead(user._id);
+    }
+  };
+
+  const sortedJobs = [...allJobs].sort((a: any, b: any) => {
+    const aIsFollowed = user?.followingCompanies?.includes(a.employerId?._id);
+    const bIsFollowed = user?.followingCompanies?.includes(b.employerId?._id);
+    if (aIsFollowed && !bIsFollowed) return -1;
+    if (!aIsFollowed && bIsFollowed) return 1;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
+  const filteredJobs = sortedJobs.filter((job: any) => {
     const query = searchQuery.toLowerCase();
     const matchesSearch = !searchQuery || (
       job.title?.toLowerCase().includes(query) ||
@@ -285,10 +308,42 @@ const CandidateDashboard = () => {
             </div>
 
             <div className="flex items-center gap-4">
-            <button className="p-2.5 bg-white border border-gray-200 rounded-full text-gray-400 hover:text-[#0F172A] hover:border-slate-200 hover:shadow-md transition-all relative">
-              <FaBell size={18} />
-              <span className="absolute top-2 right-2.5 w-2 h-2 bg-[#EF4444] rounded-full border-2 border-white"></span>
-            </button>
+            <div className="relative">
+              <button onClick={handleBellClick} className="p-2.5 bg-white border border-gray-200 rounded-full text-gray-400 hover:text-[#0F172A] hover:border-slate-200 hover:shadow-md transition-all relative">
+                <FaBell size={18} />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#EF4444] rounded-full border-2 border-white flex items-center justify-center text-white text-[8px] font-bold">
+                  </span>
+                )}
+              </button>
+              {isNotificationOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsNotificationOpen(false)}></div>
+                  <div className="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 animate-fade-in-up transform origin-top-right">
+                    <div className="px-4 py-2 border-b border-gray-100 flex justify-between items-center">
+                      <h3 className="font-bold text-[#121212]">Notifications</h3>
+                      {unreadCount > 0 && <span className="text-xs font-bold bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">{unreadCount} New</span>}
+                    </div>
+                    <div className="max-h-96 overflow-y-auto custom-scrollbar hide-scrollbar">
+                      {notifications.length > 0 ? (
+                        notifications.map((n: any) => (
+                          <div key={n._id} className={`px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${!n.isRead ? 'font-semibold' : 'text-gray-600'}`}>
+                            <p className="text-sm">{n.message}</p>
+                            <p className="text-xs text-gray-400 mt-1">{new Date(n.createdAt).toLocaleString()}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="p-8 text-center">
+                          <FaBell className="mx-auto text-3xl text-gray-300 mb-2" />
+                          <p className="text-sm text-gray-500">No notifications yet.</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
             <div className="relative">
               <button 
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
@@ -468,6 +523,8 @@ const CandidateDashboard = () => {
           companyId={selectedCompanyId} 
           onClose={() => setSelectedCompanyId(null)} 
           onJobClick={(job: any) => setSelectedJob(job)} 
+          user={user}
+          setUser={setUser}
         />
       )}
     </div>
@@ -611,7 +668,7 @@ const JobDetailsModal = ({ job, onClose }: any) => {
           </button>
         </div>
 
-        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 bg-white">
+        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar hide-scrollbar flex-1 bg-white">
           <h3 className="text-3xl font-bold text-[#0F172A]">{job.title}</h3>
           <p className="text-sm font-medium text-gray-500 mt-2 flex items-center gap-2">
             <span className="text-gray-700">{job.employerId?.companyName || job.employerId?.name || 'Company'}</span> • <span>{job.workMode}</span> • <span>{job.location}</span>
@@ -666,17 +723,25 @@ const JobDetailsModal = ({ job, onClose }: any) => {
   );
 };
 
-const CompanyProfileModal = ({ companyId, onClose, onJobClick }: any) => {
+const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser }: any) => {
   const { data: company, isLoading: isLoadingCompany } = useGetCompanyByIdQuery(companyId, { skip: !companyId });
   const { data: jobs = [], isLoading: isLoadingJobs } = useGetJobsByEmployerQuery(companyId, { skip: !companyId });
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [toggleFollow, { isLoading: isFollowingLoading }] = useToggleFollowCompanyMutation();
 
-  const handleFollowToggle = () => {
-    setIsFollowing(!isFollowing);
-    if (!isFollowing) {
-      toast.success(`You are now following ${company?.companyName || 'this company'}`);
-    } else {
-      toast.success(`Unfollowed ${company?.companyName || 'this company'}`);
+  const isFollowing = user?.followingCompanies?.includes(companyId);
+
+  const handleFollowToggle = async () => {
+    try {
+      const { result: updatedCandidate } = await toggleFollow({ companyId, candidateId: user._id }).unwrap();
+      setUser(updatedCandidate);
+      const currentProfile = JSON.parse(localStorage.getItem('profile') || '{}');
+      currentProfile.result = updatedCandidate;
+      localStorage.setItem('profile', JSON.stringify(currentProfile));
+
+      toast.success(isFollowing ? `Unfollowed ${company.companyName}` : `Now following ${company.companyName}`);
+    } catch (error) {
+      console.error("Failed to follow/unfollow:", error);
+      toast.error('An error occurred.');
     }
   };
 
@@ -701,9 +766,10 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick }: any) => {
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-all duration-300" onClick={onClose}>
+
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
         
-        <div className="overflow-y-auto custom-scrollbar flex-1 bg-gray-50 pb-8">
+        <div className="overflow-y-auto custom-scrollbar hide-scrollbar flex-1 bg-gray-50 pb-8">
           {/* Header/Cover */}
           <div 
             className="h-48 md:h-64 bg-gradient-to-r from-[#0F172A] to-slate-800 relative bg-cover bg-center flex-shrink-0"
@@ -740,20 +806,28 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick }: any) => {
                     </div>
                   </div>
                 </div>
+
                 <div className="mt-4 md:mt-0 flex-shrink-0 w-full md:w-auto">
                   <button 
                     onClick={handleFollowToggle}
-                    className={`w-full md:w-auto px-6 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm ${
+                    disabled={isFollowingLoading}
+                    className={`w-full md:w-auto px-6 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-70 ${
                       isFollowing 
                         ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200' 
                         : 'bg-[#0F172A] text-white hover:bg-slate-800 shadow-lg shadow-slate-900/20'
                     }`}
                   >
-                    {isFollowing ? <><FaCheck /> Following</> : <><FaPlus /> Follow Company</>}
+                    {isFollowingLoading ? <FaSpinner className="animate-spin" /> : (isFollowing ? <><FaCheck /> Following</> : <><FaPlus /> Follow</>)}
                   </button>
+                </div>
+                <div className="mt-4 md:mt-0 flex-shrink-0 w-full md:w-auto text-sm text-gray-500 font-medium">
+                  <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                    <FaUsers className="text-[#0F172A]" /> {company.followersCount || 0} Followers
+                  </span>
                 </div>
               </div>
             </div>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">
@@ -779,6 +853,7 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick }: any) => {
                           <button 
                             onClick={() => { onClose(); onJobClick(job); }}
                             className="px-5 py-2 bg-white border border-gray-200 text-[#0F172A] text-sm font-bold rounded-xl hover:bg-gray-100 shadow-sm transition-colors whitespace-nowrap"
+
                           >
                             View Details
                           </button>
@@ -792,13 +867,48 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick }: any) => {
               </div>
 
               <div className="space-y-8">
-                {/* Company Specialties could go here if needed */}
+                {company.specialties && (
+                  <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+                    <h2 className="text-xl font-bold text-[#121212] mb-4">Specialties</h2>
+                    <div className="flex flex-wrap gap-2">
+                      {company.specialties.split(',').map((s: string, i: number) => (
+                        <span key={i} className="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700">
+                          {s.trim()}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {company.sampleFollowers && company.sampleFollowers.length > 0 && (
+                  <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+                    <h2 className="text-xl font-bold text-[#121212] mb-6">People Also Following</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {company.sampleFollowers.map((follower: any) => (
+                        <div key={follower._id} className="flex items-center gap-3 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                          <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-[#0F172A] overflow-hidden">
+                            {follower.profilePicture ? (
+                              <img src={follower.profilePicture} alt={follower.name} className="w-full h-full object-cover" />
+                            ) : (
+                              follower.name?.charAt(0).toUpperCase() || 'U'
+                            )}
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-[#121212] text-sm">{follower.name}</h4>
+                            <p className="text-xs text-gray-500 truncate">{follower.headline || 'Job Seeker'}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
   );
 };
 

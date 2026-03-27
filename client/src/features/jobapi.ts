@@ -5,7 +5,7 @@ export const jobApi = createApi({
   baseQuery: fetchBaseQuery({ 
     baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000' 
   }),
-  tagTypes: ['Job'],
+  tagTypes: ['Job', 'Notification'],
   endpoints: (builder) => ({
     postJob: builder.mutation({
       query: (jobData) => ({
@@ -33,7 +33,18 @@ export const jobApi = createApi({
       }),
       invalidatesTags: ['Job'],
     }),
+    getNotifications: builder.query({
+      query: (userId) => `/auth/notifications/${userId}`,
+      providesTags: ['Notification'],
+    }),
+    markNotificationsAsRead: builder.mutation({
+      query: (userId) => ({
+        url: `/auth/notifications/${userId}/read`,
+        method: 'PATCH',
+      }),
+      invalidatesTags: ['Notification'],
+    }),
   }),
 });
 
-export const { usePostJobMutation, useGetJobsByEmployerQuery, useGetAllJobsQuery, useGetCompanyByIdQuery, useDeleteJobMutation } = jobApi;
+export const { usePostJobMutation, useGetJobsByEmployerQuery, useGetAllJobsQuery, useGetCompanyByIdQuery, useDeleteJobMutation, useGetNotificationsQuery, useMarkNotificationsAsReadMutation } = jobApi;

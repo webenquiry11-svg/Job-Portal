@@ -29,7 +29,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
       console.log('Login success:', result);
       setTimeout(() => {
         onClose();
-        if (result?.result?.role === 'employer') {
+        if (result?.result?.role === 'employer' && result?.result?._id) {
           router.push('/employer/dashboard');
         } else {
           router.push('/Condidate/Dashboard');

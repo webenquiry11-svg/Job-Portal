@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import mongoose from 'mongoose';
 import twilio from 'twilio';
+import NotificationModel from '../models/NotificationModel';
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -326,5 +327,67 @@ export const verifyAdminOtp = async (req: Request, res: Response) => {
     res.status(200).json({ message: "OTP verified successfully!" });
   } else {
     res.status(400).json({ message: "Invalid OTP provided." });
+  }
+};
+
+export const toggleFollowCompany = async (req: Request, res: Response) => {
+  const { companyId } = req.params;
+  // In a real app, this would come from `req.userId` set by auth middleware
+  const { userId: candidateId } = req.body;
+
+  if (!candidateId) {
+    return res.status(401).json({ message: 'Unauthenticated. User ID missing.' });
+  }
+
+  try {
+    const candidate = await AuthModel.findById(candidateId);
+    const company = await AuthModel.findById(companyId);
+
+    if (!candidate || candidate.role !== 'seeker') {
+      return res.status(404).json({ message: 'Candidate not found' });
+    }
+    if (!company || company.role !== 'employer') {
+      return res.status(404).json({ message: 'Company not found' });
+    }
+
+    const isFollowing = candidate.followingCompanies?.some(id => id.toString() === companyId);
+
+    if (isFollowing) {
+      // Unfollow
+      candidate.followingCompanies = candidate.followingCompanies?.filter(id => id.toString() !== companyId);
+    } else {
+      // Follow
+      if (!candidate.followingCompanies) {
+        candidate.followingCompanies = [];
+      }
+      candidate.followingCompanies.push(new mongoose.Types.ObjectId(companyId as string));
+    }
+
+    await candidate.save();
+    const updatedCandidate = await AuthModel.findById(candidateId).select('-password -emailOtp -phoneOtp');
+
+    res.status(200).json({ result: updatedCandidate });
+  } catch (error: any) {
+    res.status(500).json({ message: 'Something went wrong', error: error.message });
+  }
+};
+
+export const getNotifications = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  try {
+    const notifications = await NotificationModel.find({ userId }).sort({ createdAt: -1 });
+    res.status(200).json(notifications);
+  } catch (error: any) {
+    res.status(500).json({ message: 'Failed to fetch notifications', error: error.message });
+  }
+};
+
+export const markNotificationsAsRead = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  try {
+    await NotificationModel.updateMany({ userId, isRead: false }, { $set: { isRead: true } });
+    res.status(200).json({ message: 'Notifications marked as read' });
+  } catch (error: any) {
+    res.status(500).json({ message: 'Failed to update notifications', error: error.message });
   }
 };

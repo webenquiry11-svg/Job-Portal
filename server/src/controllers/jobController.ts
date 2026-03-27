@@ -1,14 +1,31 @@
 import { Request, Response } from 'express';
 import JobModel from '../models/jobmodel';
+import AuthModel from '../models/AuthModel';
+import NotificationModel from '../models/NotificationModel';
 
 export const createJob = async (req: Request, res: Response) => {
   try {
     const newJob = new JobModel(req.body);
     await newJob.save();
+
+    // Notify followers
+    const employer = await AuthModel.findById(newJob.employerId);
+    if (employer) {
+      const followers = await AuthModel.find({ followingCompanies: newJob.employerId });
+      const notifications = followers.map(follower => ({
+        userId: follower._id,
+        message: `${employer.companyName || employer.name} posted a new job: ${newJob.title}`,
+        link: `/jobs/${newJob._id}` // A link to the job, to be handled by frontend routing
+      }));
+      if (notifications.length > 0) {
+        await NotificationModel.insertMany(notifications);
+      }
+    }
+
     res.status(201).json(newJob);
   } catch (error: any) {
     console.error("Error creating job:", error);
-    res.status(409).json({ message: error.message || "Failed to create job" });
+    res.status(500).json({ message: error.message || "Failed to create job" });
   }
 };
 
@@ -19,7 +36,7 @@ export const getJobsByEmployer = async (req: Request, res: Response) => {
     res.status(200).json(jobs);
   } catch (error: any) {
     console.error("Error fetching jobs:", error);
-    res.status(404).json({ message: error.message || "Failed to fetch jobs" });
+    res.status(500).json({ message: error.message || "Failed to fetch jobs" });
   }
 };
 

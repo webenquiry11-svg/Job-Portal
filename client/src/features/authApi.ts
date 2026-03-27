@@ -23,7 +23,15 @@ export const authApi = apiSlice.injectEndpoints({
         body,
       }),
     }),
+    toggleFollowCompany: builder.mutation({
+      query: ({ companyId, candidateId }) => ({
+        url: `/follow/${companyId}`,
+        method: 'PATCH',
+        // This is not ideal, but necessary without auth middleware
+        body: { userId: candidateId },
+      }),
+    }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation, useUpdateProfileMutation } = authApi;
+export const { useRegisterMutation, useLoginMutation, useUpdateProfileMutation, useToggleFollowCompanyMutation } = authApi;

@@ -1,12 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FaBuilding, FaGlobe, FaMapMarkerAlt, FaUsers, FaEnvelope, FaPhone, FaCamera, FaPen, FaSave, FaCheckCircle, FaEye, FaEdit, FaPlus, FaTrash, FaHourglassHalf, FaTimesCircle } from 'react-icons/fa';
+import { FaBuilding, FaGlobe, FaMapMarkerAlt, FaUsers, FaEnvelope, FaPhone, FaCamera, FaPen, FaSave, FaCheckCircle, FaEye, FaEdit, FaPlus, FaTrash, FaHourglassHalf, FaTimesCircle, FaSpinner, FaBriefcase, FaTimes } from 'react-icons/fa';
 import { useUpdateProfileMutation } from '@/features/authApi';
+import { useGetCompanyByIdQuery, useGetJobsByEmployerQuery } from '@/features/jobapi';
 import toast from 'react-hot-toast';
 
 const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
-  const [isPublicView, setIsPublicView] = useState(true);
+  const [isPublicView, setIsPublicView] = useState(false);
+  const [activePublicTab, setActivePublicTab] = useState('About');
+  const [selectedJob, setSelectedJob] = useState<any>(null);
   const [formData, setFormData] = useState({
     gstNumber: user?.gstNumber || '',
     companyName: user?.companyName || '',
@@ -20,13 +23,15 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
     phone: user?.phone || '',
     gstVerificationStatus: user?.gstVerificationStatus || 'none',
     description: user?.description || '',
-    followers: user?.followers || '789K',
     commitments: user?.commitments || [
         { title: 'Career growth and learning', desc: 'There is no one-size-fits-all career path: here everyone is empowered to own their growth journey. Our team comes from a variety of traditional and non-traditional tech backgrounds including career changers...' },
         { title: 'Diversity, equity, and inclusion', desc: 'We aspire to be an employer of choice for all and diversity helps power our collective impact.' },
         { title: 'Social impact', desc: 'Technologists have a unique role to play in advocating for how technology should benefit the common good.' }
     ],
   });
+
+  const { data: companyData } = useGetCompanyByIdQuery(user?._id, { skip: !user?._id });
+  const { data: jobs = [], isLoading: isLoadingJobs } = useGetJobsByEmployerQuery(user?._id, { skip: !user?._id });
 
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   const [successMessage, setSuccessMessage] = useState('');
@@ -109,7 +114,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                           <span className="w-1 h-1 rounded-full bg-gray-300"></span>
                           <span>{formData.location || 'San Francisco, CA'}</span>
                           <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                          <span>{formData.followers} followers</span>
+                          <span>{companyData?.followersCount || 0} followers</span>
                           <span className="w-1 h-1 rounded-full bg-gray-300"></span>
                           <span>{formData.companySize}</span>
                       </div>
@@ -130,8 +135,12 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
           
           {/* Navigation Tabs */}
           <div className="px-8 border-t border-gray-100 flex items-center gap-8 overflow-x-auto">
-            {['Home', 'About', 'Posts', 'Jobs', 'Life', 'People'].map((tab, i) => (
-                <button key={tab} className={`py-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${i === 1 ? 'border-[#0F172A] text-[#0F172A]' : 'border-transparent text-gray-500 hover:text-[#121212]'}`}>
+            {['About', 'Jobs', 'People'].map((tab) => (
+                <button 
+                  key={tab} 
+                  onClick={() => setActivePublicTab(tab)}
+                  className={`py-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${activePublicTab === tab ? 'border-[#0F172A] text-[#0F172A]' : 'border-transparent text-gray-500 hover:text-[#121212]'}`}
+                >
                     {tab}
                 </button>
             ))}
@@ -139,38 +148,100 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
         </div>
 
         {/* Public View Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className={`grid grid-cols-1 ${activePublicTab === 'About' ? 'lg:grid-cols-3' : ''} gap-8`}>
             {/* Main Content Column */}
-            <div className="lg:col-span-2 space-y-6">
-                {/* About / Overview */}
-                <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-                    <h3 className="text-xl font-bold text-[#121212] mb-4">Overview</h3>
-                    <p className="text-gray-600 leading-relaxed whitespace-pre-line">
-                        {formData.description || 'We are a global technology consultancy that delivers extraordinary impact by blending design, engineering and AI expertise.\n\nFor 30 years, our commitment to design-led thinking, engineering excellence and innovation means we prioritize people, build teams with strong technical foundations and embed AI into every step of the process – not just as a tool but as a mindset.'}
-                    </p>
-                </div>
-
-                {/* Commitments Section (Mocked based on request) */}
-                <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-                    <h3 className="text-xl font-bold text-[#121212] mb-6">Commitments</h3>
-                    <div className="space-y-6">
-                        {formData.commitments.map((item: any, i: number) => (
-                            <div key={i} className="flex gap-4">
-                                <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 text-[#0F172A]">
-                                    <FaBuilding />
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-[#121212] text-base">{item.title}</h4>
-                                    <p className="text-sm text-gray-600 mt-1">{item.desc}</p>
-                                </div>
-                            </div>
-                        ))}
+            <div className={`${activePublicTab === 'About' ? 'lg:col-span-2' : ''} space-y-6`}>
+                {activePublicTab === 'About' && (
+                  <>
+                    {/* About / Overview */}
+                    <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+                        <h3 className="text-xl font-bold text-[#121212] mb-4">Overview</h3>
+                        <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+                            {formData.description || 'We are a global technology consultancy that delivers extraordinary impact by blending design, engineering and AI expertise.\n\nFor 30 years, our commitment to design-led thinking, engineering excellence and innovation means we prioritize people, build teams with strong technical foundations and embed AI into every step of the process – not just as a tool but as a mindset.'}
+                        </p>
                     </div>
-                </div>
+
+                    {/* Commitments Section */}
+                    <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+                        <h3 className="text-xl font-bold text-[#121212] mb-6">Commitments</h3>
+                        <div className="space-y-6">
+                            {formData.commitments.map((item: any, i: number) => (
+                                <div key={i} className="flex gap-4">
+                                    <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 text-[#0F172A]">
+                                        <FaBuilding />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-[#121212] text-base">{item.title}</h4>
+                                        <p className="text-sm text-gray-600 mt-1">{item.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                  </>
+                )}
+
+                {activePublicTab === 'Jobs' && (
+                  <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+                      <h3 className="text-xl font-bold text-[#121212] mb-6">Open Positions ({jobs.length})</h3>
+                      {isLoadingJobs ? (
+                        <div className="flex items-center justify-center py-8">
+                          <FaSpinner className="animate-spin text-2xl text-gray-300" />
+                        </div>
+                      ) : jobs.length > 0 ? (
+                        <div className="space-y-4">
+                          {jobs.map((job: any) => (
+                            <div key={job._id} className="bg-gray-50 rounded-2xl p-5 border border-gray-100 hover:border-gray-300 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
+                              <div>
+                                <h4 className="font-bold text-[#121212]">{job.title}</h4>
+                                <p className="text-xs text-gray-500 mt-1">{job.location} • {job.workMode} • ${job.salaryMin}-${job.salaryMax}</p>
+                              </div>
+                              <button 
+                                onClick={() => setSelectedJob(job)}
+                                className="px-5 py-2 bg-white border border-gray-200 text-[#0F172A] text-sm font-bold rounded-xl hover:bg-gray-100 shadow-sm transition-colors whitespace-nowrap"
+                              >
+                                View Details
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 text-sm text-center py-4">No open positions at the moment.</p>
+                      )}
+                  </div>
+                )}
+
+                {activePublicTab === 'People' && (
+                  <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+                      <h3 className="text-xl font-bold text-[#121212] mb-6">People Also Following</h3>
+                      {companyData?.sampleFollowers && companyData.sampleFollowers.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {companyData.sampleFollowers.map((follower: any) => (
+                            <div key={follower._id} className="flex items-center gap-3 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-[#0F172A] overflow-hidden flex-shrink-0">
+                                {follower.profilePicture ? (
+                                  <img src={follower.profilePicture} alt={follower.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  follower.name?.charAt(0).toUpperCase() || 'U'
+                                )}
+                              </div>
+                              <div className="min-w-0">
+                                <h4 className="font-bold text-[#121212] text-sm truncate">{follower.name}</h4>
+                                <p className="text-xs text-gray-500 truncate">{follower.headline || 'Job Seeker'}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 text-sm text-center py-4">No followers yet.</p>
+                      )}
+                  </div>
+                )}
             </div>
 
             {/* Sidebar Details Column */}
-            <div className="space-y-6">
+            {activePublicTab === 'About' && (
+              <div className="space-y-6">
                 <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
                     <div className="space-y-5">
                         <div>
@@ -197,8 +268,10 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                         </div>
                     </div>
                 </div>
-            </div>
+              </div>
+            )}
         </div>
+        {selectedJob && <JobDetailsModal job={selectedJob} onClose={() => setSelectedJob(null)} />}
       </div>
     );
   }
@@ -234,6 +307,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                     <div className="flex items-center gap-4 mt-2 text-sm text-gray-500 font-medium">
                         <span className="flex items-center gap-1.5"><FaBuilding className="text-[#0F172A]" /> {formData.industry || 'Tech Industry'}</span>
                         <span className="flex items-center gap-1.5"><FaMapMarkerAlt className="text-[#0F172A]" /> {formData.location || 'Location'}</span>
+                        {companyData?.followersCount !== undefined && <span className="flex items-center gap-1.5"><FaUsers className="text-[#0F172A]" /> {companyData.followersCount} Followers</span>}
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -306,7 +380,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Followers Count</label>
-                        <input type="text" name="followers" value={formData.followers} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium" placeholder="e.g. 10K" />
+                        <input type="text" name="followers" value={companyData?.followersCount || '0'} readOnly className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium" placeholder="e.g. 10K" />
                     </div>
                 </div>
                 
@@ -351,7 +425,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
 
         {/* Right Column: Contact */}
         <div className="space-y-8">
-            <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm h-full">
+            <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
                 <h3 className="text-lg font-bold text-[#121212] mb-6 flex items-center gap-2">
                     <span className="w-1 h-6 bg-[#FACC15] rounded-full"></span>
                     Contact Details
@@ -406,10 +480,97 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                     </div>
                 </div>
             </div>
+
+            {companyData?.sampleFollowers && companyData.sampleFollowers.length > 0 && (
+              <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Recent Followers</h4>
+                <div className="space-y-4">
+                  {companyData.sampleFollowers.map((follower: any) => (
+                    <div key={follower._id} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-[#0F172A] overflow-hidden flex-shrink-0">
+                        {follower.profilePicture ? (
+                          <img src={follower.profilePicture} alt={follower.name} className="w-full h-full object-cover" />
+                        ) : (
+                          follower.name?.charAt(0).toUpperCase() || 'U'
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="font-bold text-[#121212] text-sm truncate">{follower.name}</h4>
+                        <p className="text-xs text-gray-500 truncate">{follower.headline || 'Job Seeker'}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
         </div>
       </div>
     </div>
   );
 }
+
+const JobDetailsModal = ({ job, onClose }: any) => {
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-all duration-300" onClick={onClose}>
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+        
+        <div className="p-6 md:px-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+          <h2 className="text-2xl font-bold text-[#121212] flex items-center gap-3">
+            <div className="bg-[#0F172A] p-2 rounded-xl shadow-md">
+              <FaBriefcase className="text-white text-sm" />
+            </div>
+            Job Details Preview
+          </h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-800 transition-colors bg-white p-2 rounded-full border border-gray-200 shadow-sm hover:shadow-md">
+            <FaTimes size={18} />
+          </button>
+        </div>
+
+        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar hide-scrollbar flex-1 bg-white">
+          <h3 className="text-3xl font-bold text-[#0F172A]">{job.title}</h3>
+          <p className="text-sm font-medium text-gray-500 mt-2 flex items-center gap-2">
+            <span className="text-gray-700">{job.employerId?.companyName || job.employerId?.name || 'Company'}</span> • <span>{job.workMode}</span> • <span>{job.location}</span>
+          </p>
+          
+          <div className="flex flex-wrap gap-2 mt-6">
+            {job.skills && job.skills.length > 0 ? job.skills.map((s: string, i: number) => (
+              <span key={i} className="px-3 py-1 bg-gray-100 border border-gray-200 rounded-lg text-sm font-bold text-[#121212]">{s}</span>
+            )) : <span className="text-sm text-gray-400 italic">No skills specified</span>}
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-gray-100 grid grid-cols-2 gap-6 text-sm">
+            <div>
+              <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Experience</p>
+              <p className="font-bold text-[#121212] text-base">{job.experience || 'Not specified'}</p>
+            </div>
+            <div>
+              <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Salary ({job.salaryType})</p>
+              <p className="font-bold text-[#121212] text-base">${job.salaryMin || '0'} - ${job.salaryMax || '0'}</p>
+            </div>
+          </div>
+          
+          <div className="mt-8 pt-6 border-t border-gray-100">
+            <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-2">Job Description</p>
+            <p className="text-gray-700 whitespace-pre-wrap text-sm leading-relaxed">{job.description}</p>
+          </div>
+          
+          {job.screeningQuestion && (
+            <div className="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
+              <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Screening Question</p>
+              <p className="font-semibold text-[#121212] text-sm">{job.screeningQuestion}</p>
+            </div>
+          )}
+        </div>
+
+        <div className="p-6 border-t border-gray-100 flex items-center justify-end bg-gray-50/50 rounded-b-3xl">
+          <button onClick={onClose} className="px-8 py-3 bg-[#0F172A] text-white font-black rounded-xl hover:bg-slate-800 shadow-lg shadow-slate-900/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
+             Close Preview
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+};
 
 export default CompanyProfile;
