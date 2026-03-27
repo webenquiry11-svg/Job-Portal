@@ -7,6 +7,7 @@ import path from 'path';
 import authRoutes from './routes/AuthRoute';
 import jobRoutes from './routes/jobRoute';
 import companyRoutes from './routes/CompanyRoute';
+import chatRoute from './routes/ChatRoute';
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
@@ -39,6 +40,7 @@ app.use(express.json());
 app.use('/auth', authRoutes);
 app.use('/jobs', jobRoutes);
 app.use('/company', companyRoutes);
+app.use('/chat', chatRoute);
 
 // Basic Route
 app.get('/', (req: Request, res: Response) => {

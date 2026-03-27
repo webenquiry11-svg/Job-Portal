@@ -17,7 +17,19 @@ export const chatApi = createApi({
       }),
       invalidatesTags: ['Chat'],
     }),
+    markAsSeen: builder.mutation<any, { senderId: string; receiverId: string }>({
+      query: (body) => ({
+        url: `/chat/seen`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Chat'],
+    }),
+    getConversations: builder.query<any, string>({
+      query: (userId) => `/chat/conversations/${userId}`,
+      providesTags: ['Chat'],
+    }),
   }),
 });
 
-export const { useGetMessagesQuery, useSendMessageMutation } = chatApi;
+export const { useGetMessagesQuery, useSendMessageMutation, useMarkAsSeenMutation, useGetConversationsQuery } = chatApi;

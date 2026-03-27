@@ -26,9 +26,10 @@ import {
   FaBuilding,
   FaPlus,
   FaCheck,
-  FaCommentDots
+  FaCommentDots,
+  FaCheckDouble
 } from 'react-icons/fa';
-import { MdDashboard, MdMenu, MdSettings } from 'react-icons/md';
+import { MdDashboard, MdMenu, MdMessage, MdSettings } from 'react-icons/md';
 import CandidateProfile from '../../Condidate/CondidateProfile/page';
 import toast from 'react-hot-toast';
 import { 
@@ -39,7 +40,7 @@ import {
   useMarkNotificationsAsReadMutation 
 } from '@/features/jobapi';
 import { useToggleFollowCompanyMutation } from '@/features/authApi';
-import { useGetMessagesQuery, useSendMessageMutation } from '@/features/chatApi';
+import { useGetMessagesQuery, useSendMessageMutation, useMarkAsSeenMutation, useGetConversationsQuery } from '@/features/chatApi';
 
 const CandidateDashboard = () => {
   const router = useRouter();
@@ -59,12 +60,10 @@ const CandidateDashboard = () => {
   const [filterWorkMode, setFilterWorkMode] = useState('');
   const [filterExperience, setFilterExperience] = useState('');
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  
-  // Chat state
-  const [chatUser, setChatUser] = useState<any>(null);
+  const [selectedMessageUser, setSelectedMessageUser] = useState<any>(null);
 
   const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery({});
-  const { data: notifications = [] } = useGetNotificationsQuery(user?._id, { skip: !user?._id });
+  const { data: notifications = [] } = useGetNotificationsQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
   const [markNotificationsAsRead] = useMarkNotificationsAsReadMutation();
 
   useEffect(() => {
@@ -184,6 +183,7 @@ const CandidateDashboard = () => {
           <SidebarItem icon={<FaSearch />} label="Explore Jobs" active={activeTab === 'explore'} onClick={() => { setActiveTab('explore'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
           <SidebarItem icon={<FaBookmark />} label="Saved Jobs" active={activeTab === 'saved'} onClick={() => { setActiveTab('saved'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
           <SidebarItem icon={<FaBriefcase />} label="My Applications" active={activeTab === 'applications'} onClick={() => { setActiveTab('applications'); setIsSidebarOpen(false); }} badge="3" collapsed={isSidebarCollapsed} />
+          <SidebarItem icon={<MdMessage />} label="Messages" active={activeTab === 'messages'} onClick={() => { setActiveTab('messages'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
           
           <p className={`px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:hidden' : ''}`}>Account</p>
           <SidebarItem icon={<FaUserCircle />} label="My Profile" active={activeTab === 'profile'} onClick={() => { setActiveTab('profile'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
@@ -451,7 +451,8 @@ const CandidateDashboard = () => {
           )}
 
           {activeTab === 'profile' && <CandidateProfile user={user} setUser={setUser} />}
-          {activeTab !== 'dashboard' && activeTab !== 'explore' && activeTab !== 'profile' && activeTab !== 'saved' && (
+          {activeTab === 'messages' && <CandidateMessagesSection user={user} allJobs={allJobs} initialSelectedUser={selectedMessageUser} />}
+          {activeTab !== 'dashboard' && activeTab !== 'explore' && activeTab !== 'profile' && activeTab !== 'saved' && activeTab !== 'messages' && (
              <div className="flex flex-col items-center justify-center h-64 bg-white rounded-3xl border border-gray-100 shadow-sm animate-fade-in-up">
                <FaBriefcase className="text-6xl text-slate-200 mb-4" />
                <h2 className="text-xl font-bold text-[#121212] capitalize">{activeTab.replace('-', ' ')}</h2>
@@ -469,12 +470,13 @@ const CandidateDashboard = () => {
           onJobClick={(job: any) => setSelectedJob(job)} 
           user={user}
           setUser={setUser}
-          setChatUser={setChatUser}
+          onMessageClick={(company: any) => {
+            setSelectedCompanyId(null);
+            setSelectedMessageUser(company);
+            setActiveTab('messages');
+          }}
         />
       )}
-      
-      {/* Chat Box Component */}
-      {chatUser && <ChatBox currentUser={user} otherUser={chatUser} onClose={() => setChatUser(null)} />}
     </div>
   );
 }
@@ -591,7 +593,7 @@ const JobDetailsModal = ({ job, onClose }: any) => (
   </div>
 );
 
-const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser, setChatUser }: any) => {
+const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser, onMessageClick }: any) => {
   const { data: company, isLoading: isLoadingCompany } = useGetCompanyByIdQuery(companyId, { skip: !companyId });
   const { data: jobs = [], isLoading: isLoadingJobs } = useGetJobsByEmployerQuery(companyId, { skip: !companyId });
   const [toggleFollow, { isLoading: isFollowingLoading }] = useToggleFollowCompanyMutation();
@@ -635,7 +637,7 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser, se
                     {isFollowingLoading ? <FaSpinner className="animate-spin" /> : (isFollowing ? <><FaCheck /> Following</> : <><FaPlus /> Follow</>)}
                   </button>
                   {isFollowing && (
-                    <button onClick={() => setChatUser(company)} className="w-full md:w-auto px-6 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200">
+                    <button onClick={() => onMessageClick(company)} className="w-full md:w-auto px-6 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200">
                       <FaCommentDots /> Message
                     </button>
                   )}
@@ -662,53 +664,161 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser, se
   );
 };
 
-// --- Chat Box Component ---
-const ChatBox = ({ currentUser, otherUser, onClose }: any) => {
+const CandidateMessagesSection = ({ user, allJobs, initialSelectedUser }: any) => {
+  const [selectedUser, setSelectedUser] = useState<any>(initialSelectedUser);
+  const { data: conversations = [] } = useGetConversationsQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
+  const [searchQuery, setSearchQuery] = useState('');
   const [messageText, setMessageText] = useState('');
   const { data: messages = [] } = useGetMessagesQuery(
-    { user1: currentUser._id, user2: otherUser._id },
-    { pollingInterval: 3000, skip: !otherUser._id }
+    { user1: user?._id, user2: selectedUser?._id },
+    { skip: !selectedUser?._id, pollingInterval: 3000 }
   );
-  const [sendMessage] = useSendMessageMutation();
+  const [sendMessage, { isLoading: isSending }] = useSendMessageMutation();  const [markAsSeen] = useMarkAsSeenMutation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  useEffect(() => {
+    if (initialSelectedUser) setSelectedUser(initialSelectedUser);
+  }, [initialSelectedUser]);
+
+  useEffect(() => {
+    if (selectedUser && user?._id && messages.length > 0) {
+      const hasUnread = messages.some((msg: any) => String(msg.senderId) === String(selectedUser._id) && !msg.seen);
+      if (hasUnread) {
+        markAsSeen({ senderId: selectedUser._id, receiverId: user._id });
+      }
+    }
+  }, [selectedUser, user, messages, markAsSeen]);
+
   const handleSend = async () => {
-    if (!messageText.trim()) return;
-    await sendMessage({ senderId: currentUser._id, receiverId: otherUser._id, message: messageText });
-    setMessageText('');
+    if (!messageText.trim() || !selectedUser || isSending) return;
+    try {
+      await sendMessage({ senderId: user._id, receiverId: selectedUser._id, message: messageText }).unwrap();
+      setMessageText('');
+    } catch (err) {
+      toast.error('Failed to send message');
+    }
   };
 
+  // Derive connected companies from `allJobs` and `user.followingCompanies`
+  const followedCompaniesMap = new Map();
+  if (user?.followingCompanies && Array.isArray(user.followingCompanies)) {
+    allJobs.forEach((job: any) => {
+      if (job.employerId && user.followingCompanies.includes(job.employerId._id)) {
+        followedCompaniesMap.set(job.employerId._id, job.employerId);
+      }
+    });
+  }
+  
+  // Always include the initially selected user (if passed from modal) even if not in the cached jobs list
+  if (initialSelectedUser && !followedCompaniesMap.has(initialSelectedUser._id)) {
+    followedCompaniesMap.set(initialSelectedUser._id, initialSelectedUser);
+  }
+
+  const followedCompanies = Array.from(followedCompaniesMap.values());
+  const filteredCompanies = followedCompanies.filter((c: any) => 
+    c.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    c.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="fixed bottom-6 right-6 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 z-[60] overflow-hidden flex flex-col h-[400px] animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
-      <div className="bg-[#0F172A] p-4 flex items-center justify-between text-white shadow-md z-10">
-        <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-sm">
-              {otherUser.profilePicture ? <img src={otherUser.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/> : (otherUser.name?.charAt(0) || otherUser.companyName?.charAt(0) || 'U')}
-            </div>
-            <div className="font-bold text-sm truncate">{otherUser.name || otherUser.companyName}</div>
+    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm flex h-[600px] overflow-hidden animate-fade-in-up">
+      {/* Sidebar */}
+      <div className="w-1/3 border-r border-gray-100 flex flex-col bg-white z-10">
+        <div className="p-6 border-b border-gray-100 bg-gray-50/50">
+          <h2 className="text-xl font-bold text-[#121212]">Messages</h2>
+          <div className="mt-4 relative">
+            <FaSearch className="absolute left-3 top-3 text-gray-400" />
+            <input 
+              type="text" 
+              placeholder="Search companies..." 
+              value={searchQuery} 
+              onChange={(e) => setSearchQuery(e.target.value)} 
+              className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A]/20 transition-all shadow-sm"
+            />
+          </div>
         </div>
-        <button onClick={onClose} className="text-gray-300 hover:text-white p-1"><FaTimes /></button>
-      </div>
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 custom-scrollbar">
-        {messages.map((msg: any) => {
-          const isMine = msg.senderId === currentUser._id;
-          return (
-            <div key={msg._id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-              <div className={`px-4 py-2.5 rounded-2xl text-xs max-w-[85%] shadow-sm ${isMine ? 'bg-[#0F172A] text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm'}`}>
-                {msg.message}
+        <div className="overflow-y-auto flex-1 custom-scrollbar">
+          {filteredCompanies.map((company: any) => (
+            <div
+              key={company._id}
+              onClick={() => setSelectedUser(company)}
+              className={`p-4 flex items-center gap-3 cursor-pointer transition-colors border-b border-gray-50 hover:bg-gray-50 ${selectedUser?._id === company._id ? 'bg-slate-50 border-l-4 border-l-[#0F172A]' : 'border-l-4 border-l-transparent'}`}
+            >
+              <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 flex-shrink-0">
+                {company.profilePicture ? <img src={company.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/> : (company.companyName?.charAt(0) || company.name?.charAt(0) || 'C').toUpperCase()}
+              </div>
+              <div className="min-w-0">
+                <h4 className="font-bold text-sm text-[#121212] truncate">{company.companyName || company.name}</h4>
+                <p className="text-xs text-gray-500 truncate">{company.industry || 'Employer'}</p>
               </div>
             </div>
-          );
-        })}
-        <div ref={messagesEndRef} />
+          ))}
+          {filteredCompanies.length === 0 && (
+            <div className="p-8 text-center text-sm text-gray-400">{searchQuery ? "No companies found." : "No connections yet."}</div>
+          )}
+        </div>
       </div>
-      <div className="p-3 bg-white border-t border-gray-100 flex gap-2">
-        <input type="text" value={messageText} onChange={e => setMessageText(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} placeholder="Type a message..." className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A]/20" />
-        <button onClick={handleSend} className="px-4 py-2 bg-[#0F172A] text-white font-bold rounded-xl text-sm hover:bg-[#1E293B] transition-colors">Send</button>
+      {/* Chat Area */}
+      <div className="flex-1 flex flex-col bg-gray-50/50">
+        {selectedUser ? (
+          <>
+            <div className="p-6 border-b border-gray-100 bg-white flex items-center gap-4 shadow-sm z-10">
+               <div className="w-10 h-10 bg-[#0F172A] text-white rounded-full flex items-center justify-center font-bold shadow-md">
+                 {selectedUser.profilePicture ? <img src={selectedUser.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/> : (selectedUser.companyName?.charAt(0) || selectedUser.name?.charAt(0) || 'C').toUpperCase()}
+               </div>
+               <div>
+                 <h3 className="font-bold text-[#121212]">{selectedUser.companyName || selectedUser.name}</h3>
+                 <p className="text-xs text-gray-500">Connected via Follow</p>
+               </div>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+              {messages.map((msg: any) => {
+                const isMine = String(msg.senderId) === String(user._id);
+                return (
+                  <div key={msg._id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`px-4 py-2.5 rounded-2xl max-w-[75%] text-sm shadow-sm ${isMine ? 'bg-[#0F172A] text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm'}`}>
+                      {msg.message}
+                      {isMine && (
+                        <div className="text-right text-[10px] mt-1.5 -mb-1 flex items-center justify-end gap-1.5 opacity-70">
+                          <span>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          {msg.seen ? (
+                            <FaCheckDouble className="inline text-blue-400" />
+                          ) : (
+                            <FaCheck className="inline" />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+              <div ref={messagesEndRef} />
+            </div>
+            <div className="p-4 bg-white border-t border-gray-100 flex gap-3 items-center">
+              <input
+                type="text"
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                placeholder="Type your message..."
+                className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A]/20 transition-all"
+              />
+              <button onClick={handleSend} disabled={isSending} className="px-8 py-3 bg-[#0F172A] text-white font-bold rounded-xl text-sm hover:bg-[#1E293B] shadow-lg shadow-slate-900/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed">
+                {isSending ? 'Sending...' : 'Send'}
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
+            <MdMessage className="text-6xl text-slate-200 mb-4" />
+            <p className="text-lg font-medium text-gray-500">Your Messages</p>
+            <p className="text-sm mt-1">Select a company from the sidebar to start chatting.</p>
+          </div>
+        )}
       </div>
     </div>
   );

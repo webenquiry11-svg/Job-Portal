@@ -13,6 +13,7 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [otpType, setOtpType] = useState<'email' | 'phone' | null>(null);
   const [otp, setOtp] = useState('');
   const [formData, setFormData] = useState({
@@ -126,6 +127,9 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
       }
       if (coverFile) {
         formDataToSend.append('coverImage', coverFile);
+      }
+      if (resumeFile) {
+        formDataToSend.append('resume', resumeFile);
       }
 
       const response = await fetch(`${API_URL}/auth/update`, {
@@ -313,11 +317,18 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
 
           <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8">
              <h3 className="text-lg font-bold text-[#121212] mb-4 flex items-center gap-2"><FaFileAlt className="text-gray-400"/> Resume</h3>
-             <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:bg-gray-50 transition-colors cursor-pointer group">
+             <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:bg-gray-50 transition-colors relative group">
+                <input 
+                  type="file" 
+                  accept=".pdf,.doc,.docx" 
+                  className={`absolute inset-0 w-full h-full opacity-0 ${isEditing ? 'cursor-pointer z-10' : 'hidden'}`} 
+                  onChange={(e) => { if(e.target.files && e.target.files[0]) setResumeFile(e.target.files[0]); }} 
+                  disabled={!isEditing} 
+                />
                 <FaFileAlt className="text-3xl text-gray-300 mx-auto mb-3 group-hover:text-[#0F172A] transition-colors" />
-                <p className="text-sm font-bold text-[#121212] mb-1 truncate">My_Resume.pdf</p>
-                <p className="text-xs text-gray-500 mb-4">Updated 2 days ago</p>
-                <button className="text-xs font-bold text-[#0F172A] hover:underline">Replace Resume</button>
+                <p className="text-sm font-bold text-[#121212] mb-1 truncate">{resumeFile ? resumeFile.name : (user?.resume ? 'Uploaded_Resume' : 'No Resume Found')}</p>
+                <p className="text-xs text-gray-500 mb-4">{isEditing ? 'Click here to upload new resume (PDF, DOCX)' : 'Click Edit Profile to update'}</p>
+                {isEditing && <button type="button" className="text-xs font-bold text-[#0F172A] hover:underline pointer-events-none">Replace Resume</button>}
              </div>
           </div>
         </div>

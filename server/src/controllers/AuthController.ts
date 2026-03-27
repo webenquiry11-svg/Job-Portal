@@ -355,15 +355,33 @@ export const toggleFollowCompany = async (req: Request, res: Response) => {
     if (isFollowing) {
       // Unfollow
       candidate.followingCompanies = candidate.followingCompanies?.filter(id => id.toString() !== companyId);
+      company.followers = company.followers?.filter((id: any) => id.toString() !== candidateId);
     } else {
       // Follow
       if (!candidate.followingCompanies) {
         candidate.followingCompanies = [];
       }
       candidate.followingCompanies.push(new mongoose.Types.ObjectId(companyId as string));
+      if (!company.followers) {
+        company.followers = [];
+      }
+      company.followers.push(new mongoose.Types.ObjectId(candidateId as string));
+      
+      // Create Notification for the Employer
+      try {
+        await NotificationModel.create({
+          userId: companyId as string,
+          message: `${candidate.name} has started following you.`
+        });
+      } catch (err) {
+        console.error('Failed to create follow notification:', err);
+      }
     }
 
+    company.followersCount = company.followers ? company.followers.length : 0;
+
     await candidate.save();
+    await company.save();
     const updatedCandidate = await AuthModel.findById(candidateId).select('-password -emailOtp -phoneOtp');
 
     res.status(200).json({ result: updatedCandidate });
