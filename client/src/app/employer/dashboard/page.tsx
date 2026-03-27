@@ -28,7 +28,8 @@ import {
 } from 'react-icons/fa';
 import { MdDashboard, MdMenu, MdMessage, MdSettings, MdWork } from 'react-icons/md';
 import CompanyProfile from '../Profile/page';
-import { useGetJobsByEmployerQuery, usePostJobMutation, useDeleteJobMutation } from '@/features/jobapi';
+import { useGetCompanyByIdQuery, useGetJobsByEmployerQuery, usePostJobMutation, useDeleteJobMutation } from '@/features/jobapi';
+import { useGetMessagesQuery, useSendMessageMutation } from '@/features/chatApi';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 
@@ -179,8 +180,9 @@ const EmployerDashboard = () => {
           {activeTab === 'dashboard' && <DashboardOverview user={user} />}
           {activeTab === 'myJobs' && <MyJobsSection employerId={user._id} onJobClick={(job) => setSelectedJob(job)} />}
           {activeTab === 'profile' && <CompanyProfile user={user} setUser={setUser} />}
+          {activeTab === 'messages' && <MessagesSection user={user} />}
           
-          {['applicants', 'messages', 'settings'].includes(activeTab) && (
+          {['applicants', 'settings'].includes(activeTab) && (
              <div className="flex flex-col items-center justify-center h-64 bg-white rounded-3xl border border-gray-100 shadow-sm animate-fade-in-up">
                <FaBriefcase className="text-6xl text-slate-200 mb-4" />
                <h2 className="text-xl font-bold text-[#121212] capitalize">{activeTab.replace('-', ' ')}</h2>
@@ -410,6 +412,110 @@ const JobDetailsModal = ({ job, onClose }: any) => {
           </button>
         </div>
 
+      </div>
+    </div>
+  );
+};
+
+const MessagesSection = ({ user }: { user: any }) => {
+  const { data: companyData } = useGetCompanyByIdQuery(user?._id, { skip: !user?._id });
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [messageText, setMessageText] = useState('');
+  const { data: messages = [] } = useGetMessagesQuery(
+    { user1: user?._id, user2: selectedUser?._id },
+    { skip: !selectedUser?._id, pollingInterval: 3000 }
+  );
+  const [sendMessage] = useSendMessageMutation();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!messageText.trim() || !selectedUser) return;
+    await sendMessage({ senderId: user._id, receiverId: selectedUser._id, message: messageText });
+    setMessageText('');
+  };
+
+  const followers = companyData?.sampleFollowers || [];
+
+  return (
+    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm flex h-[600px] overflow-hidden animate-fade-in-up">
+      {/* Sidebar */}
+      <div className="w-1/3 border-r border-gray-100 flex flex-col bg-white z-10">
+        <div className="p-6 border-b border-gray-100">
+          <h2 className="text-xl font-bold text-[#121212]">Messages</h2>
+          <p className="text-xs text-gray-500 mt-1">Chat with your followers</p>
+        </div>
+        <div className="overflow-y-auto flex-1 custom-scrollbar">
+          {followers.map((follower: any) => (
+            <div
+              key={follower._id}
+              onClick={() => setSelectedUser(follower)}
+              className={`p-4 flex items-center gap-3 cursor-pointer transition-colors border-b border-gray-50 hover:bg-gray-50 ${selectedUser?._id === follower._id ? 'bg-slate-50 border-l-4 border-l-[#0F172A]' : 'border-l-4 border-l-transparent'}`}
+            >
+              <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 flex-shrink-0">
+                {follower.profilePicture ? <img src={follower.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/> : follower.name?.charAt(0).toUpperCase() || 'U'}
+              </div>
+              <div className="min-w-0">
+                <h4 className="font-bold text-sm text-[#121212] truncate">{follower.name}</h4>
+                <p className="text-xs text-gray-500 truncate">{follower.headline || 'Candidate'}</p>
+              </div>
+            </div>
+          ))}
+          {followers.length === 0 && (
+            <div className="p-8 text-center text-sm text-gray-400">No followers to chat with yet.</div>
+          )}
+        </div>
+      </div>
+      {/* Chat Area */}
+      <div className="flex-1 flex flex-col bg-gray-50/50">
+        {selectedUser ? (
+          <>
+            <div className="p-6 border-b border-gray-100 bg-white flex items-center gap-4 shadow-sm z-10">
+               <div className="w-10 h-10 bg-[#0F172A] text-white rounded-full flex items-center justify-center font-bold shadow-md">
+                 {selectedUser.profilePicture ? <img src={selectedUser.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/> : selectedUser.name?.charAt(0).toUpperCase() || 'U'}
+               </div>
+               <div>
+                 <h3 className="font-bold text-[#121212]">{selectedUser.name}</h3>
+                 <p className="text-xs text-gray-500">Connected via Follow</p>
+               </div>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+              {messages.map((msg: any) => {
+                const isMine = msg.senderId === user._id;
+                return (
+                  <div key={msg._id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`px-5 py-3 rounded-2xl max-w-[75%] text-sm shadow-sm ${isMine ? 'bg-[#0F172A] text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm'}`}>
+                      {msg.message}
+                    </div>
+                  </div>
+                );
+              })}
+              <div ref={messagesEndRef} />
+            </div>
+            <div className="p-4 bg-white border-t border-gray-100 flex gap-3 items-center">
+              <input
+                type="text"
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                placeholder="Type your message..."
+                className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A]/20 transition-all"
+              />
+              <button onClick={handleSend} className="px-8 py-3 bg-[#0F172A] text-white font-bold rounded-xl text-sm hover:bg-[#1E293B] shadow-lg shadow-slate-900/20 transition-all transform hover:-translate-y-0.5">
+                Send
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
+            <MdMessage className="text-6xl text-slate-200 mb-4" />
+            <p className="text-lg font-medium text-gray-500">Your Messages</p>
+            <p className="text-sm mt-1">Select a conversation from the sidebar to start chatting.</p>
+          </div>
+        )}
       </div>
     </div>
   );

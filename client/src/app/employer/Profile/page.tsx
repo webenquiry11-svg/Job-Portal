@@ -1,15 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaBuilding, FaGlobe, FaMapMarkerAlt, FaUsers, FaEnvelope, FaPhone, FaCamera, FaPen, FaSave, FaCheckCircle, FaEye, FaEdit, FaPlus, FaTrash, FaHourglassHalf, FaTimesCircle, FaSpinner, FaBriefcase, FaTimes } from 'react-icons/fa';
 import { useUpdateProfileMutation } from '@/features/authApi';
 import { useGetCompanyByIdQuery, useGetJobsByEmployerQuery } from '@/features/jobapi';
+import { useGetMessagesQuery, useSendMessageMutation } from '@/features/chatApi';
 import toast from 'react-hot-toast';
 
 const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
   const [isPublicView, setIsPublicView] = useState(false);
   const [activePublicTab, setActivePublicTab] = useState('About');
   const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [chatUser, setChatUser] = useState<any>(null);
   const [formData, setFormData] = useState({
     gstNumber: user?.gstNumber || '',
     companyName: user?.companyName || '',
@@ -225,10 +227,13 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                                   follower.name?.charAt(0).toUpperCase() || 'U'
                                 )}
                               </div>
-                              <div className="min-w-0">
+                              <div className="min-w-0 flex-1">
                                 <h4 className="font-bold text-[#121212] text-sm truncate">{follower.name}</h4>
                                 <p className="text-xs text-gray-500 truncate">{follower.headline || 'Job Seeker'}</p>
                               </div>
+                              <button onClick={() => setChatUser(follower)} className="px-4 py-2 bg-[#0F172A] text-white rounded-xl text-xs font-bold hover:bg-slate-800 shadow-md shadow-slate-900/10 transition-all">
+                                Message
+                              </button>
                             </div>
                           ))}
                         </div>
@@ -494,10 +499,13 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                           follower.name?.charAt(0).toUpperCase() || 'U'
                         )}
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <h4 className="font-bold text-[#121212] text-sm truncate">{follower.name}</h4>
                         <p className="text-xs text-gray-500 truncate">{follower.headline || 'Job Seeker'}</p>
                       </div>
+                      <button onClick={() => setChatUser(follower)} className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-100 transition-colors">
+                        Chat
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -505,6 +513,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
             )}
         </div>
       </div>
+      {chatUser && <ChatBox currentUser={user} otherUser={chatUser} onClose={() => setChatUser(null)} />}
     </div>
   );
 }
@@ -568,6 +577,57 @@ const JobDetailsModal = ({ job, onClose }: any) => {
           </button>
         </div>
 
+      </div>
+    </div>
+  );
+};
+
+const ChatBox = ({ currentUser, otherUser, onClose }: any) => {
+  const [messageText, setMessageText] = useState('');
+  const { data: messages = [] } = useGetMessagesQuery(
+    { user1: currentUser._id, user2: otherUser._id },
+    { pollingInterval: 3000, skip: !otherUser._id }
+  );
+  const [sendMessage] = useSendMessageMutation();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!messageText.trim()) return;
+    await sendMessage({ senderId: currentUser._id, receiverId: otherUser._id, message: messageText });
+    setMessageText('');
+  };
+
+  return (
+    <div className="fixed bottom-6 right-6 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden flex flex-col h-[400px] animate-fade-in-up">
+      <div className="bg-[#0F172A] p-4 flex items-center justify-between text-white shadow-md z-10">
+        <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-sm">
+              {otherUser.profilePicture ? <img src={otherUser.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/> : (otherUser.name?.charAt(0) || 'U')}
+            </div>
+            <div className="font-bold text-sm truncate">{otherUser.name || otherUser.companyName}</div>
+        </div>
+        <button onClick={onClose} className="text-gray-300 hover:text-white p-1"><FaTimes /></button>
+      </div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 custom-scrollbar">
+        {messages.map((msg: any) => {
+          const isMine = msg.senderId === currentUser._id;
+          return (
+            <div key={msg._id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+              <div className={`px-4 py-2.5 rounded-2xl text-xs max-w-[85%] shadow-sm ${isMine ? 'bg-[#0F172A] text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm'}`}>
+                {msg.message}
+              </div>
+            </div>
+          );
+        })}
+        <div ref={messagesEndRef} />
+      </div>
+      <div className="p-3 bg-white border-t border-gray-100 flex gap-2">
+        <input type="text" value={messageText} onChange={e => setMessageText(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} placeholder="Type a message..." className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A]/20" />
+        <button onClick={handleSend} className="px-4 py-2 bg-[#0F172A] text-white font-bold rounded-xl text-sm hover:bg-[#1E293B] transition-colors">Send</button>
       </div>
     </div>
   );

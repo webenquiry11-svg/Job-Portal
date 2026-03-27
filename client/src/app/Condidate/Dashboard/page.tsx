@@ -23,16 +23,23 @@ import {
   FaFilter,
   FaGlobe,
   FaUsers,
-  FaRss,
   FaBuilding,
   FaPlus,
-  FaCheck
+  FaCheck,
+  FaCommentDots
 } from 'react-icons/fa';
 import { MdDashboard, MdMenu, MdSettings } from 'react-icons/md';
 import CandidateProfile from '../../Condidate/CondidateProfile/page';
 import toast from 'react-hot-toast';
-import { useGetAllJobsQuery, useGetCompanyByIdQuery, useGetJobsByEmployerQuery, useGetNotificationsQuery, useMarkNotificationsAsReadMutation } from '@/features/jobapi';
+import { 
+  useGetAllJobsQuery, 
+  useGetCompanyByIdQuery, 
+  useGetJobsByEmployerQuery, 
+  useGetNotificationsQuery, 
+  useMarkNotificationsAsReadMutation 
+} from '@/features/jobapi';
 import { useToggleFollowCompanyMutation } from '@/features/authApi';
+import { useGetMessagesQuery, useSendMessageMutation } from '@/features/chatApi';
 
 const CandidateDashboard = () => {
   const router = useRouter();
@@ -51,23 +58,23 @@ const CandidateDashboard = () => {
   const [filterIndustry, setFilterIndustry] = useState('');
   const [filterWorkMode, setFilterWorkMode] = useState('');
   const [filterExperience, setFilterExperience] = useState('');
-
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  
+  // Chat state
+  const [chatUser, setChatUser] = useState<any>(null);
 
   const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery({});
   const { data: notifications = [] } = useGetNotificationsQuery(user?._id, { skip: !user?._id });
   const [markNotificationsAsRead] = useMarkNotificationsAsReadMutation();
 
   useEffect(() => {
-    // Check for authentication and role
     const profile = localStorage.getItem('profile');
     if (profile) {
       try {
         const parsedUser = JSON.parse(profile);
         const userData = parsedUser.result || parsedUser; 
-        
         if (userData.role !== 'seeker') {
-          router.push('/'); // Redirect if not a seeker
+          router.push('/');
         } else {
           setUser(userData);
         }
@@ -76,13 +83,12 @@ const CandidateDashboard = () => {
         router.push('/');
       }
     } else {
-      router.push('/'); // Redirect if not logged in
+      router.push('/');
     }
     setIsLoading(false);
   }, [router]);
 
   useEffect(() => {
-    // Load saved jobs from local storage when the dashboard loads
     const stored = localStorage.getItem('savedJobs');
     if (stored) {
       try {
@@ -96,10 +102,8 @@ const CandidateDashboard = () => {
   const toggleSaveJob = (jobId: string) => {
     const isSaved = savedJobIds.includes(jobId);
     const updated = isSaved ? savedJobIds.filter((id) => id !== jobId) : [...savedJobIds, jobId];
-    
     setSavedJobIds(updated);
     localStorage.setItem('savedJobs', JSON.stringify(updated));
-    
     if (isSaved) {
       toast.success('Job removed from saved list');
     } else {
@@ -138,11 +142,9 @@ const CandidateDashboard = () => {
       job.skills?.some((s: string) => s.toLowerCase().includes(query)) ||
       job.location?.toLowerCase().includes(query)
     );
-    
     const matchesIndustry = !filterIndustry || job.industry === filterIndustry;
     const matchesWorkMode = !filterWorkMode || job.workMode === filterWorkMode;
     const matchesExperience = !filterExperience || job.experience === filterExperience;
-
     return matchesSearch && matchesIndustry && matchesWorkMode && matchesExperience;
   });
 
@@ -160,18 +162,12 @@ const CandidateDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-50 font-sans text-[#121212]">
       {isSidebarOpen && (
-        <div 
-            className="fixed inset-0 bg-black/30 z-30 md:hidden"
-            onClick={() => setIsSidebarOpen(false)}
-        ></div>
+        <div className="fixed inset-0 bg-black/30 z-30 md:hidden" onClick={() => setIsSidebarOpen(false)}></div>
       )}
       
       {/* Sidebar */}
       <aside className={`bg-white border-r border-gray-100 flex-col fixed h-full z-40 shadow-[4px_0_24px_rgba(0,0,0,0.02)] transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-all duration-300 ease-in-out flex ${isSidebarCollapsed ? 'w-72 md:w-20' : 'w-72'}`}>
-        <button 
-          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
-          className="hidden md:flex absolute -right-3 top-9 w-6 h-6 bg-white border border-gray-200 rounded-full items-center justify-center text-gray-400 hover:text-[#0F172A] hover:shadow-md transition-all z-50 cursor-pointer"
-        >
+        <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="hidden md:flex absolute -right-3 top-9 w-6 h-6 bg-white border border-gray-200 rounded-full items-center justify-center text-gray-400 hover:text-[#0F172A] hover:shadow-md transition-all z-50 cursor-pointer">
           <FaChevronLeft className={`text-[10px] transition-transform duration-300 ${isSidebarCollapsed ? 'rotate-180' : ''}`} />
         </button>
 
@@ -214,7 +210,6 @@ const CandidateDashboard = () => {
               <h1 className="text-2xl font-bold text-[#121212] capitalize whitespace-nowrap">{activeTab.replace('-', ' ')}</h1>
             </div>
             
-            {/* Search Bar - Top Center */}
             <div className="flex-1 w-full md:w-auto order-last md:order-none max-w-2xl mx-auto md:px-6 relative">
               <div className="relative group flex items-center">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -228,16 +223,11 @@ const CandidateDashboard = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button 
-                  onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  title="Filter Jobs"
-                  className="absolute right-2 p-1.5 text-gray-400 hover:text-[#0F172A] hover:bg-gray-50 rounded-xl transition-all"
-                >
+                <button onClick={() => setIsFilterOpen(!isFilterOpen)} title="Filter Jobs" className="absolute right-2 p-1.5 text-gray-400 hover:text-[#0F172A] hover:bg-gray-50 rounded-xl transition-all">
                   <FaFilter />
                 </button>
               </div>
 
-              {/* Filter Dropdown */}
               {isFilterOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setIsFilterOpen(false)}></div>
@@ -246,15 +236,10 @@ const CandidateDashboard = () => {
                       <h3 className="font-bold text-[#121212]">Filter Jobs</h3>
                       <button onClick={() => setIsFilterOpen(false)} className="text-gray-400 hover:text-gray-800 transition-colors p-1"><FaTimes /></button>
                     </div>
-                    
                     <div className="space-y-4">
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Industry</label>
-                        <select 
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A] transition-all"
-                          value={filterIndustry}
-                          onChange={(e) => setFilterIndustry(e.target.value)}
-                        >
+                        <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A] transition-all" value={filterIndustry} onChange={(e) => setFilterIndustry(e.target.value)}>
                           <option value="">All Industries</option>
                           <option value="IT Services">IT Services</option>
                           <option value="Advertising">Advertising</option>
@@ -263,11 +248,7 @@ const CandidateDashboard = () => {
                       </div>
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Work Mode</label>
-                        <select 
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A] transition-all"
-                          value={filterWorkMode}
-                          onChange={(e) => setFilterWorkMode(e.target.value)}
-                        >
+                        <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A] transition-all" value={filterWorkMode} onChange={(e) => setFilterWorkMode(e.target.value)}>
                           <option value="">All Modes</option>
                           <option value="Remote">Remote</option>
                           <option value="On-site">On-site</option>
@@ -276,30 +257,16 @@ const CandidateDashboard = () => {
                       </div>
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Experience Level</label>
-                        <select 
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A] transition-all"
-                          value={filterExperience}
-                          onChange={(e) => setFilterExperience(e.target.value)}
-                        >
+                        <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A] transition-all" value={filterExperience} onChange={(e) => setFilterExperience(e.target.value)}>
                           <option value="">Any Experience</option>
                           <option value="Entry Level (0-2 Yrs)">Entry Level (0-2 Yrs)</option>
                           <option value="Mid Level (3-5 Yrs)">Mid Level (3-5 Yrs)</option>
                           <option value="Senior Level (5+ Yrs)">Senior Level (5+ Yrs)</option>
                         </select>
                       </div>
-                      
                       <div className="pt-2 flex gap-3">
-                        <button onClick={() => {
-                          setFilterIndustry('');
-                          setFilterWorkMode('');
-                          setFilterExperience('');
-                          setIsFilterOpen(false);
-                        }} className="flex-1 py-2.5 bg-gray-50 text-gray-600 font-bold text-sm rounded-xl hover:bg-gray-100 transition-colors">
-                          Clear
-                        </button>
-                        <button onClick={() => setIsFilterOpen(false)} className="flex-1 py-2.5 bg-[#0F172A] text-white font-bold text-sm rounded-xl hover:bg-slate-800 transition-colors shadow-md shadow-slate-900/10">
-                          Apply
-                        </button>
+                        <button onClick={() => { setFilterIndustry(''); setFilterWorkMode(''); setFilterExperience(''); setIsFilterOpen(false); }} className="flex-1 py-2.5 bg-gray-50 text-gray-600 font-bold text-sm rounded-xl hover:bg-gray-100 transition-colors">Clear</button>
+                        <button onClick={() => setIsFilterOpen(false)} className="flex-1 py-2.5 bg-[#0F172A] text-white font-bold text-sm rounded-xl hover:bg-slate-800 transition-colors shadow-md shadow-slate-900/10">Apply</button>
                       </div>
                     </div>
                   </div>
@@ -311,10 +278,7 @@ const CandidateDashboard = () => {
             <div className="relative">
               <button onClick={handleBellClick} className="p-2.5 bg-white border border-gray-200 rounded-full text-gray-400 hover:text-[#0F172A] hover:border-slate-200 hover:shadow-md transition-all relative">
                 <FaBell size={18} />
-                {unreadCount > 0 && (
-                  <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#EF4444] rounded-full border-2 border-white flex items-center justify-center text-white text-[8px] font-bold">
-                  </span>
-                )}
+                {unreadCount > 0 && <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#EF4444] rounded-full border-2 border-white flex items-center justify-center text-white text-[8px] font-bold"></span>}
               </button>
               {isNotificationOpen && (
                 <>
@@ -345,10 +309,7 @@ const CandidateDashboard = () => {
             </div>
 
             <div className="relative">
-              <button 
-                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group focus:outline-none"
-              >
+              <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)} className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group focus:outline-none">
                  <div className="w-9 h-9 bg-[#0F172A] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-inner overflow-hidden">
                    {user?.profilePicture ? <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" /> : user?.name?.charAt(0).toUpperCase() || 'U'}
                  </div>
@@ -357,7 +318,6 @@ const CandidateDashboard = () => {
                    <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wide mt-0.5">Job Seeker</p>
                  </div>
               </button>
-
               {isProfileMenuOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setIsProfileMenuOpen(false)}></div>
@@ -387,17 +347,13 @@ const CandidateDashboard = () => {
                 <h2 className="text-3xl font-bold text-[#121212]">Welcome back, {user?.name?.split(' ')[0]}! 👋</h2>
                 <p className="text-gray-500 mt-2 text-sm">Here is what's happening with your job applications today.</p>
               </div>
-
-              {/* Stats Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard icon={<FaBriefcase />} label="Applied Jobs" value="12" color="bg-blue-100 text-blue-600" />
                 <StatCard icon={<FaBookmark />} label="Saved Jobs" value={savedJobIds.length.toString()} color="bg-amber-100 text-amber-500" />
                 <StatCard icon={<FaClock />} label="Interviews" value="2" color="bg-green-100 text-green-600" />
                 <StatCard icon={<FaEye />} label="Profile Views" value="84" color="bg-purple-100 text-purple-600" />
               </div>
-
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                {/* Recent Applications Column */}
                 <div className="xl:col-span-2 space-y-6">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xl font-bold text-[#121212]">Recent Applications</h3>
@@ -410,8 +366,6 @@ const CandidateDashboard = () => {
                     <ApplicationRow title="Full Stack Developer" company="InnovateTech" logo="I" status="Offered" date="Oct 10" />
                   </div>
                 </div>
-
-                {/* Recommended Jobs Column */}
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xl font-bold text-[#121212]">Recommended for you</h3>
@@ -431,9 +385,7 @@ const CandidateDashboard = () => {
                         />
                       ))
                     ) : (
-                      <p className="text-sm text-gray-500">
-                        {searchQuery ? "No jobs match your search criteria." : "No jobs available right now."}
-                      </p>
+                      <p className="text-sm text-gray-500">{searchQuery ? "No jobs match your search criteria." : "No jobs available right now."}</p>
                     )}
                   </div>
                 </div>
@@ -463,11 +415,7 @@ const CandidateDashboard = () => {
                 ) : (
                   <div className="col-span-full py-16 flex flex-col items-center justify-center bg-white rounded-3xl border border-dashed border-gray-200">
                     <FaSearch className="text-5xl text-gray-200 mb-4" />
-                    <p className="text-gray-500 font-medium">
-                      {searchQuery || filterIndustry || filterWorkMode || filterExperience 
-                        ? "No jobs match your search criteria." 
-                        : "No jobs available right now."}
-                    </p>
+                    <p className="text-gray-500 font-medium">{searchQuery || filterIndustry || filterWorkMode || filterExperience ? "No jobs match your search criteria." : "No jobs available right now."}</p>
                   </div>
                 )}
               </div>
@@ -495,11 +443,7 @@ const CandidateDashboard = () => {
                   <div className="col-span-full py-16 flex flex-col items-center justify-center bg-white rounded-3xl border border-dashed border-gray-200">
                     <FaBookmark className="text-5xl text-gray-200 mb-4" />
                     <p className="text-gray-500 font-medium">You haven't saved any jobs yet.</p>
-                    <button onClick={() => { 
-                      setActiveTab('dashboard'); 
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                      setTimeout(() => searchInputRef.current?.focus(), 300);
-                    }} className="mt-4 px-6 py-2 bg-[#0F172A] text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20">Explore Jobs</button>
+                    <button onClick={() => { setActiveTab('dashboard'); window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => searchInputRef.current?.focus(), 300); }} className="mt-4 px-6 py-2 bg-[#0F172A] text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20">Explore Jobs</button>
                   </div>
                 )}
               </div>
@@ -507,7 +451,6 @@ const CandidateDashboard = () => {
           )}
 
           {activeTab === 'profile' && <CandidateProfile user={user} setUser={setUser} />}
-
           {activeTab !== 'dashboard' && activeTab !== 'explore' && activeTab !== 'profile' && activeTab !== 'saved' && (
              <div className="flex flex-col items-center justify-center h-64 bg-white rounded-3xl border border-gray-100 shadow-sm animate-fade-in-up">
                <FaBriefcase className="text-6xl text-slate-200 mb-4" />
@@ -517,6 +460,7 @@ const CandidateDashboard = () => {
           )}
         </div>
       </main>
+
       {selectedJob && <JobDetailsModal job={selectedJob} onClose={() => setSelectedJob(null)} />}
       {selectedCompanyId && (
         <CompanyProfileModal 
@@ -525,39 +469,31 @@ const CandidateDashboard = () => {
           onJobClick={(job: any) => setSelectedJob(job)} 
           user={user}
           setUser={setUser}
+          setChatUser={setChatUser}
         />
       )}
+      
+      {/* Chat Box Component */}
+      {chatUser && <ChatBox currentUser={user} otherUser={chatUser} onClose={() => setChatUser(null)} />}
     </div>
   );
 }
 
 const SidebarItem = ({ icon, label, active, onClick, badge, collapsed }: any) => (
-  <button 
-    onClick={onClick}
-    title={collapsed ? label : undefined}
-    className={`w-full flex items-center justify-between py-3.5 rounded-xl transition-all duration-200 font-medium group relative ${collapsed ? 'md:px-0 md:justify-center px-4' : 'px-4'} ${active ? 'bg-[#0F172A] text-white shadow-lg shadow-slate-900/30' : 'text-gray-500 hover:bg-slate-50 hover:text-[#0F172A]'}`}
-  >
+  <button onClick={onClick} title={collapsed ? label : undefined} className={`w-full flex items-center justify-between py-3.5 rounded-xl transition-all duration-200 font-medium group relative ${collapsed ? 'md:px-0 md:justify-center px-4' : 'px-4'} ${active ? 'bg-[#0F172A] text-white shadow-lg shadow-slate-900/30' : 'text-gray-500 hover:bg-slate-50 hover:text-[#0F172A]'}`}>
     <div className={`flex items-center ${collapsed ? 'md:gap-0 gap-3' : 'gap-3'}`}>
         <span className={`text-xl flex-shrink-0 ${active ? 'text-white' : 'text-gray-400 group-hover:text-[#0F172A]'}`}>{icon}</span>
         <span className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${collapsed ? 'md:max-w-0 md:opacity-0' : 'max-w-[200px] opacity-100'}`}>{label}</span>
     </div>
-    {badge && (
-        <span className={`text-xs font-bold px-2 py-0.5 rounded-md whitespace-nowrap transition-all duration-300 ${collapsed ? 'md:hidden' : ''} ${active ? 'bg-white/20 text-white' : 'bg-slate-200 text-[#0F172A]'}`}>
-            {badge}
-        </span>
-    )}
-    {badge && collapsed && (
-        <span className="hidden md:block absolute top-3 right-3 w-2 h-2 rounded-full bg-red-500 border border-white"></span>
-    )}
+    {badge && <span className={`text-xs font-bold px-2 py-0.5 rounded-md whitespace-nowrap transition-all duration-300 ${collapsed ? 'md:hidden' : ''} ${active ? 'bg-white/20 text-white' : 'bg-slate-200 text-[#0F172A]'}`}>{badge}</span>}
+    {badge && collapsed && <span className="hidden md:block absolute top-3 right-3 w-2 h-2 rounded-full bg-red-500 border border-white"></span>}
   </button>
 );
 
 const StatCard = ({ icon, label, value, color }: any) => (
   <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
     <div className="flex items-start justify-between mb-4">
-      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl ${color}`}>
-        {icon}
-      </div>
+      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl ${color}`}>{icon}</div>
     </div>
     <h3 className="text-3xl font-bold text-[#121212] mb-1">{value}</h3>
     <p className="text-sm font-medium text-gray-400">{label}</p>
@@ -570,13 +506,10 @@ const ApplicationRow = ({ title, company, logo, status, date }: any) => {
   if (status === 'Interview') statusConfig = { color: 'text-amber-600 bg-amber-50 border-amber-200', icon: <FaClock /> };
   if (status === 'Rejected') statusConfig = { color: 'text-red-600 bg-red-50 border-red-200', icon: <FaTimesCircle /> };
   if (status === 'Offered') statusConfig = { color: 'text-green-600 bg-green-50 border-green-200', icon: <FaCheckCircle /> };
-
   return (
       <div className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow group">
           <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-xl font-bold text-[#0F172A] group-hover:bg-[#0F172A] group-hover:text-white transition-colors">
-                  {logo}
-              </div>
+              <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-xl font-bold text-[#0F172A] group-hover:bg-[#0F172A] group-hover:text-white transition-colors">{logo}</div>
               <div>
                   <h4 className="font-bold text-[#121212] text-sm md:text-base group-hover:text-[#0F172A] transition-colors">{title}</h4>
                   <p className="text-xs font-medium text-gray-500">{company}</p>
@@ -587,52 +520,30 @@ const ApplicationRow = ({ title, company, logo, status, date }: any) => {
                   <span className="text-[10px] font-bold text-gray-400 block mb-0.5 uppercase tracking-wider">Applied</span>
                   <span className="text-xs font-medium text-[#121212]">{date}</span>
               </div>
-              <div className={`px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg border text-[10px] md:text-xs font-bold flex items-center gap-1.5 ${statusConfig.color}`}>
-                  {statusConfig.icon} <span className="hidden sm:inline">{status}</span>
-              </div>
+              <div className={`px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg border text-[10px] md:text-xs font-bold flex items-center gap-1.5 ${statusConfig.color}`}>{statusConfig.icon} <span className="hidden sm:inline">{status}</span></div>
           </div>
       </div>
   );
 };
 
 const RecommendedJobCard = ({ job, onViewDetails, isSaved, onToggleSave, onViewCompany }: any) => {
-  const { 
-    title, 
-    employerId, 
-    location, 
-    salaryMin, 
-    salaryMax, 
-    skills 
-  } = job;
+  const { title, employerId, location, salaryMin, salaryMax, skills } = job;
   const company = employerId?.companyName || employerId?.name || 'Company';
   const logo = company.charAt(0).toUpperCase();
   const salary = `$${salaryMin} - $${salaryMax}`;
   const tags = skills?.slice(0, 3) || [];
-
-  const handleCompanyClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (employerId?._id && onViewCompany) {
-      onViewCompany(employerId._id);
-    }
-  };
-
+  const handleCompanyClick = (e: React.MouseEvent) => { e.stopPropagation(); if (employerId?._id && onViewCompany) onViewCompany(employerId._id); };
   return (
   <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
       <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-lg font-bold text-[#0F172A] flex-shrink-0">
-                  {logo}
-              </div>
+              <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-lg font-bold text-[#0F172A] flex-shrink-0">{logo}</div>
               <div className="min-w-0">
                   <h4 className="font-bold text-[#121212] text-sm group-hover:text-[#0F172A] transition-colors truncate">{title}</h4>
-                  <span onClick={handleCompanyClick} className="text-xs font-medium text-gray-500 hover:underline hover:text-slate-800 transition-colors truncate block cursor-pointer">
-                    {company}
-                  </span>
+                  <span onClick={handleCompanyClick} className="text-xs font-medium text-gray-500 hover:underline hover:text-slate-800 transition-colors truncate block cursor-pointer">{company}</span>
               </div>
           </div>
-          <button onClick={onToggleSave} className={`transition-colors flex-shrink-0 ml-2 ${isSaved ? 'text-amber-500 hover:text-amber-600' : 'text-gray-300 hover:text-[#0F172A]'}`}>
-              <FaBookmark />
-          </button>
+          <button onClick={onToggleSave} className={`transition-colors flex-shrink-0 ml-2 ${isSaved ? 'text-amber-500 hover:text-amber-600' : 'text-gray-300 hover:text-[#0F172A]'}`}><FaBookmark /></button>
       </div>
       <div className="flex flex-col gap-2 mb-4">
           <div className="flex items-center text-xs text-gray-500"><FaMapMarkerAlt className="mr-2 flex-shrink-0" /> <span className="truncate">{location}</span></div>
@@ -643,91 +554,47 @@ const RecommendedJobCard = ({ job, onViewDetails, isSaved, onToggleSave, onViewC
               <span key={i} className="text-[10px] font-bold px-2 py-1 bg-slate-50 text-slate-600 rounded-md border border-slate-100">{tag}</span>
           ))}
       </div>
-      <div className="mt-auto">
-        <button onClick={onViewDetails} className="w-full py-2.5 bg-slate-50 text-[#0F172A] font-bold text-sm rounded-xl hover:bg-[#0F172A] hover:text-white transition-colors border border-slate-100 group-hover:border-[#0F172A]">
-            View Job Details
-        </button>
-      </div>
+      <div className="mt-auto"><button onClick={onViewDetails} className="w-full py-2.5 bg-slate-50 text-[#0F172A] font-bold text-sm rounded-xl hover:bg-[#0F172A] hover:text-white transition-colors border border-slate-100 group-hover:border-[#0F172A]">View Job Details</button></div>
   </div>
 )};
 
-const JobDetailsModal = ({ job, onClose }: any) => {
-  return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-all duration-300" onClick={onClose}>
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
-        
-        <div className="p-6 md:px-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-          <h2 className="text-2xl font-bold text-[#121212] flex items-center gap-3">
-            <div className="bg-[#0F172A] p-2 rounded-xl shadow-md">
-              <FaBriefcase className="text-white text-sm" />
-            </div>
-            Job Details
-          </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-800 transition-colors bg-white p-2 rounded-full border border-gray-200 shadow-sm hover:shadow-md">
-            <FaTimes size={18} />
-          </button>
+const JobDetailsModal = ({ job, onClose }: any) => (
+  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-all duration-300" onClick={onClose}>
+    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+      <div className="p-6 md:px-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+        <h2 className="text-2xl font-bold text-[#121212] flex items-center gap-3">
+          <div className="bg-[#0F172A] p-2 rounded-xl shadow-md"><FaBriefcase className="text-white text-sm" /></div>
+          Job Details
+        </h2>
+        <button onClick={onClose} className="text-gray-400 hover:text-gray-800 transition-colors bg-white p-2 rounded-full border border-gray-200 shadow-sm hover:shadow-md"><FaTimes size={18} /></button>
+      </div>
+      <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 bg-white">
+        <h3 className="text-3xl font-bold text-[#0F172A]">{job.title}</h3>
+        <p className="text-sm font-medium text-gray-500 mt-2 flex items-center gap-2"><span className="text-gray-700">{job.employerId?.companyName || job.employerId?.name || 'Company'}</span> • <span>{job.workMode}</span> • <span>{job.location}</span></p>
+        <div className="flex flex-wrap gap-2 mt-6">
+          {job.skills && job.skills.length > 0 ? job.skills.map((s: string, i: number) => (
+            <span key={i} className="px-3 py-1 bg-gray-100 border border-gray-200 rounded-lg text-sm font-bold text-[#121212]">{s}</span>
+          )) : <span className="text-sm text-gray-400 italic">No skills specified</span>}
         </div>
-
-        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar hide-scrollbar flex-1 bg-white">
-          <h3 className="text-3xl font-bold text-[#0F172A]">{job.title}</h3>
-          <p className="text-sm font-medium text-gray-500 mt-2 flex items-center gap-2">
-            <span className="text-gray-700">{job.employerId?.companyName || job.employerId?.name || 'Company'}</span> • <span>{job.workMode}</span> • <span>{job.location}</span>
-          </p>
-          
-          <div className="flex flex-wrap gap-2 mt-6">
-            {job.skills && job.skills.length > 0 ? job.skills.map((s: string, i: number) => (
-              <span key={i} className="px-3 py-1 bg-gray-100 border border-gray-200 rounded-lg text-sm font-bold text-[#121212]">{s}</span>
-            )) : <span className="text-sm text-gray-400 italic">No skills specified</span>}
-          </div>
-
-          <div className="mt-8 pt-6 border-t border-gray-100 grid grid-cols-2 gap-6 text-sm">
-            <div>
-              <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Experience</p>
-              <p className="font-bold text-[#121212] text-base">{job.experience || 'Not specified'}</p>
-            </div>
-            <div>
-              <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Salary ({job.salaryType})</p>
-              <p className="font-bold text-[#121212] text-base">${job.salaryMin || '0'} - ${job.salaryMax || '0'}</p>
-            </div>
-          </div>
-          
-          <div className="mt-8 pt-6 border-t border-gray-100">
-            <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-2">Job Description</p>
-            <p className="text-gray-700 whitespace-pre-wrap text-sm leading-relaxed">{job.description}</p>
-          </div>
-          
-          {job.screeningQuestion && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
-              <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Screening Question</p>
-              <p className="font-semibold text-[#121212] text-sm">{job.screeningQuestion}</p>
-            </div>
-          )}
-          
-          <div className="mt-6 flex items-center gap-4">
-            {job.immediateJoiner && (
-               <span className="px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg text-xs font-bold">Immediate Joiner Required</span>
-            )}
-            <span className="text-xs font-medium text-gray-500">Contact via: <span className="font-bold text-gray-700">{job.contactPreference}</span></span>
-          </div>
-
+        <div className="mt-8 pt-6 border-t border-gray-100 grid grid-cols-2 gap-6 text-sm">
+          <div><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Experience</p><p className="font-bold text-[#121212] text-base">{job.experience || 'Not specified'}</p></div>
+          <div><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Salary ({job.salaryType})</p><p className="font-bold text-[#121212] text-base">${job.salaryMin || '0'} - ${job.salaryMax || '0'}</p></div>
         </div>
-
-        <div className="p-6 border-t border-gray-100 flex items-center justify-end bg-gray-50/50 rounded-b-3xl">
-          <button className="px-8 py-3 bg-[#0F172A] text-white font-black rounded-xl hover:bg-slate-800 shadow-lg shadow-slate-900/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
-             Apply Now <FaArrowRight />
-          </button>
-        </div>
-
+        <div className="mt-8 pt-6 border-t border-gray-100"><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-2">Job Description</p><p className="text-gray-700 whitespace-pre-wrap text-sm leading-relaxed">{job.description}</p></div>
+        {job.screeningQuestion && <div className="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100"><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Screening Question</p><p className="font-semibold text-[#121212] text-sm">{job.screeningQuestion}</p></div>}
+        <div className="mt-6 flex items-center gap-4">{job.immediateJoiner && <span className="px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg text-xs font-bold">Immediate Joiner Required</span>}<span className="text-xs font-medium text-gray-500">Contact via: <span className="font-bold text-gray-700">{job.contactPreference}</span></span></div>
+      </div>
+      <div className="p-6 border-t border-gray-100 flex items-center justify-end bg-gray-50/50 rounded-b-3xl">
+        <button className="px-8 py-3 bg-[#0F172A] text-white font-black rounded-xl hover:bg-slate-800 shadow-lg shadow-slate-900/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">Apply Now <FaArrowRight /></button>
       </div>
     </div>
-  );
-};
+  </div>
+);
 
-const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser }: any) => {
+const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser, setChatUser }: any) => {
   const { data: company, isLoading: isLoadingCompany } = useGetCompanyByIdQuery(companyId, { skip: !companyId });
   const { data: jobs = [], isLoading: isLoadingJobs } = useGetJobsByEmployerQuery(companyId, { skip: !companyId });
   const [toggleFollow, { isLoading: isFollowingLoading }] = useToggleFollowCompanyMutation();
-
   const isFollowing = user?.followingCompanies?.includes(companyId);
 
   const handleFollowToggle = async () => {
@@ -737,67 +604,24 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser }: 
       const currentProfile = JSON.parse(localStorage.getItem('profile') || '{}');
       currentProfile.result = updatedCandidate;
       localStorage.setItem('profile', JSON.stringify(currentProfile));
-
       toast.success(isFollowing ? `Unfollowed ${company.companyName}` : `Now following ${company.companyName}`);
-    } catch (error) {
-      console.error("Failed to follow/unfollow:", error);
-      toast.error('An error occurred.');
-    }
+    } catch (error) { toast.error('An error occurred.'); }
   };
 
-  if (isLoadingCompany) {
-    return (
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-        <FaSpinner className="animate-spin text-4xl text-white" />
-      </div>
-    );
-  }
-
-  if (!company) {
-    return (
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4" onClick={onClose}>
-         <div className="bg-white p-8 rounded-3xl" onClick={e => e.stopPropagation()}>
-           <h2 className="text-xl font-bold">Company not found</h2>
-           <button onClick={onClose} className="mt-4 px-4 py-2 bg-gray-200 font-bold text-sm rounded-xl">Close</button>
-         </div>
-      </div>
-    );
-  }
+  if (isLoadingCompany) return <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4"><FaSpinner className="animate-spin text-4xl text-white" /></div>;
+  if (!company) return <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4" onClick={onClose}><div className="bg-white p-8 rounded-3xl" onClick={e => e.stopPropagation()}><h2 className="text-xl font-bold">Company not found</h2><button onClick={onClose} className="mt-4 px-4 py-2 bg-gray-200 font-bold text-sm rounded-xl">Close</button></div></div>;
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-all duration-300" onClick={onClose}>
-
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
-        
-        <div className="overflow-y-auto custom-scrollbar hide-scrollbar flex-1 bg-gray-50 pb-8">
-          {/* Header/Cover */}
-          <div 
-            className="h-48 md:h-64 bg-gradient-to-r from-[#0F172A] to-slate-800 relative bg-cover bg-center flex-shrink-0"
-            style={{ backgroundImage: company.coverImage ? `url(${company.coverImage})` : undefined }}
-          >
-            <div className="absolute inset-0 bg-black/30"></div>
-            <button onClick={onClose} className="absolute top-4 right-4 bg-black/20 hover:bg-black/40 text-white p-2.5 rounded-full backdrop-blur-md transition-colors z-10">
-              <FaTimes size={18} />
-            </button>
-          </div>
-
-          {/* Profile Info */}
+        <div className="overflow-y-auto custom-scrollbar flex-1 bg-gray-50 pb-8">
+          <div className="h-48 md:h-64 bg-gradient-to-r from-[#0F172A] to-slate-800 relative bg-cover bg-center flex-shrink-0" style={{ backgroundImage: company.coverImage ? `url(${company.coverImage})` : undefined }}><div className="absolute inset-0 bg-black/30"></div><button onClick={onClose} className="absolute top-4 right-4 bg-black/20 hover:bg-black/40 text-white p-2.5 rounded-full backdrop-blur-md transition-colors z-10"><FaTimes size={18} /></button></div>
           <div className="px-6 md:px-10">
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-8 -mt-12 relative z-10">
               <div className="flex flex-col md:flex-row gap-6 items-start justify-between">
                 <div className="flex flex-col md:flex-row gap-6 items-start flex-1">
-                  <div className="w-24 h-24 md:w-28 md:h-28 bg-white rounded-2xl p-1.5 shadow-lg -mt-16 flex-shrink-0 border border-gray-100">
-                    <div className="w-full h-full bg-slate-50 rounded-xl flex items-center justify-center text-4xl font-bold text-[#0F172A] overflow-hidden">
-                      {company.profilePicture ? (
-                        <img src={company.profilePicture} alt={company.companyName} className="w-full h-full object-cover" />
-                      ) : (
-                        company.companyName?.charAt(0).toUpperCase() || 'C'
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex-1 mt-2 md:mt-0">
-                    <h1 className="text-2xl md:text-3xl font-bold text-[#121212]">{company.companyName}</h1>
-                    <p className="text-gray-500 text-sm md:text-base mt-1 font-medium">{company.tagline || 'Leading the way in innovation.'}</p>
+                  <div className="w-24 h-24 md:w-28 md:h-28 bg-white rounded-2xl p-1.5 shadow-lg -mt-16 flex-shrink-0 border border-gray-100"><div className="w-full h-full bg-slate-50 rounded-xl flex items-center justify-center text-4xl font-bold text-[#0F172A] overflow-hidden">{company.profilePicture ? <img src={company.profilePicture} alt={company.companyName} className="w-full h-full object-cover" /> : company.companyName?.charAt(0).toUpperCase() || 'C'}</div></div>
+                  <div className="flex-1 mt-2 md:mt-0"><h1 className="text-2xl md:text-3xl font-bold text-[#121212]">{company.companyName}</h1><p className="text-gray-500 text-sm md:text-base mt-1 font-medium">{company.tagline || 'Leading the way in innovation.'}</p>
                     <div className="flex flex-wrap items-center gap-3 mt-4 text-xs font-medium text-gray-500">
                       {company.location && <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100"><FaMapMarkerAlt className="text-[#0F172A]" /> {company.location}</span>}
                       {company.industry && <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100"><FaBuilding className="text-[#0F172A]" /> {company.industry}</span>}
@@ -806,109 +630,87 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser }: 
                     </div>
                   </div>
                 </div>
-
-                <div className="mt-4 md:mt-0 flex-shrink-0 w-full md:w-auto">
-                  <button 
-                    onClick={handleFollowToggle}
-                    disabled={isFollowingLoading}
-                    className={`w-full md:w-auto px-6 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-70 ${
-                      isFollowing 
-                        ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200' 
-                        : 'bg-[#0F172A] text-white hover:bg-slate-800 shadow-lg shadow-slate-900/20'
-                    }`}
-                  >
+                <div className="mt-4 md:mt-0 flex-shrink-0 w-full md:w-auto flex flex-col sm:flex-row gap-3">
+                  <button onClick={handleFollowToggle} disabled={isFollowingLoading} className={`w-full md:w-auto px-6 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-70 ${isFollowing ? 'bg-gray-100 text-gray-600 border border-gray-200' : 'bg-[#0F172A] text-white shadow-lg shadow-slate-900/20'}`}>
                     {isFollowingLoading ? <FaSpinner className="animate-spin" /> : (isFollowing ? <><FaCheck /> Following</> : <><FaPlus /> Follow</>)}
                   </button>
-                </div>
-                <div className="mt-4 md:mt-0 flex-shrink-0 w-full md:w-auto text-sm text-gray-500 font-medium">
-                  <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                    <FaUsers className="text-[#0F172A]" /> {company.followersCount || 0} Followers
-                  </span>
-                </div>
-              </div>
-            </div>
-
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 space-y-8">
-                <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-                  <h2 className="text-xl font-bold text-[#121212] mb-4">About Us</h2>
-                  <p className="text-gray-600 leading-relaxed whitespace-pre-wrap text-sm md:text-base">{company.description || 'No description available for this company.'}</p>
-                </div>
-
-                <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-                  <h2 className="text-xl font-bold text-[#121212] mb-6">Open Positions ({jobs.length})</h2>
-                  {isLoadingJobs ? (
-                    <div className="flex items-center justify-center py-8">
-                      <FaSpinner className="animate-spin text-2xl text-gray-300" />
-                    </div>
-                  ) : jobs.length > 0 ? (
-                    <div className="space-y-4">
-                      {jobs.map((job: any) => (
-                        <div key={job._id} className="bg-gray-50 rounded-2xl p-5 border border-gray-100 hover:border-gray-300 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
-                          <div>
-                            <h3 className="font-bold text-[#121212]">{job.title}</h3>
-                            <p className="text-xs text-gray-500 mt-1">{job.location} • {job.workMode} • ${job.salaryMin}-${job.salaryMax}</p>
-                          </div>
-                          <button 
-                            onClick={() => { onClose(); onJobClick(job); }}
-                            className="px-5 py-2 bg-white border border-gray-200 text-[#0F172A] text-sm font-bold rounded-xl hover:bg-gray-100 shadow-sm transition-colors whitespace-nowrap"
-
-                          >
-                            View Details
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-500 text-sm text-center py-4">No open positions at the moment.</p>
+                  {isFollowing && (
+                    <button onClick={() => setChatUser(company)} className="w-full md:w-auto px-6 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200">
+                      <FaCommentDots /> Message
+                    </button>
                   )}
                 </div>
               </div>
-
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 space-y-8">
+                <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8"><h2 className="text-xl font-bold text-[#121212] mb-4">About Us</h2><p className="text-gray-600 leading-relaxed whitespace-pre-wrap text-sm md:text-base">{company.description || 'No description available.'}</p></div>
+                <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8"><h2 className="text-xl font-bold text-[#121212] mb-6">Open Positions ({jobs.length})</h2>
+                  {isLoadingJobs ? <div className="flex items-center justify-center py-8"><FaSpinner className="animate-spin text-2xl text-gray-300" /></div> : jobs.length > 0 ? (
+                    <div className="space-y-4">{jobs.map((job: any) => (<div key={job._id} className="bg-gray-50 rounded-2xl p-5 border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4"><div><h3 className="font-bold text-[#121212]">{job.title}</h3><p className="text-xs text-gray-500 mt-1">{job.location} • {job.workMode} • ${job.salaryMin}-${job.salaryMax}</p></div><button onClick={() => { onClose(); onJobClick(job); }} className="px-5 py-2 bg-white border border-gray-200 text-[#0F172A] text-sm font-bold rounded-xl hover:bg-gray-100 shadow-sm transition-colors whitespace-nowrap">View Details</button></div>))}</div>
+                  ) : <p className="text-gray-500 text-sm text-center py-4">No open positions.</p>}
+                </div>
+              </div>
               <div className="space-y-8">
-                {company.specialties && (
-                  <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-                    <h2 className="text-xl font-bold text-[#121212] mb-4">Specialties</h2>
-                    <div className="flex flex-wrap gap-2">
-                      {company.specialties.split(',').map((s: string, i: number) => (
-                        <span key={i} className="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700">
-                          {s.trim()}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {company.sampleFollowers && company.sampleFollowers.length > 0 && (
-                  <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-                    <h2 className="text-xl font-bold text-[#121212] mb-6">People Also Following</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {company.sampleFollowers.map((follower: any) => (
-                        <div key={follower._id} className="flex items-center gap-3 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                          <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-[#0F172A] overflow-hidden">
-                            {follower.profilePicture ? (
-                              <img src={follower.profilePicture} alt={follower.name} className="w-full h-full object-cover" />
-                            ) : (
-                              follower.name?.charAt(0).toUpperCase() || 'U'
-                            )}
-                          </div>
-                          <div>
-                            <h4 className="font-bold text-[#121212] text-sm">{follower.name}</h4>
-                            <p className="text-xs text-gray-500 truncate">{follower.headline || 'Job Seeker'}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {company.specialties && <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8"><h2 className="text-xl font-bold text-[#121212] mb-4">Specialties</h2><div className="flex flex-wrap gap-2">{company.specialties.split(',').map((s: string, i: number) => (<span key={i} className="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700">{s.trim()}</span>))}</div></div>}
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  );
+};
 
+// --- Chat Box Component ---
+const ChatBox = ({ currentUser, otherUser, onClose }: any) => {
+  const [messageText, setMessageText] = useState('');
+  const { data: messages = [] } = useGetMessagesQuery(
+    { user1: currentUser._id, user2: otherUser._id },
+    { pollingInterval: 3000, skip: !otherUser._id }
+  );
+  const [sendMessage] = useSendMessageMutation();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!messageText.trim()) return;
+    await sendMessage({ senderId: currentUser._id, receiverId: otherUser._id, message: messageText });
+    setMessageText('');
+  };
+
+  return (
+    <div className="fixed bottom-6 right-6 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 z-[60] overflow-hidden flex flex-col h-[400px] animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-[#0F172A] p-4 flex items-center justify-between text-white shadow-md z-10">
+        <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-sm">
+              {otherUser.profilePicture ? <img src={otherUser.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/> : (otherUser.name?.charAt(0) || otherUser.companyName?.charAt(0) || 'U')}
+            </div>
+            <div className="font-bold text-sm truncate">{otherUser.name || otherUser.companyName}</div>
+        </div>
+        <button onClick={onClose} className="text-gray-300 hover:text-white p-1"><FaTimes /></button>
+      </div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 custom-scrollbar">
+        {messages.map((msg: any) => {
+          const isMine = msg.senderId === currentUser._id;
+          return (
+            <div key={msg._id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+              <div className={`px-4 py-2.5 rounded-2xl text-xs max-w-[85%] shadow-sm ${isMine ? 'bg-[#0F172A] text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm'}`}>
+                {msg.message}
+              </div>
+            </div>
+          );
+        })}
+        <div ref={messagesEndRef} />
+      </div>
+      <div className="p-3 bg-white border-t border-gray-100 flex gap-2">
+        <input type="text" value={messageText} onChange={e => setMessageText(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} placeholder="Type a message..." className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A]/20" />
+        <button onClick={handleSend} className="px-4 py-2 bg-[#0F172A] text-white font-bold rounded-xl text-sm hover:bg-[#1E293B] transition-colors">Send</button>
+      </div>
+    </div>
   );
 };
 
