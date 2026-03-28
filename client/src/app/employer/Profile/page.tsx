@@ -95,13 +95,13 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
       <div className="max-w-6xl mx-auto space-y-6 animate-fade-in-up">
         {/* Banner & Header */}
         <div className="relative rounded-3xl overflow-hidden shadow-xl bg-white border border-gray-100 group">
-          <div className="h-48 bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#334155] relative overflow-hidden">
+          <div className="h-48 bg-gradient-to-r from-[#0B0C10] via-[#1F2833] to-[#2A3441] relative overflow-hidden">
               <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
           </div>
           
           <div className="px-8 pb-8 pt-16 relative">
               <div className="absolute -top-12 left-8 p-1.5 bg-white rounded-2xl shadow-lg">
-                  <div className="w-28 h-28 bg-gray-100 rounded-xl flex items-center justify-center text-4xl font-bold text-[#0F172A] relative overflow-hidden border border-gray-100">
+                  <div className="w-28 h-28 bg-gray-100 rounded-xl flex items-center justify-center text-4xl font-bold text-[#0B0C10] relative overflow-hidden border border-gray-100">
                     {formData.companyName.charAt(0).toUpperCase()}
                   </div>
               </div>
@@ -128,7 +128,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                   </div>
                   <button 
                       onClick={() => setIsPublicView(false)}
-                      className="px-6 py-2.5 bg-[#121212] hover:bg-black text-white font-bold rounded-full transition-all shadow-lg shadow-slate-900/20 text-sm flex items-center gap-2 shrink-0"
+                      className="px-6 py-2.5 bg-[#0B0C10] hover:bg-[#1F2833] text-[#FACC15] font-bold rounded-full transition-all shadow-lg shadow-black/20 text-sm flex items-center gap-2 shrink-0"
                   >
                       <FaEdit /> Edit Profile
                   </button>
@@ -141,7 +141,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                 <button 
                   key={tab} 
                   onClick={() => setActivePublicTab(tab)}
-                  className={`py-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${activePublicTab === tab ? 'border-[#0F172A] text-[#0F172A]' : 'border-transparent text-gray-500 hover:text-[#121212]'}`}
+                  className={`py-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${activePublicTab === tab ? 'border-[#FACC15] text-[#0B0C10]' : 'border-transparent text-gray-500 hover:text-[#0B0C10]'}`}
                 >
                     {tab}
                 </button>
@@ -169,7 +169,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                         <div className="space-y-6">
                             {formData.commitments.map((item: any, i: number) => (
                                 <div key={i} className="flex gap-4">
-                                    <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 text-[#0F172A]">
+                                    <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 text-[#0B0C10]">
                                         <FaBuilding />
                                     </div>
                                     <div>
@@ -200,7 +200,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                               </div>
                               <button 
                                 onClick={() => setSelectedJob(job)}
-                                className="px-5 py-2 bg-white border border-gray-200 text-[#0F172A] text-sm font-bold rounded-xl hover:bg-gray-100 shadow-sm transition-colors whitespace-nowrap"
+                                className="px-5 py-2 bg-white border border-gray-200 text-[#0B0C10] text-sm font-bold rounded-xl hover:bg-[#FACC15] hover:border-[#FACC15] shadow-sm transition-colors whitespace-nowrap"
                               >
                                 View Details
                               </button>
@@ -220,7 +220,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           {companyData.sampleFollowers.map((follower: any) => (
                             <div key={follower._id} className="flex items-center gap-3 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-[#0F172A] overflow-hidden flex-shrink-0">
+                              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-[#0B0C10] overflow-hidden flex-shrink-0">
                                 {follower.profilePicture ? (
                                   <img src={follower.profilePicture} alt={follower.name} className="w-full h-full object-cover" />
                                 ) : (
@@ -231,7 +231,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                                 <h4 className="font-bold text-[#121212] text-sm truncate">{follower.name}</h4>
                                 <p className="text-xs text-gray-500 truncate">{follower.headline || 'Job Seeker'}</p>
                               </div>
-                              <button onClick={() => setChatUser(follower)} className="px-4 py-2 bg-[#0F172A] text-white rounded-xl text-xs font-bold hover:bg-slate-800 shadow-md shadow-slate-900/10 transition-all">
+                              <button onClick={() => setChatUser(follower)} className="px-4 py-2 bg-[#0B0C10] text-[#FACC15] rounded-xl text-xs font-bold hover:bg-[#1F2833] shadow-md shadow-black/10 transition-all">
                                 Message
                               </button>
                             </div>
@@ -251,7 +251,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                     <div className="space-y-5">
                         <div>
                             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Website</h4>
-                            <a href={formData.website} target="_blank" className="text-[#0F172A] font-semibold hover:underline text-sm truncate block">{formData.website || 'http://www.thoughtworks.com'}</a>
+                            <a href={formData.website} target="_blank" className="text-[#0B0C10] font-semibold hover:text-[#EAB308] hover:underline text-sm truncate block">{formData.website || 'http://www.thoughtworks.com'}</a>
                         </div>
                         <div>
                             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Industry</h4>
@@ -285,7 +285,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
     <div className="max-w-5xl mx-auto space-y-8 animate-fade-in-up">
       {/* Banner & Header */}
       <div className="relative rounded-3xl overflow-hidden shadow-xl bg-white border border-gray-100 group">
-        <div className="h-48 bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#334155] relative overflow-hidden">
+        <div className="h-48 bg-gradient-to-r from-[#0B0C10] via-[#1F2833] to-[#2A3441] relative overflow-hidden">
             <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
             <div className="absolute bottom-4 right-6">
                 <button className="bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-white/30 transition-all">
@@ -296,7 +296,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
         
         <div className="px-8 pb-8 pt-16 relative">
             <div className="absolute -top-16 left-8 p-1.5 bg-white rounded-3xl shadow-lg">
-                <div className="w-32 h-32 bg-gray-100 rounded-2xl flex items-center justify-center text-5xl font-bold text-[#0F172A] relative overflow-hidden group/avatar cursor-pointer">
+                <div className="w-32 h-32 bg-[#0B0C10] rounded-2xl flex items-center justify-center text-5xl font-bold text-[#FACC15] relative overflow-hidden group/avatar cursor-pointer border-4 border-white shadow-xl">
                 {formData.companyName.charAt(0).toUpperCase()}
                     <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity">
                         <FaCamera className="text-white text-2xl mb-1" />
@@ -310,9 +310,9 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                     <h1 className="text-3xl font-bold text-[#121212]">{formData.companyName || 'Your Company Name'}</h1>
                     <p className="text-lg text-gray-600 max-w-2xl leading-relaxed mt-1">{formData.tagline || 'Add a tagline to describe your company'}</p>
                     <div className="flex items-center gap-4 mt-2 text-sm text-gray-500 font-medium">
-                        <span className="flex items-center gap-1.5"><FaBuilding className="text-[#0F172A]" /> {formData.industry || 'Tech Industry'}</span>
-                        <span className="flex items-center gap-1.5"><FaMapMarkerAlt className="text-[#0F172A]" /> {formData.location || 'Location'}</span>
-                        {companyData && <span className="flex items-center gap-1.5"><FaUsers className="text-[#0F172A]" /> {companyData?.followersCount || 0} Followers</span>}
+                        <span className="flex items-center gap-1.5"><FaBuilding className="text-[#0B0C10]" /> {formData.industry || 'Tech Industry'}</span>
+                        <span className="flex items-center gap-1.5"><FaMapMarkerAlt className="text-[#0B0C10]" /> {formData.location || 'Location'}</span>
+                        {companyData && <span className="flex items-center gap-1.5"><FaUsers className="text-[#0B0C10]" /> {companyData?.followersCount || 0} Followers</span>}
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -323,14 +323,14 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                     )}
                     <button 
                         onClick={() => setIsPublicView(true)}
-                        className="px-4 py-3 bg-white border border-gray-200 text-gray-600 font-bold rounded-xl transition-all text-sm flex items-center gap-2 hover:bg-slate-50 hover:text-[#121212]"
+                        className="px-4 py-3 bg-white border border-gray-200 text-gray-600 font-bold rounded-xl transition-all text-sm flex items-center gap-2 hover:bg-slate-50 hover:text-[#0B0C10]"
                     >
                         <FaEye /> View as Public
                     </button>
                     <button 
                         onClick={handleSubmit} 
                         disabled={isLoading}
-                        className="px-6 py-3 bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold rounded-xl transition-all shadow-lg shadow-slate-900/20 text-sm flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:translate-y-0"
+                        className="px-6 py-3 bg-[#FACC15] hover:bg-[#EAB308] text-[#0B0C10] font-bold rounded-xl transition-all shadow-lg shadow-[#FACC15]/20 text-sm flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:translate-y-0"
                     >
                         {isLoading ? 'Saving...' : <><FaSave /> Save Changes</>}
                     </button>
@@ -345,36 +345,36 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
         <div className="lg:col-span-2 space-y-8">
             <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
                 <h3 className="text-lg font-bold text-[#121212] mb-6 flex items-center gap-2">
-                    <span className="w-1 h-6 bg-[#0F172A] rounded-full"></span>
+                    <span className="w-1 h-6 bg-[#0B0C10] rounded-full"></span>
                     Company Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Company Name</label>
                         <div className="relative">
-                            <input type="text" name="companyName" value={formData.companyName} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium" placeholder="e.g. TechCorp" />
+                            <input type="text" name="companyName" value={formData.companyName} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium" placeholder="e.g. TechCorp" />
                         </div>
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Tagline</label>
-                        <input type="text" name="tagline" value={formData.tagline} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium" placeholder="e.g. Global tech consultancy..." />
+                        <input type="text" name="tagline" value={formData.tagline} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium" placeholder="e.g. Global tech consultancy..." />
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Website</label>
                         <div className="relative group">
-                            <FaGlobe className="absolute left-4 top-4 text-gray-400 group-focus-within:text-[#0F172A] transition-colors" />
-                            <input type="text" name="website" value={formData.website} onChange={handleChange} className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium" placeholder="https://..." />
+                            <FaGlobe className="absolute left-4 top-4 text-gray-400 group-focus-within:text-[#0B0C10] transition-colors" />
+                            <input type="text" name="website" value={formData.website} onChange={handleChange} className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium" placeholder="https://..." />
                         </div>
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Industry</label>
-                        <input type="text" name="industry" value={formData.industry} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium" placeholder="e.g. Software Development" />
+                        <input type="text" name="industry" value={formData.industry} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium" placeholder="e.g. Software Development" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Company Size</label>
                         <div className="relative group">
-                            <FaUsers className="absolute left-4 top-4 text-gray-400 group-focus-within:text-[#0F172A] transition-colors" />
-                            <select name="companySize" value={formData.companySize} onChange={handleChange} className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium appearance-none cursor-pointer">
+                            <FaUsers className="absolute left-4 top-4 text-gray-400 group-focus-within:text-[#0B0C10] transition-colors" />
+                            <select name="companySize" value={formData.companySize} onChange={handleChange} className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium appearance-none cursor-pointer">
                                 <option>1-10 employees</option>
                                 <option>11-50 employees</option>
                                 <option>51-200 employees</option>
@@ -385,17 +385,17 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Followers Count</label>
-                        <input type="text" name="followers" value={companyData?.followersCount || '0'} readOnly className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium" placeholder="e.g. 10K" />
+                        <input type="text" name="followers" value={companyData?.followersCount || '0'} readOnly className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium" placeholder="e.g. 10K" />
                     </div>
                 </div>
                 
                 <div className="mt-6 space-y-2">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">About Company</label>
-                    <textarea name="description" value={formData.description} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium resize-none min-h-[150px]" placeholder="Tell potential candidates about your mission, vision, and culture..."></textarea>
+                    <textarea name="description" value={formData.description} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium resize-none min-h-[150px]" placeholder="Tell potential candidates about your mission, vision, and culture..."></textarea>
                 </div>
                 <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Specialties</label>
-                    <textarea name="specialties" value={formData.specialties} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A]/50 focus:border-[#0F172A] transition-all text-sm font-medium resize-none min-h-[100px]" placeholder="e.g. Agile Development, AI, Cloud Computing..."></textarea>
+                    <textarea name="specialties" value={formData.specialties} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium resize-none min-h-[100px]" placeholder="e.g. Agile Development, Data Science..."></textarea>
                 </div>
 
                 <div className="mt-8 border-t border-gray-100 pt-8">
@@ -462,7 +462,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                       <div className="flex items-center gap-3">
                           <input type="text" name="gstNumber" value={formData.gstNumber} onChange={handleChange} className="w-full pl-4 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium" placeholder="Enter GST Number" />
                           {formData.gstVerificationStatus === 'none' && (
-                            <button onClick={handleRequestGSTVerification} disabled={isGstRequesting} className="px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <button onClick={handleRequestGSTVerification} disabled={isGstRequesting} className="px-4 py-2 bg-[#FACC15] text-[#0B0C10] text-sm font-bold rounded-xl hover:bg-[#EAB308] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                               {isGstRequesting ? 'Requesting...' : 'Verify'}
                             </button>
                           )}
@@ -503,7 +503,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                         <h4 className="font-bold text-[#121212] text-sm truncate">{follower.name}</h4>
                         <p className="text-xs text-gray-500 truncate">{follower.headline || 'Job Seeker'}</p>
                       </div>
-                      <button onClick={() => setChatUser(follower)} className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-100 transition-colors">
+                      <button onClick={() => setChatUser(follower)} className="px-3 py-1.5 bg-[#0B0C10] text-[#FACC15] rounded-lg text-xs font-bold hover:bg-[#1F2833] transition-colors">
                         Chat
                       </button>
                     </div>
@@ -525,8 +525,8 @@ const JobDetailsModal = ({ job, onClose }: any) => {
         
         <div className="p-6 md:px-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
           <h2 className="text-2xl font-bold text-[#121212] flex items-center gap-3">
-            <div className="bg-[#0F172A] p-2 rounded-xl shadow-md">
-              <FaBriefcase className="text-white text-sm" />
+            <div className="bg-[#FACC15] p-2 rounded-xl shadow-md">
+              <FaBriefcase className="text-[#0B0C10] text-sm" />
             </div>
             Job Details Preview
           </h2>
@@ -536,7 +536,7 @@ const JobDetailsModal = ({ job, onClose }: any) => {
         </div>
 
         <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar hide-scrollbar flex-1 bg-white">
-          <h3 className="text-3xl font-bold text-[#0F172A]">{job.title}</h3>
+          <h3 className="text-3xl font-bold text-[#0B0C10]">{job.title}</h3>
           <p className="text-sm font-medium text-gray-500 mt-2 flex items-center gap-2">
             <span className="text-gray-700">{job.employerId?.companyName || job.employerId?.name || 'Company'}</span> • <span>{job.workMode}</span> • <span>{job.location}</span>
           </p>
@@ -572,7 +572,7 @@ const JobDetailsModal = ({ job, onClose }: any) => {
         </div>
 
         <div className="p-6 border-t border-gray-100 flex items-center justify-end bg-gray-50/50 rounded-b-3xl">
-          <button onClick={onClose} className="px-8 py-3 bg-[#0F172A] text-white font-black rounded-xl hover:bg-slate-800 shadow-lg shadow-slate-900/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
+          <button onClick={onClose} className="px-8 py-3 bg-[#0B0C10] text-[#FACC15] font-black rounded-xl hover:bg-[#1F2833] shadow-lg shadow-black/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
              Close Preview
           </button>
         </div>
@@ -616,7 +616,7 @@ const ChatBox = ({ currentUser, otherUser, onClose }: any) => {
 
   return (
     <div className="fixed bottom-6 right-6 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden flex flex-col h-[400px] animate-fade-in-up">
-      <div className="bg-[#0F172A] p-4 flex items-center justify-between text-white shadow-md z-10">
+      <div className="bg-[#0B0C10] p-4 flex items-center justify-between text-[#FACC15] shadow-md z-10">
         <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-sm">
               {otherUser.profilePicture ? <img src={otherUser.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/> : (otherUser.name?.charAt(0) || 'U')}
@@ -630,7 +630,7 @@ const ChatBox = ({ currentUser, otherUser, onClose }: any) => {
           const isMine = String(msg.senderId) === String(currentUser._id);          
           return (
             <div key={msg._id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-              <div className={`px-4 py-2.5 rounded-2xl text-xs max-w-[85%] shadow-sm ${isMine ? 'bg-[#0F172A] text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm'}`}>
+              <div className={`px-4 py-2.5 rounded-2xl text-xs max-w-[85%] shadow-sm ${isMine ? 'bg-[#FACC15] text-[#0B0C10] rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm'}`}>
                 {msg.message}
                 {isMine && (
                   <div className="text-right text-[10px] mt-1.5 -mb-1 flex items-center justify-end gap-1.5 opacity-70">
@@ -649,8 +649,8 @@ const ChatBox = ({ currentUser, otherUser, onClose }: any) => {
         <div ref={messagesEndRef} />
       </div>
       <div className="p-3 bg-white border-t border-gray-100 flex gap-2">
-        <input type="text" value={messageText} onChange={e => setMessageText(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} placeholder="Type a message..." className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A]/20" />
-        <button onClick={handleSend} disabled={isSending} className="px-4 py-2 bg-[#0F172A] text-white font-bold rounded-xl text-sm hover:bg-[#1E293B] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+        <input type="text" value={messageText} onChange={e => setMessageText(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} placeholder="Type a message..." className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50" />
+        <button onClick={handleSend} disabled={isSending} className="px-4 py-2 bg-[#0B0C10] text-[#FACC15] font-bold rounded-xl text-sm hover:bg-[#1F2833] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
           {isSending ? '...' : 'Send'}
         </button>
       </div>

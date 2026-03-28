@@ -130,7 +130,7 @@ const EmployerDashboard = () => {
       >
         <button
           onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          className="hidden md:flex absolute -right-3 top-9 w-6 h-6 bg-white border border-gray-200 rounded-full items-center justify-center text-gray-400 hover:text-[#0F172A] hover:shadow-md transition-all z-50 cursor-pointer"
+          className="hidden md:flex absolute -right-3 top-9 w-6 h-6 bg-white border border-gray-200 rounded-full items-center justify-center text-gray-400 hover:text-[#0B0C10] hover:shadow-md transition-all z-50 cursor-pointer"
         >
           <FaChevronLeft
             className={`text-[10px] transition-transform duration-300 ${isSidebarCollapsed ? "rotate-180" : ""}`}
@@ -140,13 +140,13 @@ const EmployerDashboard = () => {
         <div
           className={`p-8 flex items-center gap-3 transition-all duration-300 ${isSidebarCollapsed ? "md:justify-center md:px-4" : ""}`}
         >
-          <div className="bg-[#0F172A] p-2.5 rounded-xl shadow-lg shadow-slate-900/20 flex-shrink-0">
-            <FaBriefcase className="text-white text-lg" />
+          <div className="bg-[#FACC15] p-2.5 rounded-xl shadow-lg shadow-[#FACC15]/20 flex-shrink-0">
+            <FaBriefcase className="text-[#0B0C10] text-lg" />
           </div>
           <span
             className={`text-xl font-bold text-[#121212] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? "md:max-w-0 md:opacity-0" : "max-w-xs opacity-100"}`}
           >
-            Job<span className="text-[#0F172A]">Portal</span>
+            Job<span className="text-[#FACC15]">Portal</span>
           </span>
         </div>
 
@@ -260,7 +260,7 @@ const EmployerDashboard = () => {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setIsSidebarOpen(true)}
-                className="md:hidden p-2.5 -ml-2 text-gray-500 hover:text-[#0F172A] hover:bg-slate-50 rounded-full"
+                className="md:hidden p-2.5 -ml-2 text-gray-500 hover:text-[#0B0C10] hover:bg-slate-50 rounded-full"
               >
                 <MdMenu size={22} />
               </button>
@@ -272,13 +272,13 @@ const EmployerDashboard = () => {
             <div className="flex items-center gap-4">
               <Link
                 href="/employer/Job post"
-                className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-[#0F172A] text-white font-bold text-sm rounded-xl shadow-lg shadow-slate-900/20 hover:bg-slate-800 transition-all"
+                className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-[#FACC15] text-[#0B0C10] font-bold text-sm rounded-xl shadow-lg shadow-[#FACC15]/20 hover:bg-[#EAB308] transition-all"
               >
                 <FaPlus /> Post New Job
               </Link>
 
               <div className="relative">
-                <button onClick={handleBellClick} className="p-2.5 bg-white border border-gray-200 rounded-full text-gray-400 hover:text-[#0F172A] hover:border-slate-200 hover:shadow-md transition-all relative">
+                <button onClick={handleBellClick} className="p-2.5 bg-white border border-gray-200 rounded-full text-gray-400 hover:text-[#0B0C10] hover:border-slate-200 hover:shadow-md transition-all relative">
                   <FaBell size={18} />
                   {unreadCount > 0 && <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#EF4444] rounded-full border-2 border-white flex items-center justify-center text-white text-[8px] font-bold"></span>}
                 </button>
@@ -306,9 +306,9 @@ const EmployerDashboard = () => {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                  className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group focus:outline-none"
+                  className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                 >
-                  <div className="w-9 h-9 bg-[#0F172A] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-inner overflow-hidden">
+                  <div className="w-9 h-9 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#FACC15] font-bold text-sm shadow-inner overflow-hidden">
                     {user?.profilePicture ? (
                       <img
                         src={user.profilePicture}
@@ -320,7 +320,7 @@ const EmployerDashboard = () => {
                     )}
                   </div>
                   <div className="hidden sm:block text-left">
-                    <p className="text-sm font-bold text-[#121212] leading-none group-hover:text-[#0F172A] transition-colors">
+                    <p className="text-sm font-bold text-[#121212] leading-none group-hover:text-[#0B0C10] transition-colors">
                       {user?.companyName || "Employer"}
                     </p>
                     <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wide mt-0.5">
@@ -349,7 +349,7 @@ const EmployerDashboard = () => {
                           setActiveTab("profile");
                           setIsProfileMenuOpen(false);
                         }}
-                        className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#0F172A] transition-colors flex items-center gap-3"
+                        className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#0B0C10] transition-colors flex items-center gap-3"
                       >
                         <FaBuilding className="text-lg" /> Company Profile
                       </button>
@@ -358,7 +358,7 @@ const EmployerDashboard = () => {
                           setActiveTab("settings");
                           setIsProfileMenuOpen(false);
                         }}
-                        className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#0F172A] transition-colors flex items-center gap-3"
+                        className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#0B0C10] transition-colors flex items-center gap-3"
                       >
                         <MdSettings className="text-lg" /> Settings
                       </button>
@@ -415,13 +415,13 @@ const SidebarItem = ({
   <button
     onClick={onClick}
     title={collapsed ? label : undefined}
-    className={`w-full flex items-center justify-between py-3.5 rounded-xl transition-all duration-200 font-medium group relative ${collapsed ? "md:px-0 md:justify-center px-4" : "px-4"} ${active ? "bg-[#0F172A] text-white shadow-lg shadow-slate-900/30" : "text-gray-500 hover:bg-slate-50 hover:text-[#0F172A]"}`}
+    className={`w-full flex items-center justify-between py-3.5 rounded-xl transition-all duration-200 font-medium group relative ${collapsed ? "md:px-0 md:justify-center px-4" : "px-4"} ${active ? "bg-[#0B0C10] text-[#FACC15] shadow-lg shadow-black/30" : "text-gray-500 hover:bg-gray-100 hover:text-[#0B0C10]"}`}
   >
     <div
       className={`flex items-center ${collapsed ? "md:gap-0 gap-3" : "gap-3"}`}
     >
       <span
-        className={`text-xl flex-shrink-0 ${active ? "text-white" : "text-gray-400 group-hover:text-[#0F172A]"}`}
+        className={`text-xl flex-shrink-0 ${active ? "text-[#FACC15]" : "text-gray-400 group-hover:text-[#0B0C10]"}`}
       >
         {icon}
       </span>
@@ -433,7 +433,7 @@ const SidebarItem = ({
     </div>
     {badge && (
       <span
-        className={`text-xs font-bold px-2 py-0.5 rounded-md whitespace-nowrap transition-all duration-300 ${collapsed ? "md:hidden" : ""} ${active ? "bg-white/20 text-white" : "bg-slate-200 text-[#0F172A]"}`}
+        className={`text-xs font-bold px-2 py-0.5 rounded-md whitespace-nowrap transition-all duration-300 ${collapsed ? "md:hidden" : ""} ${active ? "bg-[#FACC15]/20 text-[#FACC15]" : "bg-gray-200 text-[#0B0C10]"}`}
       >
         {badge}
       </span>
@@ -481,25 +481,25 @@ const DashboardOverview = ({ user }: { user: any }) => {
           icon={<FaBriefcase />}
           label="Active Jobs"
           value={jobs.length}
-          color="bg-blue-100 text-blue-600"
+          color="bg-yellow-100 text-yellow-600"
         />
         <StatCard
           icon={<FaUsers />}
           label="Total Applicants"
           value={isLoading ? "..." : totalApplicants.toString()}
-          color="bg-amber-100 text-amber-500"
+          color="bg-slate-100 text-slate-600"
         />
         <StatCard
           icon={<FaClock />}
           label="Pending Reviews"
           value="18"
-          color="bg-green-100 text-green-600"
+          color="bg-yellow-100 text-yellow-600"
         />
         <StatCard
           icon={<FaChartLine />}
           label="Profile Views"
           value="2.1k"
-          color="bg-purple-100 text-purple-600"
+          color="bg-slate-100 text-slate-600"
         />
       </div>
 
@@ -511,8 +511,8 @@ const DashboardOverview = ({ user }: { user: any }) => {
           {totalApplicants === 0 ? (
             <p className="text-sm text-gray-500">No recent applicants.</p>
           ) : (
-            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-sm font-medium text-[#0F172A]">
-              You have <span className="font-bold text-blue-600">{totalApplicants}</span> total applicant(s). Go to the <span className="font-bold">Applicants</span> tab to review them!
+            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-sm font-medium text-[#0B0C10]">
+              You have <span className="font-bold text-yellow-600">{totalApplicants}</span> total applicant(s). Go to the <span className="font-bold">Applicants</span> tab to review them!
             </div>
           )}
         </div>
@@ -573,7 +573,7 @@ const MyJobsSection = ({
         <h2 className="text-3xl font-bold text-[#121212]">My Job Postings</h2>
         <Link
           href="/employer/Job post"
-          className="px-5 py-2.5 bg-[#0F172A] text-white font-bold text-sm rounded-xl shadow-lg shadow-slate-900/20 hover:bg-slate-800 transition-all"
+          className="px-5 py-2.5 bg-[#FACC15] text-[#0B0C10] font-bold text-sm rounded-xl shadow-lg shadow-[#FACC15]/20 hover:bg-[#EAB308] transition-all"
         >
           Post New Job
         </Link>
@@ -627,7 +627,7 @@ const MyJobsSection = ({
                   <td className="p-4 text-right">
                     <button
                       onClick={() => onJobClick(job)}
-                      className="text-sm font-bold text-[#0F172A] hover:underline"
+                      className="text-sm font-bold text-[#0B0C10] hover:underline"
                     >
                       View
                     </button>
@@ -648,7 +648,7 @@ const MyJobsSection = ({
           </p>
           <Link
             href="/employer/Job post"
-            className="px-6 py-2.5 bg-[#0F172A] text-white font-bold text-sm rounded-xl shadow-lg shadow-slate-900/20 hover:bg-slate-800 transition-all"
+            className="px-6 py-2.5 bg-[#FACC15] text-[#0B0C10] font-bold text-sm rounded-xl shadow-lg shadow-[#FACC15]/20 hover:bg-[#EAB308] transition-all"
           >
             Post a Job
           </Link>
@@ -689,8 +689,8 @@ const JobDetailsModal = ({ job, onClose }: any) => {
       >
         <div className="p-6 md:px-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
           <h2 className="text-2xl font-bold text-[#121212] flex items-center gap-3">
-            <div className="bg-[#0F172A] p-2 rounded-xl shadow-md">
-              <FaBriefcase className="text-white text-sm" />
+            <div className="bg-[#FACC15] p-2 rounded-xl shadow-md">
+              <FaBriefcase className="text-[#0B0C10] text-sm" />
             </div>
             Job Details
           </h2>
@@ -703,7 +703,7 @@ const JobDetailsModal = ({ job, onClose }: any) => {
         </div>
 
         <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar hide-scrollbar flex-1 bg-white">
-          <h3 className="text-3xl font-bold text-[#0F172A]">{job.title}</h3>
+          <h3 className="text-3xl font-bold text-[#0B0C10]">{job.title}</h3>
           <p className="text-sm font-medium text-gray-500 mt-2 flex items-center gap-2">
             <span className="text-gray-700">
               {job.employerId?.companyName || job.employerId?.name || "Company"}
@@ -772,11 +772,11 @@ const JobDetailsModal = ({ job, onClose }: any) => {
           <button
             onClick={handleDelete}
             disabled={isDeleting}
-            className="px-6 py-2.5 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-all flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2.5 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-all flex items-center gap-2 text-sm disabled:opacity-50"
           >
             <FaTimes /> {isDeleting ? "Deleting..." : "Delete Job"}
           </button>
-          <button className="px-8 py-3 bg-[#0F172A] text-white font-bold rounded-xl hover:bg-slate-800 shadow-lg shadow-slate-900/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
+          <button className="px-8 py-3 bg-[#FACC15] text-[#0B0C10] font-bold rounded-xl hover:bg-[#EAB308] shadow-lg shadow-[#FACC15]/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
             <FaEdit /> Edit Job
           </button>
         </div>
@@ -856,7 +856,7 @@ const MessagesSection = ({ user }: { user: any }) => {
             <div
               key={follower._id}
               onClick={() => setSelectedUser(follower)}
-              className={`p-4 flex items-center gap-3 cursor-pointer transition-colors border-b border-gray-50 hover:bg-gray-50 ${selectedUser?._id === follower._id ? "bg-slate-50 border-l-4 border-l-[#0F172A]" : "border-l-4 border-l-transparent"}`}
+              className={`p-4 flex items-center gap-3 cursor-pointer transition-colors border-b border-gray-50 hover:bg-gray-50 ${selectedUser?._id === follower._id ? "bg-slate-50 border-l-4 border-l-[#FACC15]" : "border-l-4 border-l-transparent"}`}
             >
               <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 flex-shrink-0">
                 {follower.profilePicture ? (
@@ -891,7 +891,7 @@ const MessagesSection = ({ user }: { user: any }) => {
         {selectedUser ? (
           <>
             <div className="p-6 border-b border-gray-100 bg-white flex items-center gap-4 shadow-sm z-10">
-              <div className="w-10 h-10 bg-[#0F172A] text-white rounded-full flex items-center justify-center font-bold shadow-md">
+              <div className="w-10 h-10 bg-[#0B0C10] text-[#FACC15] rounded-full flex items-center justify-center font-bold shadow-md">
                 {selectedUser.profilePicture ? (
                   <img
                     src={selectedUser.profilePicture}
@@ -918,7 +918,7 @@ const MessagesSection = ({ user }: { user: any }) => {
                     className={`flex ${isMine ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`px-4 py-2.5 rounded-2xl max-w-[75%] text-sm shadow-sm ${isMine ? "bg-[#0F172A] text-white rounded-tr-sm" : "bg-white border border-gray-100 text-gray-800 rounded-tl-sm"}`}
+                      className={`px-4 py-2.5 rounded-2xl max-w-[75%] text-sm shadow-sm ${isMine ? "bg-[#FACC15] text-[#0B0C10] rounded-tr-sm" : "bg-white border border-gray-100 text-gray-800 rounded-tl-sm"}`}
                     >
                       {msg.message}
                       {isMine && (
@@ -949,12 +949,12 @@ const MessagesSection = ({ user }: { user: any }) => {
                 onChange={(e) => setMessageText(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 placeholder="Type your message..."
-                className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F172A]/20 transition-all"
+                className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 transition-all"
               />
               <button
                 onClick={handleSend}
                 disabled={isSending}
-                className="px-8 py-3 bg-[#0F172A] text-white font-bold rounded-xl text-sm hover:bg-[#1E293B] shadow-lg shadow-slate-900/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-8 py-3 bg-[#0B0C10] text-[#FACC15] font-bold rounded-xl text-sm hover:bg-[#1F2833] shadow-lg shadow-black/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSending ? "Sending..." : "Send"}
               </button>
@@ -1021,9 +1021,9 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
   };
 
   const columns = [
-    { id: "Applied", title: "Applied", color: "border-gray-300" },
-    { id: "Reviewing", title: "Reviewing", color: "border-blue-400" },
-    { id: "Interview", title: "Interview", color: "border-amber-400" },
+    { id: "Applied", title: "Applied", color: "border-slate-300" },
+    { id: "Reviewing", title: "Reviewing", color: "border-yellow-400" },
+    { id: "Interview", title: "Interview", color: "border-yellow-500" },
     { id: "Offered", title: "Offered", color: "border-green-400" },
     { id: "Rejected", title: "Rejected", color: "border-red-400" },
   ];
@@ -1036,7 +1036,7 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
           <select 
             value={selectedJobId} 
             onChange={(e) => setSelectedJobId(e.target.value)}
-            className="w-full sm:w-auto px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F172A]/20 font-bold text-[#121212] shadow-sm cursor-pointer"
+            className="w-full sm:w-auto px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 font-bold text-[#121212] shadow-sm cursor-pointer"
           >
             {jobs.map((job: any) => (
               <option key={job._id} value={job._id}>{job.title}</option>
@@ -1086,7 +1086,7 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
                       className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group flex flex-col gap-3 transition-all"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-[#0F172A] overflow-hidden flex-shrink-0 shadow-sm border border-gray-200">
+                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-[#0B0C10] overflow-hidden flex-shrink-0 shadow-sm border border-gray-200 group-hover:bg-[#0B0C10] group-hover:text-[#FACC15] transition-colors">
                           {applicant.profilePicture ? (
                             <img src={applicant.profilePicture.startsWith('http') ? applicant.profilePicture : `${apiUrl}/${applicant.profilePicture.replace(/\\/g, '/')}`} alt={applicant.name} className="w-full h-full object-cover" />
                           ) : (
@@ -1094,7 +1094,7 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
                           )}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="font-bold text-[#121212] group-hover:text-[#0F172A] transition-colors truncate">
+                          <div className="font-bold text-[#121212] group-hover:text-[#0B0C10] transition-colors truncate">
                             {applicant.name}
                           </div>
                           <div className="text-xs font-medium text-gray-500 truncate">
@@ -1122,15 +1122,15 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
                             href={applicant.resume.startsWith('http') ? applicant.resume : `${apiUrl}/${applicant.resume.replace(/\\/g, '/')}`}
                             onClick={(e) => e.stopPropagation()} 
                             target="_blank" 
-                            rel="noreferrer" 
-                            className="text-xs font-bold text-[#0F172A] hover:underline bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100"
+                            rel="noreferrer"
+                            className="text-xs font-bold text-[#0B0C10] hover:text-[#FACC15] hover:bg-[#0B0C10] bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 transition-colors"
                           >
                             View / Download Resume
                           </a>
                         ) : (
                           <span className="text-[10px] text-gray-400 italic">No Resume</span>
                         )}
-                        <a href={`mailto:${applicant.email}`} className="text-gray-400 hover:text-[#0F172A] p-1.5 bg-gray-50 rounded-lg transition-colors">
+                        <a href={`mailto:${applicant.email}`} className="text-gray-400 hover:text-[#0B0C10] p-1.5 bg-gray-50 rounded-lg transition-colors" onClick={(e) => e.stopPropagation()}>
                           <FaEnvelope />
                         </a>
                       </div>

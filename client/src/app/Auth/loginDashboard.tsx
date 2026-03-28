@@ -75,9 +75,9 @@ const LoginDashboard = () => {
           <div className="space-y-4">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#121212] leading-tight tracking-tight">
               Find The Job That <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0F172A] to-[#1E293B]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FACC15] to-[#EAB308]">
                 {displayText}
-                <span className="text-[#0F172A] animate-pulse">|</span>
+                <span className="text-[#FACC15] animate-pulse">|</span>
               </span>
             </h1>
             <p className="text-lg text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
@@ -112,7 +112,7 @@ const LoginDashboard = () => {
           </div>
 
           <p className="text-xs text-gray-500 text-center lg:text-left pt-4">
-            By continuing, you agree to our <a href="#" className="underline hover:text-[#0F172A]">Terms of Service</a> and <a href="#" className="underline hover:text-[#0F172A]">Privacy Policy</a>.
+            By continuing, you agree to our <a href="#" className="underline hover:text-[#EAB308]">Terms of Service</a> and <a href="#" className="underline hover:text-[#EAB308]">Privacy Policy</a>.
           </p>
         </div>
 
@@ -149,8 +149,8 @@ const LoginDashboard = () => {
             
             <div className="grid md:grid-cols-3 gap-8">
                 <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                    <div className="w-14 h-14 bg-slate-100 text-[#0F172A] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                    <div className="w-14 h-14 bg-[#0B0C10] text-[#FACC15] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                         <FaSearch size={24} />
                     </div>
                     <h3 className="text-xl font-bold text-[#121212] mb-3">1. Search Jobs</h3>
@@ -158,8 +158,8 @@ const LoginDashboard = () => {
                 </div>
 
                 <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FACC15] to-[#FBBF24] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                    <div className="w-14 h-14 bg-amber-100 text-[#FACC15] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FACC15] to-[#EAB308] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                    <div className="w-14 h-14 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                         <FaFileAlt size={24} />
                     </div>
                     <h3 className="text-xl font-bold text-[#121212] mb-3">2. Apply Easily</h3>
@@ -167,8 +167,8 @@ const LoginDashboard = () => {
                 </div>
 
                 <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#EF4444] to-[#E11D48] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                    <div className="w-14 h-14 bg-red-100 text-[#EF4444] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                    <div className="w-14 h-14 bg-[#0B0C10] text-[#FACC15] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                         <FaBell size={24} />
                     </div>
                     <h3 className="text-xl font-bold text-[#121212] mb-3">3. Get Notified</h3>
@@ -187,20 +187,20 @@ const LoginDashboard = () => {
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   {[
-                      { name: 'Development', count: '1.2k+ Jobs', icon: <FaBriefcase />, color: 'bg-slate-100 text-[#0F172A]' },
-                      { name: 'Design', count: '800+ Jobs', icon: <FaFileAlt />, color: 'bg-amber-100 text-[#FACC15]' },
-                      { name: 'Marketing', count: '600+ Jobs', icon: <FaSearch />, color: 'bg-red-100 text-[#EF4444]' },
-                      { name: 'Management', count: '400+ Jobs', icon: <FaUsers />, color: 'bg-gray-100 text-gray-600' },
-                      { name: 'Finance', count: '300+ Jobs', icon: <FaBuilding />, color: 'bg-slate-100 text-[#0F172A]' },
-                      { name: 'Customer Service', count: '900+ Jobs', icon: <FaHeadset />, color: 'bg-amber-100 text-[#FACC15]' },
-                      { name: 'Health Care', count: '500+ Jobs', icon: <FaBriefcase />, color: 'bg-red-100 text-[#EF4444]' },
-                      { name: 'Sales', count: '700+ Jobs', icon: <FaBell />, color: 'bg-gray-100 text-gray-600' },
+                      { name: 'Development', count: '1.2k+ Jobs', icon: <FaBriefcase />, color: 'bg-[#0B0C10] text-[#FACC15]' },
+                      { name: 'Design', count: '800+ Jobs', icon: <FaFileAlt />, color: 'bg-yellow-100 text-yellow-600' },
+                      { name: 'Marketing', count: '600+ Jobs', icon: <FaSearch />, color: 'bg-[#0B0C10] text-[#FACC15]' },
+                      { name: 'Management', count: '400+ Jobs', icon: <FaUsers />, color: 'bg-yellow-100 text-yellow-600' },
+                      { name: 'Finance', count: '300+ Jobs', icon: <FaBuilding />, color: 'bg-[#0B0C10] text-[#FACC15]' },
+                      { name: 'Customer Service', count: '900+ Jobs', icon: <FaHeadset />, color: 'bg-yellow-100 text-yellow-600' },
+                      { name: 'Health Care', count: '500+ Jobs', icon: <FaBriefcase />, color: 'bg-[#0B0C10] text-[#FACC15]' },
+                      { name: 'Sales', count: '700+ Jobs', icon: <FaBell />, color: 'bg-yellow-100 text-yellow-600' },
                   ].map((cat, idx) => (
                       <div key={idx} className="group p-6 bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 hover:-translate-y-1">
                           <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4 transition-transform duration-300 group-hover:scale-110 ${cat.color}`}>
                               {cat.icon}
                           </div>
-                          <h3 className="font-bold text-[#121212] text-lg mb-1 group-hover:text-[#0F172A] transition-colors">{cat.name}</h3>
+                          <h3 className="font-bold text-[#121212] text-lg mb-1 group-hover:text-[#EAB308] transition-colors">{cat.name}</h3>
                           <p className="text-sm text-gray-500">{cat.count}</p>
                       </div>
                   ))}
@@ -217,10 +217,10 @@ const LoginDashboard = () => {
             </div>
             <div className="grid md:grid-cols-2 gap-6">
                 {[
-                    { title: 'Senior Software Engineer', company: 'TechCorp', type: 'Full Time', location: 'Remote', salary: '$120k - $150k', logo: 'T', color: 'bg-[#0F172A]', tags: ['Engineering', 'Senior'] },
-                    { title: 'Product Designer', company: 'CreativeStudio', type: 'Part Time', location: 'New York', salary: '$80k - $100k', logo: 'C', color: 'bg-[#FACC15]', tags: ['Design', 'Creative'] },
-                    { title: 'Marketing Manager', company: 'GrowthInc', type: 'Full Time', location: 'London', salary: '$90k - $110k', logo: 'G', color: 'bg-[#EF4444]', tags: ['Marketing', 'Management'] },
-                    { title: 'Data Analyst', company: 'DataFlow', type: 'Contract', location: 'Remote', salary: '$60k - $80k', logo: 'D', color: 'bg-[#121212]', tags: ['Data', 'Analysis'] },
+                    { title: 'Senior Software Engineer', company: 'TechCorp', type: 'Full Time', location: 'Remote', salary: '$120k - $150k', logo: 'T', color: 'bg-[#0B0C10]', tags: ['Engineering', 'Senior'] },
+                    { title: 'Product Designer', company: 'CreativeStudio', type: 'Part Time', location: 'New York', salary: '$80k - $100k', logo: 'C', color: 'bg-yellow-400', tags: ['Design', 'Creative'] },
+                    { title: 'Marketing Manager', company: 'GrowthInc', type: 'Full Time', location: 'London', salary: '$90k - $110k', logo: 'G', color: 'bg-[#0B0C10]', tags: ['Marketing', 'Management'] },
+                    { title: 'Data Analyst', company: 'DataFlow', type: 'Contract', location: 'Remote', salary: '$60k - $80k', logo: 'D', color: 'bg-yellow-400', tags: ['Data', 'Analysis'] },
                 ].map((job, idx) => (
                     <div key={idx} className="bg-white rounded-2xl p-8 border border-gray-100 hover:border-slate-200 hover:shadow-2xl transition-all duration-300 group cursor-pointer relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity transform translate-x-4 -translate-y-4">
@@ -230,15 +230,15 @@ const LoginDashboard = () => {
                         <div className="relative z-10">
                             <div className="flex items-start justify-between mb-6">
                                 <div className="flex items-center gap-5">
-                                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-2xl shadow-lg transform group-hover:scale-105 transition-transform duration-300 ${job.color === 'bg-[#FACC15]' ? 'text-[#121212]' : 'text-white'} ${job.color}`}>
+                                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-2xl shadow-lg transform group-hover:scale-105 transition-transform duration-300 ${job.color.includes('yellow') ? 'text-[#0B0C10]' : 'text-white'} ${job.color}`}>
                                         {job.logo}
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-xl text-[#121212] group-hover:text-[#0F172A] transition-colors mb-1">{job.title}</h3>
+                                        <h3 className="font-bold text-xl text-[#121212] group-hover:text-[#EAB308] transition-colors mb-1">{job.title}</h3>
                                         <p className="text-gray-500 font-medium text-sm">{job.company}</p>
                                     </div>
                                 </div>
-                                <span className="bg-slate-50 text-[#0F172A] text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide border border-slate-200">{job.type}</span>
+                                <span className="bg-slate-50 text-[#0B0C10] text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide border border-slate-200">{job.type}</span>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4 mb-6">
@@ -253,7 +253,7 @@ const LoginDashboard = () => {
                                         <span key={i} className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition-colors">#{tag}</span>
                                     ))}
                                 </div>
-                                <button className="text-[#0F172A] font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
+                                <button className="text-[#0B0C10] font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all hover:text-[#EAB308]">
                                     Apply Now <FaArrowRight />
                                 </button>
                             </div>
@@ -262,7 +262,7 @@ const LoginDashboard = () => {
                 ))}
             </div>
              <div className="text-center mt-12">
-                <button className="px-8 py-3.5 border-2 border-gray-200 text-gray-700 font-bold rounded-full hover:border-[#0F172A] hover:text-[#0F172A] hover:bg-slate-50 transition-all duration-300">View All Jobs</button>
+                <button className="px-8 py-3.5 border-2 border-gray-200 text-gray-700 font-bold rounded-full hover:border-[#0B0C10] hover:text-[#FACC15] hover:bg-[#0B0C10] transition-all duration-300">View All Jobs</button>
               </div>
           </div>
       </div>
@@ -282,22 +282,20 @@ const LoginDashboard = () => {
                     </div>
                     <p className="text-gray-600 italic mb-6 flex-grow leading-relaxed">"I found my dream job within a week of signing up. The process was incredibly smooth and the company recommendations were spot on."</p>
                     <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
-                        <div className="w-10 h-10 bg-[#0F172A] rounded-full flex items-center justify-center text-white font-bold shadow-md text-sm">SJ</div>
+                        <div className="w-10 h-10 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#FACC15] font-bold shadow-md text-sm">SJ</div>
                         <div>
                             <h4 className="font-bold text-[#121212] text-sm">Sarah Johnson</h4>
-                            <p className="text-xs text-[#0F172A] font-medium">Software Engineer</p>
+                            <p className="text-xs text-[#0B0C10] font-medium">Software Engineer</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Card 2 */}
                 <div className="bg-gray-50 p-8 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex flex-col">
-                    <div className="mb-6">
-                        <FaQuoteLeft className="text-amber-100 text-4xl" />
-                    </div>
+                    <div className="mb-6"><FaQuoteLeft className="text-yellow-200 text-4xl" /></div>
                     <p className="text-gray-600 italic mb-6 flex-grow leading-relaxed">"As a recruiter, this platform has been a game-changer. We've found some of our best talent here. Highly recommended!"</p>
                     <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
-                        <div className="w-10 h-10 bg-[#FACC15] rounded-full flex items-center justify-center text-[#121212] font-bold shadow-md text-sm">MC</div>
+                        <div className="w-10 h-10 bg-[#FACC15] rounded-full flex items-center justify-center text-[#0B0C10] font-bold shadow-md text-sm">MC</div>
                         <div>
                             <h4 className="font-bold text-[#121212] text-sm">Michael Chen</h4>
                             <p className="text-xs text-[#FACC15] font-medium">HR Manager</p>
@@ -307,15 +305,13 @@ const LoginDashboard = () => {
 
                 {/* Card 3 */}
                 <div className="bg-gray-50 p-8 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex flex-col">
-                    <div className="mb-6">
-                        <FaQuoteLeft className="text-red-100 text-4xl" />
-                    </div>
+                    <div className="mb-6"><FaQuoteLeft className="text-slate-200 text-4xl" /></div>
                     <p className="text-gray-600 italic mb-6 flex-grow leading-relaxed">"The interface is so user-friendly and the job alerts kept me in the loop. I didn't miss a single opportunity."</p>
                     <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
-                        <div className="w-10 h-10 bg-[#EF4444] rounded-full flex items-center justify-center text-white font-bold shadow-md text-sm">ED</div>
+                        <div className="w-10 h-10 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#FACC15] font-bold shadow-md text-sm">ED</div>
                         <div>
                             <h4 className="font-bold text-[#121212] text-sm">Emily Davis</h4>
-                            <p className="text-xs text-[#EF4444] font-medium">Product Designer</p>
+                            <p className="text-xs text-[#0B0C10] font-medium">Product Designer</p>
                         </div>
                     </div>
                 </div>
@@ -325,11 +321,11 @@ const LoginDashboard = () => {
 
       {/* CTA Section (New) */}
       <div className="py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[#0F172A] z-0"></div>
+          <div className="absolute inset-0 bg-[#0B0C10] z-0"></div>
           <div className="container mx-auto px-6 md:px-12 text-center relative z-10">
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Ready to Start Your Career Journey?</h2>
               <p className="text-slate-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">Join thousands of professionals who have advanced their careers with JobPortal. Create your account today.</p>
-              <button className="bg-white text-[#0F172A] font-bold py-4 px-10 rounded-full shadow-xl hover:bg-slate-100 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
+              <button className="bg-[#FACC15] text-[#0B0C10] font-bold py-4 px-10 rounded-full shadow-xl hover:bg-[#EAB308] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
                   Get Started Now
               </button>
           </div>
