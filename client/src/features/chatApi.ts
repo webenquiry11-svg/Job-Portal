@@ -29,7 +29,11 @@ export const chatApi = createApi({
       query: (userId) => `/chat/conversations/${userId}`,
       providesTags: ['Chat'],
     }),
+    getUnreadMessageCount: builder.query<{ count: number }, string>({
+      query: (userId) => `/chat/unread-count/${userId}`,
+      providesTags: ['Chat'],
+    }),
   }),
 });
 
-export const { useGetMessagesQuery, useSendMessageMutation, useMarkAsSeenMutation, useGetConversationsQuery } = chatApi;
+export const { useGetMessagesQuery, useSendMessageMutation, useMarkAsSeenMutation, useGetConversationsQuery, useGetUnreadMessageCountQuery } = chatApi;

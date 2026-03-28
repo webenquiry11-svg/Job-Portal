@@ -58,6 +58,16 @@ export const markAsSeen = async (req: Request, res: Response) => {
   }
 };
 
+export const getUnreadMessageCount = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const unreadSenders = await Chat.distinct('senderId', { receiverId: userId, seen: false });
+    res.status(200).json({ count: unreadSenders.length });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch unread count', error });
+  }
+};
+
 export const getConversations = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;

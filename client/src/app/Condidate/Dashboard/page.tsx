@@ -41,7 +41,7 @@ import {
   useApplyForJobMutation
 } from '@/features/jobapi';
 import { useToggleFollowCompanyMutation, useUpdateProfileMutation } from '@/features/authApi';
-import { useGetMessagesQuery, useSendMessageMutation, useMarkAsSeenMutation, useGetConversationsQuery } from '@/features/chatApi';
+import { useGetMessagesQuery, useSendMessageMutation, useMarkAsSeenMutation, useGetConversationsQuery, useGetUnreadMessageCountQuery } from '@/features/chatApi';
 
 const CandidateDashboard = () => {
   const router = useRouter();
@@ -68,6 +68,9 @@ const CandidateDashboard = () => {
   const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery({});
   const { data: notifications = [] } = useGetNotificationsQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
   const [markNotificationsAsRead] = useMarkNotificationsAsReadMutation();
+
+  const { data: unreadChatData } = useGetUnreadMessageCountQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
+  const unreadMessageCount = unreadChatData?.count || 0;
 
   useEffect(() => {
     const profile = localStorage.getItem('profile');
@@ -188,7 +191,7 @@ const CandidateDashboard = () => {
           <SidebarItem icon={<FaSearch />} label="Explore Jobs" active={activeTab === 'explore'} onClick={() => { setActiveTab('explore'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
           <SidebarItem icon={<FaBookmark />} label="Saved Jobs" active={activeTab === 'saved'} onClick={() => { setActiveTab('saved'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
           <SidebarItem icon={<FaBriefcase />} label="My Applications" active={activeTab === 'applications'} onClick={() => { setActiveTab('applications'); setIsSidebarOpen(false); }} badge={appliedJobs.length > 0 ? appliedJobs.length.toString() : undefined} collapsed={isSidebarCollapsed} />
-          <SidebarItem icon={<MdMessage />} label="Messages" active={activeTab === 'messages'} onClick={() => { setActiveTab('messages'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
+          <SidebarItem icon={<MdMessage />} label="Messages" active={activeTab === 'messages'} onClick={() => { setActiveTab('messages'); setIsSidebarOpen(false); }} badge={unreadMessageCount > 0 ? unreadMessageCount.toString() : undefined} collapsed={isSidebarCollapsed} />
           
           <p className={`px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:hidden' : ''}`}>Account</p>
           <SidebarItem icon={<FaUserCircle />} label="My Profile" active={activeTab === 'profile'} onClick={() => { setActiveTab('profile'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />

@@ -52,6 +52,7 @@ import {
   useSendMessageMutation,
   useMarkAsSeenMutation,
   useGetConversationsQuery,
+  useGetUnreadMessageCountQuery,
 } from "@/features/chatApi";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -70,6 +71,10 @@ const EmployerDashboard = () => {
   const { data: notifications = [] } = useGetNotificationsQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
   const [markNotificationsAsRead] = useMarkNotificationsAsReadMutation();
   const unreadCount = notifications.filter((n: any) => !n.isRead).length;
+
+  const { data: unreadChatData } = useGetUnreadMessageCountQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
+  const unreadMessageCount = unreadChatData?.count || 0;
+
   const handleBellClick = () => {
     setIsNotificationOpen(!isNotificationOpen);
     if (!isNotificationOpen && unreadCount > 0) {
@@ -201,6 +206,7 @@ const EmployerDashboard = () => {
               setActiveTab("messages");
               setIsSidebarOpen(false);
             }}
+            badge={unreadMessageCount > 0 ? unreadMessageCount.toString() : undefined}
             collapsed={isSidebarCollapsed}
           />
 
