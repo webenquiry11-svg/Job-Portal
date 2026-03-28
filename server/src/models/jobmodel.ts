@@ -16,6 +16,7 @@ export interface IJob extends Document {
   contactPreference: string;
   employerId: mongoose.Types.ObjectId;
   status: string;
+  applicants?: mongoose.Types.ObjectId[];
 }
 
 const jobSchema = new mongoose.Schema({
@@ -34,6 +35,7 @@ const jobSchema = new mongoose.Schema({
   contactPreference: { type: String },
   employerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Auth', required: true },
   status: { type: String, enum: ['Active', 'Closed'], default: 'Active' },
+  applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Auth' }],
 }, { timestamps: true });
 
 export default mongoose.model<IJob>('Job', jobSchema);

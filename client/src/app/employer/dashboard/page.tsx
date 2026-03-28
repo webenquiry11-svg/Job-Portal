@@ -27,6 +27,8 @@ import {
   FaEdit,
   FaCheck,
   FaCheckDouble,
+  FaEnvelope,
+  FaPhone,
 } from "react-icons/fa";
 import {
   MdDashboard,
@@ -43,6 +45,7 @@ import {
   useDeleteJobMutation,
   useGetNotificationsQuery,
   useMarkNotificationsAsReadMutation,
+  useUpdateApplicantStatusMutation,
 } from "@/features/jobapi";
 import {
   useGetMessagesQuery,
@@ -380,25 +383,15 @@ const EmployerDashboard = () => {
           {activeTab === "myJobs" && (
             <MyJobsSection
               employerId={user._id}
-              onJobClick={(job) => setSelectedJob(job)}
+              onJobClick={(job: any) => setSelectedJob(job)}
             />
           )}
           {activeTab === "profile" && (
             <CompanyProfile user={user} setUser={setUser} />
           )}
           {activeTab === "messages" && <MessagesSection user={user} />}
-
-          {["applicants", "settings"].includes(activeTab) && (
-            <div className="flex flex-col items-center justify-center h-64 bg-white rounded-3xl border border-gray-100 shadow-sm animate-fade-in-up">
-              <FaBriefcase className="text-6xl text-slate-200 mb-4" />
-              <h2 className="text-xl font-bold text-[#121212] capitalize">
-                {activeTab.replace("-", " ")}
-              </h2>
-              <p className="text-gray-500 text-sm mt-2">
-                This section is currently under development.
-              </p>
-            </div>
-          )}
+          {activeTab === "applicants" && <ApplicantsSection employerId={user._id} />}
+          {activeTab === "settings" && <div className="flex flex-col items-center justify-center h-64 bg-white rounded-3xl border border-gray-100 shadow-sm animate-fade-in-up"><FaBriefcase className="text-6xl text-slate-200 mb-4" /><h2 className="text-xl font-bold text-[#121212] capitalize">Settings</h2><p className="text-gray-500 text-sm mt-2">This section is currently under development.</p></div>}
         </div>
       </main>
       {selectedJob && (
@@ -466,9 +459,11 @@ const StatCard = ({ icon, label, value, color }: any) => (
 );
 
 const DashboardOverview = ({ user }: { user: any }) => {
-  const { data: jobs = [] } = useGetJobsByEmployerQuery(user._id, {
+  const { data: jobs = [], isLoading } = useGetJobsByEmployerQuery(user._id, {
     skip: !user._id,
+    pollingInterval: 5000
   });
+  const totalApplicants = jobs.reduce((acc: number, job: any) => acc + (job.applicants?.length || 0), 0);
 
   return (
     <div className="space-y-8 animate-fade-in-up">
@@ -491,7 +486,7 @@ const DashboardOverview = ({ user }: { user: any }) => {
         <StatCard
           icon={<FaUsers />}
           label="Total Applicants"
-          value="142"
+          value={isLoading ? "..." : totalApplicants.toString()}
           color="bg-amber-100 text-amber-500"
         />
         <StatCard
@@ -513,21 +508,13 @@ const DashboardOverview = ({ user }: { user: any }) => {
           Recent Applicants
         </h3>
         <div className="space-y-4">
-          <ApplicantRow
-            name="John Doe"
-            role="Frontend Developer"
-            date="2h ago"
-          />
-          <ApplicantRow
-            name="Jane Smith"
-            role="UI/UX Designer"
-            date="1 day ago"
-          />
-          <ApplicantRow
-            name="Sam Wilson"
-            role="Full Stack Engineer"
-            date="3 days ago"
-          />
+          {totalApplicants === 0 ? (
+            <p className="text-sm text-gray-500">No recent applicants.</p>
+          ) : (
+            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-sm font-medium text-[#0F172A]">
+              You have <span className="font-bold text-blue-600">{totalApplicants}</span> total applicant(s). Go to the <span className="font-bold">Applicants</span> tab to review them!
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -983,6 +970,178 @@ const MessagesSection = ({ user }: { user: any }) => {
           </div>
         )}
       </div>
+    </div>
+  );
+};
+
+const ApplicantsSection = ({ employerId }: { employerId: string }) => {
+  const { data: jobs = [], isLoading: isLoadingJobs } = useGetJobsByEmployerQuery(employerId);
+  const [selectedJobId, setSelectedJobId] = useState<string>('');
+
+  useEffect(() => {
+    if (jobs.length > 0 && !selectedJobId) {
+      setSelectedJobId(jobs[0]._id);
+    }
+  }, [jobs, selectedJobId]);
+
+  // Find the selected job from the jobs array to get its applicants
+  const selectedJobData = jobs.find((job: any) => job._id === selectedJobId);
+  const applicants = selectedJobData?.applicants || [];
+  const isLoadingApplicants = false; // Data is already part of the jobs query
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+  const [updateApplicantStatus] = useUpdateApplicantStatusMutation();
+  const [applicantStatuses, setApplicantStatuses] = useState<Record<string, string>>({});
+
+  const handleDragStart = (e: React.DragEvent, applicantId: string) => {
+    e.dataTransfer.setData("applicantId", applicantId);
+  };
+
+  const handleDrop = async (e: React.DragEvent, status: string) => {
+    const applicantId = e.dataTransfer.getData("applicantId");
+    if (applicantId) {
+      setApplicantStatuses((prev) => ({ ...prev, [applicantId]: status }));
+      toast.success(`Applicant moved to ${status}`);
+      
+      try {
+        await updateApplicantStatus({
+          jobId: selectedJobId,
+          candidateId: applicantId,
+          status: status,
+        }).unwrap();
+      } catch (err) {
+        console.error("Failed to notify candidate", err);
+      }
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const columns = [
+    { id: "Applied", title: "Applied", color: "border-gray-300" },
+    { id: "Reviewing", title: "Reviewing", color: "border-blue-400" },
+    { id: "Interview", title: "Interview", color: "border-amber-400" },
+    { id: "Offered", title: "Offered", color: "border-green-400" },
+    { id: "Rejected", title: "Rejected", color: "border-red-400" },
+  ];
+
+  return (
+    <div className="space-y-6 animate-fade-in-up">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h2 className="text-3xl font-bold text-[#121212]">Applicants</h2>
+        {jobs.length > 0 && (
+          <select 
+            value={selectedJobId} 
+            onChange={(e) => setSelectedJobId(e.target.value)}
+            className="w-full sm:w-auto px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F172A]/20 font-bold text-[#121212] shadow-sm cursor-pointer"
+          >
+            {jobs.map((job: any) => (
+              <option key={job._id} value={job._id}>{job.title}</option>
+            ))}
+          </select>
+        )}
+      </div>
+
+      {isLoadingJobs || isLoadingApplicants ? (
+        <div className="flex justify-center py-16"><FaSpinner className="animate-spin text-4xl text-gray-300" /></div>
+      ) : jobs.length === 0 ? (
+        <div className="text-center py-16 bg-white rounded-3xl border border-dashed border-gray-200">
+          <FaUsers className="text-6xl text-gray-200 mx-auto mb-4" />
+          <p className="text-gray-500 font-medium">Post a job to start receiving applicants.</p>
+        </div>
+      ) : applicants.length === 0 ? (
+        <div className="text-center py-16 bg-white rounded-3xl border border-dashed border-gray-200">
+          <FaUsers className="text-6xl text-gray-200 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-[#121212]">No Applicants Yet</h3>
+          <p className="text-sm text-gray-500 mt-2">When candidates apply for this job, they will appear here.</p>
+        </div>
+      ) : (
+        <div className="flex gap-4 overflow-x-auto pb-6 w-full custom-scrollbar">
+          {columns.map((col) => {
+            const colApplicants = applicants.filter(
+              (a: any) => (applicantStatuses[a._id] || "Applied") === col.id
+            );
+            return (
+              <div
+                key={col.id}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, col.id)}
+                className={`flex-1 min-w-[200px] xl:min-w-[220px] bg-gray-50/80 rounded-2xl border-t-4 ${col.color} p-3 flex flex-col max-h-[700px]`}
+              >
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-bold text-[#121212]">{col.title}</h3>
+                  <span className="bg-white text-xs font-bold px-2 py-1 rounded-md text-gray-500 shadow-sm border border-gray-100">
+                    {colApplicants.length}
+                  </span>
+                </div>
+                <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-1">
+                  {colApplicants.map((applicant: any) => (
+                    <div
+                      key={applicant._id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, applicant._id)}
+                      className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group flex flex-col gap-3 transition-all"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-[#0F172A] overflow-hidden flex-shrink-0 shadow-sm border border-gray-200">
+                          {applicant.profilePicture ? (
+                            <img src={applicant.profilePicture.startsWith('http') ? applicant.profilePicture : `${apiUrl}/${applicant.profilePicture.replace(/\\/g, '/')}`} alt={applicant.name} className="w-full h-full object-cover" />
+                          ) : (
+                            applicant.name?.charAt(0).toUpperCase()
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="font-bold text-[#121212] group-hover:text-[#0F172A] transition-colors truncate">
+                            {applicant.name}
+                          </div>
+                          <div className="text-xs font-medium text-gray-500 truncate">
+                            {applicant.headline || "Job Seeker"}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-1.5 bg-gray-50 p-2.5 rounded-lg border border-gray-100/50">
+                        <div className="flex items-center gap-2 text-xs text-gray-600 truncate">
+                          <FaEnvelope className="text-gray-400 flex-shrink-0" />
+                          <span className="truncate">{applicant.email}</span>
+                        </div>
+                        {applicant.phone && (
+                          <div className="flex items-center gap-2 text-xs text-gray-600 truncate">
+                            <FaPhone className="text-gray-400 flex-shrink-0" />
+                            <span className="truncate">{applicant.phone}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between mt-1">
+                        {applicant.resume ? (
+                          <a 
+                            href={applicant.resume.startsWith('http') ? applicant.resume : `${apiUrl}/${applicant.resume.replace(/\\/g, '/')}`}
+                            onClick={(e) => e.stopPropagation()} 
+                            target="_blank" 
+                            rel="noreferrer" 
+                            className="text-xs font-bold text-[#0F172A] hover:underline bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100"
+                          >
+                            View / Download Resume
+                          </a>
+                        ) : (
+                          <span className="text-[10px] text-gray-400 italic">No Resume</span>
+                        )}
+                        <a href={`mailto:${applicant.email}`} className="text-gray-400 hover:text-[#0F172A] p-1.5 bg-gray-50 rounded-lg transition-colors">
+                          <FaEnvelope />
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

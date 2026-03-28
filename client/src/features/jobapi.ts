@@ -5,7 +5,7 @@ export const jobApi = createApi({
   baseQuery: fetchBaseQuery({ 
     baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000' 
   }),
-  tagTypes: ['Job', 'Notification'],
+  tagTypes: ['Job', 'Notification', 'Application'], // 'Application' tag add kiya
   endpoints: (builder) => ({
     postJob: builder.mutation({
       query: (jobData) => ({
@@ -33,6 +33,22 @@ export const jobApi = createApi({
       }),
       invalidatesTags: ['Job'],
     }),
+    // Naya Apply Endpoint yahan hai
+    applyForJob: builder.mutation({
+      query: (applicationData) => ({
+        url: '/jobs/apply',
+        method: 'POST',
+        body: applicationData,
+      }),
+      invalidatesTags: ['Application', 'Job'], // Added 'Job' to refresh the job list
+    }),
+    updateApplicantStatus: builder.mutation({
+      query: (data) => ({
+        url: '/jobs/applicant-status',
+        method: 'PATCH',
+        body: data,
+      }),
+    }),
     getNotifications: builder.query({
       query: (userId) => `/auth/notifications/${userId}`,
       providesTags: ['Notification'],
@@ -47,4 +63,15 @@ export const jobApi = createApi({
   }),
 });
 
-export const { usePostJobMutation, useGetJobsByEmployerQuery, useGetAllJobsQuery, useGetCompanyByIdQuery, useDeleteJobMutation, useGetNotificationsQuery, useMarkNotificationsAsReadMutation } = jobApi;
+// useApplyForJobMutation ko export list mein add kiya
+export const { 
+  usePostJobMutation, 
+  useGetJobsByEmployerQuery, 
+  useGetAllJobsQuery, 
+  useGetCompanyByIdQuery, 
+  useDeleteJobMutation, 
+  useApplyForJobMutation, // Ab yeh dashboard mein mil jayega
+  useUpdateApplicantStatusMutation,
+  useGetNotificationsQuery, 
+  useMarkNotificationsAsReadMutation 
+} = jobApi;

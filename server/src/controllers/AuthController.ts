@@ -81,6 +81,9 @@ export const updateProfile = async (req: Request, res: Response) => {
       if (files.coverImage?.length) {
         updates.coverImage = files.coverImage[0].path;
       }
+      if (files.resume?.length) {
+        updates.resume = files.resume[0].path;
+      }
     } else if (req.file) {
       updates.profilePicture = req.file.path;
     }

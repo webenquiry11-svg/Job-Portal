@@ -32,7 +32,7 @@ export const createJob = async (req: Request, res: Response) => {
 export const getJobsByEmployer = async (req: Request, res: Response) => {
   try {
     const { employerId } = req.params;
-    const jobs = await JobModel.find({ employerId }).sort({ createdAt: -1 });
+    const jobs = await JobModel.find({ employerId }).populate('applicants').sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error: any) {
     console.error("Error fetching jobs:", error);
@@ -48,6 +48,59 @@ export const getAllJobs = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error("Error fetching all jobs:", error);
     res.status(500).json({ message: error.message || "Failed to fetch jobs" });
+  }
+};
+
+export const applyForJob = async (req: Request, res: Response) => {
+  const { jobId, candidateId } = req.body;
+  try {
+    const job = await JobModel.findById(jobId);
+    if (!job) return res.status(404).json({ message: 'Job not found' });
+
+    const candidate = await AuthModel.findById(candidateId);
+    if (!candidate) return res.status(404).json({ message: 'Candidate not found' });
+
+    // Check if already applied
+    if (job.applicants && job.applicants.includes(candidateId as any)) {
+      return res.status(400).json({ message: 'You have already applied for this job' });
+    }
+
+    if (!job.applicants) {
+      job.applicants = [];
+    }
+    job.applicants.push(candidateId as any);
+    await job.save();
+
+    // Create notification for employer
+    await NotificationModel.create({
+      userId: job.employerId,
+      message: `${candidate.name} has applied for your job: ${job.title}.`,
+    });
+
+    res.status(200).json({ message: 'Applied successfully' });
+  } catch (error: any) {
+    console.error('Apply for job error:', error);
+    res.status(500).json({ message: 'Something went wrong', error: error.message });
+  }
+};
+
+export const updateApplicantStatus = async (req: Request, res: Response) => {
+  const { jobId, candidateId, status } = req.body;
+  try {
+    const job = await JobModel.findById(jobId);
+    const candidate = await AuthModel.findById(candidateId);
+    if (!job || !candidate) return res.status(404).json({ message: 'Not found' });
+
+    // Create notification for the candidate
+    await NotificationModel.create({
+      userId: candidateId,
+      message: `Your application for "${job.title}" has been moved to: ${status}.`,
+    });
+
+    res.status(200).json({ message: 'Candidate notified successfully' });
+  } catch (error: any) {
+    console.error('Update applicant status error:', error);
+    res.status(500).json({ message: 'Something went wrong', error: error.message });
   }
 };
 

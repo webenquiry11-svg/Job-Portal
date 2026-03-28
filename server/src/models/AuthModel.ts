@@ -22,6 +22,7 @@ export interface IAuth extends Document {
   commitments?: { title: string; desc: string }[];
   followingCompanies?: mongoose.Types.ObjectId[];
   followers?: mongoose.Types.ObjectId[];
+  resume?: string;
   followersCount?: number;
   profilePicture?: string;
   coverImage?: string;
@@ -66,6 +67,7 @@ const authSchema = new mongoose.Schema({
   }],
   followingCompanies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Auth' }],
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Auth' }],
+  resume: { type: String },
   followersCount: { type: Number, default: 0 },
   profilePicture: { type: String },
   coverImage: { type: String },

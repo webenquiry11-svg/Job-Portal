@@ -36,10 +36,11 @@ import {
   useGetAllJobsQuery, 
   useGetCompanyByIdQuery, 
   useGetJobsByEmployerQuery, 
-  useGetNotificationsQuery, 
-  useMarkNotificationsAsReadMutation 
+  useGetNotificationsQuery,
+  useMarkNotificationsAsReadMutation,
+  useApplyForJobMutation
 } from '@/features/jobapi';
-import { useToggleFollowCompanyMutation } from '@/features/authApi';
+import { useToggleFollowCompanyMutation, useUpdateProfileMutation } from '@/features/authApi';
 import { useGetMessagesQuery, useSendMessageMutation, useMarkAsSeenMutation, useGetConversationsQuery } from '@/features/chatApi';
 
 const CandidateDashboard = () => {
@@ -60,6 +61,8 @@ const CandidateDashboard = () => {
   const [filterWorkMode, setFilterWorkMode] = useState('');
   const [filterExperience, setFilterExperience] = useState('');
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
+  const [jobToApply, setJobToApply] = useState<any>(null);
   const [selectedMessageUser, setSelectedMessageUser] = useState<any>(null);
 
   const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery({});
@@ -147,6 +150,8 @@ const CandidateDashboard = () => {
     return matchesSearch && matchesIndustry && matchesWorkMode && matchesExperience;
   });
 
+  const appliedJobs = allJobs.filter((job: any) => job.applicants?.includes(user?._id));
+
   if (isLoading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -182,7 +187,7 @@ const CandidateDashboard = () => {
           <SidebarItem icon={<MdDashboard />} label="Dashboard" active={activeTab === 'dashboard'} onClick={() => { setActiveTab('dashboard'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
           <SidebarItem icon={<FaSearch />} label="Explore Jobs" active={activeTab === 'explore'} onClick={() => { setActiveTab('explore'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
           <SidebarItem icon={<FaBookmark />} label="Saved Jobs" active={activeTab === 'saved'} onClick={() => { setActiveTab('saved'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
-          <SidebarItem icon={<FaBriefcase />} label="My Applications" active={activeTab === 'applications'} onClick={() => { setActiveTab('applications'); setIsSidebarOpen(false); }} badge="3" collapsed={isSidebarCollapsed} />
+          <SidebarItem icon={<FaBriefcase />} label="My Applications" active={activeTab === 'applications'} onClick={() => { setActiveTab('applications'); setIsSidebarOpen(false); }} badge={appliedJobs.length > 0 ? appliedJobs.length.toString() : undefined} collapsed={isSidebarCollapsed} />
           <SidebarItem icon={<MdMessage />} label="Messages" active={activeTab === 'messages'} onClick={() => { setActiveTab('messages'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
           
           <p className={`px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:hidden' : ''}`}>Account</p>
@@ -348,7 +353,7 @@ const CandidateDashboard = () => {
                 <p className="text-gray-500 mt-2 text-sm">Here is what's happening with your job applications today.</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard icon={<FaBriefcase />} label="Applied Jobs" value="12" color="bg-blue-100 text-blue-600" />
+                <StatCard icon={<FaBriefcase />} label="Applied Jobs" value={appliedJobs.length.toString()} color="bg-blue-100 text-blue-600" />
                 <StatCard icon={<FaBookmark />} label="Saved Jobs" value={savedJobIds.length.toString()} color="bg-amber-100 text-amber-500" />
                 <StatCard icon={<FaClock />} label="Interviews" value="2" color="bg-green-100 text-green-600" />
                 <StatCard icon={<FaEye />} label="Profile Views" value="84" color="bg-purple-100 text-purple-600" />
@@ -360,10 +365,13 @@ const CandidateDashboard = () => {
                     <button onClick={() => setActiveTab('applications')} className="text-sm font-bold text-[#0F172A] hover:text-slate-700">View All</button>
                   </div>
                   <div className="space-y-4">
-                    <ApplicationRow title="Frontend Developer" company="TechCorp Inc." logo="T" status="Interview" date="Oct 24" />
-                    <ApplicationRow title="UI/UX Designer" company="CreativeStudio" logo="C" status="Applied" date="Oct 20" />
-                    <ApplicationRow title="React Engineer" company="Global Systems" logo="G" status="Rejected" date="Oct 15" />
-                    <ApplicationRow title="Full Stack Developer" company="InnovateTech" logo="I" status="Offered" date="Oct 10" />
+                    {appliedJobs.length > 0 ? (
+                      appliedJobs.slice(0, 4).map((job: any) => (
+                        <ApplicationRow key={job._id} title={job.title} company={job.employerId?.companyName || job.employerId?.name || 'Company'} logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} status="Applied" date={new Date(job.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} />
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-500">No recent applications.</p>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-6">
@@ -452,7 +460,30 @@ const CandidateDashboard = () => {
 
           {activeTab === 'profile' && <CandidateProfile user={user} setUser={setUser} />}
           {activeTab === 'messages' && <CandidateMessagesSection user={user} allJobs={allJobs} initialSelectedUser={selectedMessageUser} />}
-          {activeTab !== 'dashboard' && activeTab !== 'explore' && activeTab !== 'profile' && activeTab !== 'saved' && activeTab !== 'messages' && (
+          {activeTab === 'applications' && (
+            <div className="space-y-6 animate-fade-in-up">
+              <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-bold text-[#121212]">My Applications</h2>
+              </div>
+              <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8">
+                {appliedJobs.length > 0 ? (
+                   <div className="space-y-4">
+                      {appliedJobs.map((job: any) => (
+                          <ApplicationRow key={job._id} title={job.title} company={job.employerId?.companyName || job.employerId?.name || 'Company'} logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} status="Applied" date={new Date(job.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} />
+                      ))}
+                   </div>
+                ) : (
+                   <div className="text-center py-16">
+                      <FaBriefcase className="mx-auto text-5xl text-gray-200 mb-4" />
+                      <h3 className="text-lg font-bold text-[#121212]">No applications yet</h3>
+                      <p className="text-gray-500 mt-2">When you apply for a job, it will appear here.</p>
+                      <button onClick={() => setActiveTab('explore')} className="mt-6 px-6 py-2.5 bg-[#0F172A] text-white font-bold rounded-xl shadow-lg hover:bg-slate-800 transition-all">Explore Jobs</button>
+                   </div>
+                )}
+              </div>
+            </div>
+          )}
+          {activeTab !== 'dashboard' && activeTab !== 'explore' && activeTab !== 'profile' && activeTab !== 'saved' && activeTab !== 'messages' && activeTab !== 'applications' && (
              <div className="flex flex-col items-center justify-center h-64 bg-white rounded-3xl border border-gray-100 shadow-sm animate-fade-in-up">
                <FaBriefcase className="text-6xl text-slate-200 mb-4" />
                <h2 className="text-xl font-bold text-[#121212] capitalize">{activeTab.replace('-', ' ')}</h2>
@@ -462,7 +493,11 @@ const CandidateDashboard = () => {
         </div>
       </main>
 
-      {selectedJob && <JobDetailsModal job={selectedJob} onClose={() => setSelectedJob(null)} />}
+      {selectedJob && <JobDetailsModal job={selectedJob} onClose={() => setSelectedJob(null)} user={user} onApply={() => {
+        setJobToApply(selectedJob);
+        setIsResumeModalOpen(true);
+        setSelectedJob(null);
+      }} />}
       {selectedCompanyId && (
         <CompanyProfileModal 
           companyId={selectedCompanyId} 
@@ -475,6 +510,14 @@ const CandidateDashboard = () => {
             setSelectedMessageUser(company);
             setActiveTab('messages');
           }}
+        />
+      )}
+      {isResumeModalOpen && (
+        <ResumeUploadModal
+            user={user}
+            setUser={setUser}
+            jobToApply={jobToApply}
+            onClose={() => setIsResumeModalOpen(false)}
         />
       )}
     </div>
@@ -560,7 +603,33 @@ const RecommendedJobCard = ({ job, onViewDetails, isSaved, onToggleSave, onViewC
   </div>
 )};
 
-const JobDetailsModal = ({ job, onClose }: any) => (
+const JobDetailsModal = ({ job, onClose, user, onApply }: any) => {
+  const [applyForJob, { isLoading: isApplying }] = useApplyForJobMutation();
+  const handleApply = async () => {
+    if (!user?.resume) {
+      onApply();
+    } else {
+      try {
+        await applyForJob({ jobId: job._id, candidateId: user._id }).unwrap();
+              toast.success('🎉 Successfully applied! The employer has been notified.', {
+                duration: 5000,
+                position: 'top-center',
+                style: {
+                  background: '#0F172A',
+                  color: '#fff',
+                  fontWeight: 'bold',
+                  padding: '16px',
+                  borderRadius: '12px',
+                },
+              });
+        onClose();
+      } catch (err: any) {
+        toast.error(err.data?.message || 'Failed to apply');
+      }
+    }
+  };
+
+  return (
   <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-all duration-300" onClick={onClose}>
     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
       <div className="p-6 md:px-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
@@ -587,11 +656,87 @@ const JobDetailsModal = ({ job, onClose }: any) => (
         <div className="mt-6 flex items-center gap-4">{job.immediateJoiner && <span className="px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg text-xs font-bold">Immediate Joiner Required</span>}<span className="text-xs font-medium text-gray-500">Contact via: <span className="font-bold text-gray-700">{job.contactPreference}</span></span></div>
       </div>
       <div className="p-6 border-t border-gray-100 flex items-center justify-end bg-gray-50/50 rounded-b-3xl">
-        <button className="px-8 py-3 bg-[#0F172A] text-white font-black rounded-xl hover:bg-slate-800 shadow-lg shadow-slate-900/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">Apply Now <FaArrowRight /></button>
+        <button onClick={handleApply} disabled={isApplying} className="px-8 py-3 bg-[#0F172A] text-white font-black rounded-xl hover:bg-slate-800 shadow-lg shadow-slate-900/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm disabled:opacity-50">
+          {isApplying ? 'Applying...' : 'Apply Now'} <FaArrowRight />
+        </button>
       </div>
     </div>
   </div>
-);
+  );
+};
+
+const ResumeUploadModal = ({ user, setUser, jobToApply, onClose }: any) => {
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [updateProfile, { isLoading: isUploading }] = useUpdateProfileMutation();
+  const [applyForJob, { isLoading: isApplying }] = useApplyForJobMutation();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setResumeFile(e.target.files[0]);
+    }
+  };
+
+  const handleUploadAndApply = async () => {
+    if (!resumeFile) {
+      toast.error('Please select a resume file.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('_id', user._id);
+    formData.append('resume', resumeFile);
+
+    try {
+      const uploadResult = await updateProfile(formData).unwrap();
+      const updatedUser = uploadResult.result;
+      setUser(updatedUser);
+      const currentProfile = JSON.parse(localStorage.getItem('profile') || '{}');
+      currentProfile.result = updatedUser;
+      localStorage.setItem('profile', JSON.stringify(currentProfile));
+      toast.success('Resume uploaded successfully!');
+
+      await applyForJob({ jobId: jobToApply._id, candidateId: updatedUser._id }).unwrap();
+      toast.success(`🎉 Successfully applied for ${jobToApply.title}! The employer has been notified.`, {
+        duration: 5000,
+        position: 'top-center',
+        style: {
+          background: '#0F172A',
+          color: '#fff',
+          fontWeight: 'bold',
+          padding: '16px',
+          borderRadius: '12px',
+        },
+      });
+      onClose();
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.data?.message || 'An error occurred.');
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4" onClick={onClose}>
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md relative animate-fade-in-up" onClick={e => e.stopPropagation()}>
+        <div className="p-6 border-b border-gray-100">
+          <h2 className="text-xl font-bold text-[#121212]">Upload Your Resume</h2>
+          <p className="text-sm text-gray-500 mt-1">You need to upload a resume before applying for "{jobToApply?.title}".</p>
+        </div>
+        <div className="p-6 space-y-4">
+          <div>
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Resume (PDF, DOC, DOCX)</label>
+            <input type="file" onChange={handleFileChange} accept=".pdf,.doc,.docx" className="mt-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+          </div>
+        </div>
+        <div className="p-6 bg-gray-50/50 border-t border-gray-100 flex justify-end gap-3">
+          <button onClick={onClose} className="px-5 py-2.5 text-sm font-bold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50">Cancel</button>
+          <button onClick={handleUploadAndApply} disabled={isUploading || isApplying} className="px-5 py-2.5 text-sm font-bold text-white bg-[#0F172A] rounded-xl hover:bg-slate-800 shadow-md disabled:opacity-50">
+            {isUploading ? 'Uploading...' : isApplying ? 'Applying...' : 'Upload & Apply'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser, onMessageClick }: any) => {
   const { data: company, isLoading: isLoadingCompany } = useGetCompanyByIdQuery(companyId, { skip: !companyId });
