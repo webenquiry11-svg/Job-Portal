@@ -467,11 +467,17 @@ const StatCard = ({ icon, label, value, color }: any) => (
 );
 
 const DashboardOverview = ({ user }: { user: any }) => {
-  const { data: jobs = [], isLoading } = useGetJobsByEmployerQuery(user._id, {
+  const { data: jobs = [], isLoading: isLoadingJobs } = useGetJobsByEmployerQuery(user._id, {
     skip: !user._id,
     pollingInterval: 5000
   });
+  const { data: companyData, isLoading: isLoadingCompany } = useGetCompanyByIdQuery(user._id, {
+    skip: !user._id,
+    pollingInterval: 30000, // Poll for new views every 30 seconds
+  });
+
   const totalApplicants = jobs.reduce((acc: number, job: any) => acc + (job.applicants?.length || 0), 0);
+  const profileViews = companyData?.profileViews ?? user?.profileViews ?? 0;
 
   return (
     <div className="space-y-8 animate-fade-in-up">
@@ -494,19 +500,19 @@ const DashboardOverview = ({ user }: { user: any }) => {
         <StatCard
           icon={<FaUsers />}
           label="Total Applicants"
-          value={isLoading ? "..." : totalApplicants.toString()}
+          value={isLoadingJobs ? "..." : totalApplicants.toString()}
           color="bg-slate-100 text-slate-600"
         />
         <StatCard
           icon={<FaClock />}
           label="Pending Reviews"
-          value="18"
+          value={totalApplicants.toString()}
           color="bg-yellow-100 text-yellow-600"
         />
         <StatCard
           icon={<FaChartLine />}
           label="Profile Views"
-          value="2.1k"
+          value={isLoadingCompany ? "..." : profileViews.toLocaleString()}
           color="bg-slate-100 text-slate-600"
         />
       </div>

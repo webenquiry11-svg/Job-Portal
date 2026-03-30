@@ -634,7 +634,7 @@ const ApplicationRow = ({ title, company, logo, status, date, detail }: any) => 
   if (status === 'Selected') statusConfig = { color: 'text-blue-600 bg-blue-50 border-blue-200', icon: <FaCheckCircle /> };
   if (status === 'Interview') statusConfig = { color: 'text-amber-600 bg-amber-50 border-amber-200', icon: <FaClock /> };
   if (status === 'Rejected') statusConfig = { color: 'text-red-600 bg-red-50 border-red-200', icon: <FaTimesCircle /> };
-  if (status === 'Offered' || status === 'Selected') statusConfig = { color: 'text-green-600 bg-green-50 border-green-200', icon: <FaCheckCircle /> };
+  if (status === 'Offered') statusConfig = { color: 'text-green-600 bg-green-50 border-green-200', icon: <FaCheckCircle /> };
   return (
       <div className="flex flex-col p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow group">
         <div className="flex items-center justify-between">
