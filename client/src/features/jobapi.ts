@@ -49,6 +49,14 @@ export const jobApi = createApi({
         body: data,
       }),
     }),
+    scheduleInterview: builder.mutation({
+      query: (data) => ({
+        url: '/jobs/schedule-interview',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Job'],
+    }),
     getNotifications: builder.query({
       query: (userId) => `/auth/notifications/${userId}`,
       providesTags: ['Notification'],
@@ -72,6 +80,7 @@ export const {
   useDeleteJobMutation, 
   useApplyForJobMutation, // Ab yeh dashboard mein mil jayega
   useUpdateApplicantStatusMutation,
+  useScheduleInterviewMutation,
   useGetNotificationsQuery, 
   useMarkNotificationsAsReadMutation 
 } = jobApi;

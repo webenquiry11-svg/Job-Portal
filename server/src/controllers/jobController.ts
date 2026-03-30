@@ -91,15 +91,64 @@ export const updateApplicantStatus = async (req: Request, res: Response) => {
     const candidate = await AuthModel.findById(candidateId);
     if (!job || !candidate) return res.status(404).json({ message: 'Not found' });
 
+    let detail = job.applicantDetails?.find((d: any) => d.candidateId.toString() === candidateId);
+    if (!detail) {
+      if (!job.applicantDetails) job.applicantDetails = [];
+      job.applicantDetails.push({ candidateId: candidateId as any, status });
+    } else {
+      detail.status = status;
+    }
+    await job.save();
+
     // Create notification for the candidate
+    let notificationMessage = `Your application for "${job.title}" has been moved to: ${status}.`;
+    if (status === 'Selected') {
+      notificationMessage = `Congratulations! Your application for "${job.title}" has been selected for this role.`;
+    } else if (status === 'Interview') {
+      notificationMessage = `Your application for "${job.title}" has been moved to the interview section. Your interview date and details will be notified to you soon.`;
+    }
+
     await NotificationModel.create({
       userId: candidateId,
-      message: `Your application for "${job.title}" has been moved to: ${status}.`,
+      message: notificationMessage,
     });
 
     res.status(200).json({ message: 'Candidate notified successfully' });
   } catch (error: any) {
     console.error('Update applicant status error:', error);
+    res.status(500).json({ message: 'Something went wrong', error: error.message });
+  }
+};
+
+export const scheduleInterview = async (req: Request, res: Response) => {
+  const { jobId, candidateId, date, time, link, description } = req.body;
+  try {
+    const job = await JobModel.findById(jobId);
+    if (!job) return res.status(404).json({ message: 'Job not found' });
+
+    let detail = job.applicantDetails?.find((d: any) => d.candidateId.toString() === candidateId);
+    if (!detail) {
+      if (!job.applicantDetails) job.applicantDetails = [];
+      const newDetail = { candidateId: candidateId as any, status: 'Interview' };
+      job.applicantDetails.push(newDetail);
+      // Mongoose subdocuments don't have their own .save(), so we get the reference from the parent array
+      detail = job.applicantDetails[job.applicantDetails.length - 1];
+    }
+
+    const interviewDate = new Date(`${date}T${time}`);
+    detail.interviewDate = interviewDate;
+    detail.interviewLink = link;
+    detail.interviewDescription = description;
+    detail.status = 'Interview'; // Ensure status is set to Interview
+    await job.save();
+
+    await NotificationModel.create({
+      userId: candidateId,
+      message: `Your interview for "${job.title}" has been scheduled for ${interviewDate.toLocaleString()}. Please check your dashboard for the link and instructions.`,
+    });
+
+    res.status(200).json({ message: 'Interview scheduled successfully' });
+  } catch (error: any) {
     res.status(500).json({ message: 'Something went wrong', error: error.message });
   }
 };

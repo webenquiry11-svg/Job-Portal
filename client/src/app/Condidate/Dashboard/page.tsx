@@ -64,6 +64,7 @@ const CandidateDashboard = () => {
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
   const [jobToApply, setJobToApply] = useState<any>(null);
   const [selectedMessageUser, setSelectedMessageUser] = useState<any>(null);
+  const [applicationFilter, setApplicationFilter] = useState('All');
 
   const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery({});
   const { data: notifications = [] } = useGetNotificationsQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
@@ -369,9 +370,12 @@ const CandidateDashboard = () => {
                   </div>
                   <div className="space-y-4">
                     {appliedJobs.length > 0 ? (
-                      appliedJobs.slice(0, 4).map((job: any) => (
-                        <ApplicationRow key={job._id} title={job.title} company={job.employerId?.companyName || job.employerId?.name || 'Company'} logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} status="Applied" date={new Date(job.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} />
-                      ))
+                      appliedJobs.slice(0, 4).map((job: any) => {
+                        const detail = job.applicantDetails?.find((d: any) => d.candidateId === user._id);
+                        return (
+                          <ApplicationRow key={job._id} title={job.title} company={job.employerId?.companyName || job.employerId?.name || 'Company'} logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} status={detail?.status || 'Applied'} date={new Date(job.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} detail={detail} />
+                        )
+                      })
                     ) : (
                       <p className="text-sm text-gray-500">No recent applications.</p>
                     )}
@@ -465,15 +469,46 @@ const CandidateDashboard = () => {
           {activeTab === 'messages' && <CandidateMessagesSection user={user} allJobs={allJobs} initialSelectedUser={selectedMessageUser} />}
           {activeTab === 'applications' && (
             <div className="space-y-6 animate-fade-in-up">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h2 className="text-3xl font-bold text-[#121212]">My Applications</h2>
+                {appliedJobs.length > 0 && (
+                  <select 
+                    value={applicationFilter} 
+                    onChange={(e) => setApplicationFilter(e.target.value)}
+                    className="w-full sm:w-auto px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FACC15] transition-all cursor-pointer shadow-sm"
+                  >
+                    <option value="All">All Statuses</option>
+                    <option value="Applied">Applied</option>
+                    <option value="Reviewing">Reviewing</option>
+                    <option value="Selected">Selected</option>
+                    <option value="Interview">Interview</option>
+                    <option value="Offered">Offered</option>
+                    <option value="Rejected">Rejected</option>
+                  </select>
+                )}
               </div>
               <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8">
                 {appliedJobs.length > 0 ? (
                    <div className="space-y-4">
-                      {appliedJobs.map((job: any) => (
-                          <ApplicationRow key={job._id} title={job.title} company={job.employerId?.companyName || job.employerId?.name || 'Company'} logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} status="Applied" date={new Date(job.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} />
-                      ))}
+                      {(() => {
+                        const filtered = appliedJobs.filter((job: any) => {
+                          if (applicationFilter === 'All') return true;
+                          const detail = job.applicantDetails?.find((d: any) => d.candidateId === user._id);
+                          const status = detail?.status || 'Applied';
+                          return status === applicationFilter;
+                        });
+
+                        if (filtered.length === 0) {
+                          return <div className="text-center py-8 text-gray-500 text-sm">No applications found for the selected status.</div>;
+                        }
+
+                        return filtered.map((job: any) => {
+                          const detail = job.applicantDetails?.find((d: any) => d.candidateId === user._id);
+                          return (
+                            <ApplicationRow key={job._id} title={job.title} company={job.employerId?.companyName || job.employerId?.name || 'Company'} logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} status={detail?.status || 'Applied'} date={new Date(job.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} detail={detail} />
+                          )
+                        });
+                      })()}
                    </div>
                 ) : (
                    <div className="text-center py-16">
@@ -548,14 +583,61 @@ const StatCard = ({ icon, label, value, color }: any) => (
   </div>
 );
 
-const ApplicationRow = ({ title, company, logo, status, date }: any) => {
+const CountdownTimer = ({ targetDate }: any) => {
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+  useEffect(() => {
+    if (!targetDate) return;
+
+    const intervalId = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [targetDate]);
+
+  function calculateTimeLeft() {
+    const difference = +new Date(targetDate) - +new Date();
+    let timeLeft: any = {};
+
+    if (difference > 0) {
+      timeLeft = {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      };
+    }
+
+    return timeLeft;
+  }
+
+  const timerComponents = Object.keys(timeLeft).map((interval) => {
+    if (!timeLeft[interval as keyof typeof timeLeft]) {
+      return null;
+    }
+    return (
+      <div key={interval} className="text-center">
+        <div className="text-lg sm:text-xl font-bold text-[#0B0C10]">{timeLeft[interval as keyof typeof timeLeft]}</div>
+        <div className="text-[9px] sm:text-[10px] uppercase font-bold text-gray-500">{interval}</div>
+      </div>
+    );
+  });
+
+  return <div className="flex items-center gap-3 sm:gap-4">{timerComponents.length ? timerComponents : <span className="text-sm font-bold text-red-500">Time's up!</span>}</div>;
+};
+
+const ApplicationRow = ({ title, company, logo, status, date, detail }: any) => {
   let statusConfig = { color: 'text-gray-500 bg-gray-100 border-gray-200', icon: <FaSpinner className="animate-spin" /> };
   if (status === 'Applied') statusConfig = { color: 'text-yellow-600 bg-yellow-50 border-yellow-200', icon: <FaCheckCircle /> };
-  if (status === 'Interview') statusConfig = { color: 'text-yellow-600 bg-yellow-50 border-yellow-200', icon: <FaClock /> };
+  if (status === 'Reviewing') statusConfig = { color: 'text-blue-600 bg-blue-50 border-blue-200', icon: <FaEye /> };
+  if (status === 'Selected') statusConfig = { color: 'text-blue-600 bg-blue-50 border-blue-200', icon: <FaCheckCircle /> };
+  if (status === 'Interview') statusConfig = { color: 'text-amber-600 bg-amber-50 border-amber-200', icon: <FaClock /> };
   if (status === 'Rejected') statusConfig = { color: 'text-red-600 bg-red-50 border-red-200', icon: <FaTimesCircle /> };
-  if (status === 'Offered') statusConfig = { color: 'text-green-600 bg-green-50 border-green-200', icon: <FaCheckCircle /> }; // Keep green for offered
+  if (status === 'Offered' || status === 'Selected') statusConfig = { color: 'text-green-600 bg-green-50 border-green-200', icon: <FaCheckCircle /> };
   return (
-      <div className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow group">
+      <div className="flex flex-col p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow group">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-xl font-bold text-[#0B0C10] group-hover:bg-[#0B0C10] group-hover:text-[#FACC15] transition-colors">{logo}</div>
               <div>
@@ -570,6 +652,19 @@ const ApplicationRow = ({ title, company, logo, status, date }: any) => {
               </div>
               <div className={`px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg border text-[10px] md:text-xs font-bold flex items-center gap-1.5 ${statusConfig.color}`}>{statusConfig.icon} <span className="hidden sm:inline">{status}</span></div>
           </div>
+        </div>
+        {status === 'Interview' && detail?.interviewDate && (
+          <div className="mt-4 pt-4 border-t border-gray-50 flex flex-col gap-3">
+             <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-[#0B0C10]/5 p-4 rounded-xl border border-gray-200 gap-3">
+               <div><p className="text-xs font-bold text-[#0B0C10] uppercase tracking-wider mb-1">Interview Scheduled</p><p className="text-sm font-medium text-gray-700">{new Date(detail.interviewDate).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}</p></div>
+               <CountdownTimer targetDate={detail.interviewDate} />
+             </div>
+             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm">
+               <p className="mb-2"><span className="font-bold text-[#0B0C10]">Meeting Link:</span> <a href={detail.interviewLink} target="_blank" className="text-blue-600 hover:underline font-medium break-all">{detail.interviewLink}</a></p>
+               <p><span className="font-bold text-[#0B0C10]">Instructions:</span> <span className="text-gray-600">{detail.interviewDescription || 'None provided.'}</span></p>
+             </div>
+          </div>
+        )}
       </div>
   );
 };

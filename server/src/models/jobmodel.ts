@@ -17,6 +17,13 @@ export interface IJob extends Document {
   employerId: mongoose.Types.ObjectId;
   status: string;
   applicants?: mongoose.Types.ObjectId[];
+  applicantDetails?: {
+    candidateId: mongoose.Types.ObjectId;
+    status: string;
+    interviewDate?: Date;
+    interviewLink?: string;
+    interviewDescription?: string;
+  }[];
 }
 
 const jobSchema = new mongoose.Schema({
@@ -36,6 +43,14 @@ const jobSchema = new mongoose.Schema({
   employerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Auth', required: true },
   status: { type: String, enum: ['Active', 'Closed'], default: 'Active' },
   applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Auth' }],
+  applicantDetails: [{
+    candidateId: { type: mongoose.Schema.Types.ObjectId, ref: 'Auth' },
+    status: { type: String, default: 'Applied' },
+    interviewDate: { type: Date },
+    
+    interviewLink: { type: String },
+    interviewDescription: { type: String }
+  }]
 }, { timestamps: true });
 
 export default mongoose.model<IJob>('Job', jobSchema);

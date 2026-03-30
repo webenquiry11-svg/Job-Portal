@@ -46,6 +46,7 @@ import {
   useGetNotificationsQuery,
   useMarkNotificationsAsReadMutation,
   useUpdateApplicantStatusMutation,
+  useScheduleInterviewMutation,
 } from "@/features/jobapi";
 import {
   useGetMessagesQuery,
@@ -67,6 +68,7 @@ const EmployerDashboard = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isPostJobModalOpen, setIsPostJobModalOpen] = useState(false);
 
   const { data: notifications = [] } = useGetNotificationsQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
   const [markNotificationsAsRead] = useMarkNotificationsAsReadMutation();
@@ -182,13 +184,6 @@ const EmployerDashboard = () => {
             collapsed={isSidebarCollapsed}
           />
           <SidebarItem
-            icon={<FaPlus />}
-            label="Post a Job"
-            active={false}
-            onClick={() => router.push("/employer/Job post")}
-            collapsed={isSidebarCollapsed}
-          />
-          <SidebarItem
             icon={<FaUsers />}
             label="Applicants"
             active={activeTab === "applicants"}
@@ -276,12 +271,12 @@ const EmployerDashboard = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              <Link
-                href="/employer/Job post"
-                className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-[#FACC15] text-[#0B0C10] font-bold text-sm rounded-xl shadow-lg shadow-[#FACC15]/20 hover:bg-[#EAB308] transition-all"
+              <button
+                onClick={() => setIsPostJobModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-[#FACC15] text-[#0B0C10] font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-[#FACC15]/20 hover:bg-[#EAB308] transition-all"
               >
-                <FaPlus /> Post New Job
-              </Link>
+                <FaPlus /> <span className="hidden sm:inline">Post New Job</span><span className="sm:hidden">Post Job</span>
+              </button>
 
               <div className="relative">
                 <button onClick={handleBellClick} className="p-2.5 bg-white border border-gray-200 rounded-full text-gray-400 hover:text-[#0B0C10] hover:border-slate-200 hover:shadow-md transition-all relative">
@@ -390,6 +385,7 @@ const EmployerDashboard = () => {
             <MyJobsSection
               employerId={user._id}
               onJobClick={(job: any) => setSelectedJob(job)}
+              onPostJobClick={() => setIsPostJobModalOpen(true)}
             />
           )}
           {activeTab === "profile" && (
@@ -404,6 +400,12 @@ const EmployerDashboard = () => {
         <JobDetailsModal
           job={selectedJob}
           onClose={() => setSelectedJob(null)}
+        />
+      )}
+      {isPostJobModalOpen && (
+        <PostJobModal 
+          user={user} 
+          onClose={() => setIsPostJobModalOpen(false)} 
         />
       )}
     </div>
@@ -552,9 +554,11 @@ const ApplicantRow = ({ name, role, date }: any) => (
 const MyJobsSection = ({
   employerId,
   onJobClick,
+  onPostJobClick,
 }: {
   employerId: string;
   onJobClick: (job: any) => void;
+  onPostJobClick: () => void;
 }) => {
   const {
     data: jobs = [],
@@ -577,12 +581,12 @@ const MyJobsSection = ({
     <div className="space-y-6 animate-fade-in-up">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold text-[#121212]">My Job Postings</h2>
-        <Link
-          href="/employer/Job post"
+        <button
+          onClick={onPostJobClick}
           className="px-5 py-2.5 bg-[#FACC15] text-[#0B0C10] font-bold text-sm rounded-xl shadow-lg shadow-[#FACC15]/20 hover:bg-[#EAB308] transition-all"
         >
           Post New Job
-        </Link>
+        </button>
       </div>
 
       {jobs.length > 0 ? (
@@ -652,12 +656,12 @@ const MyJobsSection = ({
           <p className="text-sm text-gray-500 mt-2 mb-6">
             Start by posting your first job to attract top talent.
           </p>
-          <Link
-            href="/employer/Job post"
+          <button
+            onClick={onPostJobClick}
             className="px-6 py-2.5 bg-[#FACC15] text-[#0B0C10] font-bold text-sm rounded-xl shadow-lg shadow-[#FACC15]/20 hover:bg-[#EAB308] transition-all"
           >
             Post a Job
-          </Link>
+          </button>
         </div>
       )}
     </div>
@@ -998,7 +1002,40 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
   const [updateApplicantStatus] = useUpdateApplicantStatusMutation();
+  const [scheduleInterview, { isLoading: isScheduling }] = useScheduleInterviewMutation();
+  const [schedulingCandidate, setSchedulingCandidate] = useState<any>(null);
+  const [interviewForm, setInterviewForm] = useState({ date: '', time: '', link: '', description: '' });
   const [applicantStatuses, setApplicantStatuses] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (schedulingCandidate) {
+        const detail = selectedJobData?.applicantDetails?.find((d: any) => d.candidateId.toString() === schedulingCandidate._id.toString());
+        if (detail?.interviewDate) {
+            const interviewDate = new Date(detail.interviewDate);
+            const yyyy = interviewDate.getFullYear();
+            const mm = String(interviewDate.getMonth() + 1).padStart(2, '0');
+            const dd = String(interviewDate.getDate()).padStart(2, '0');
+            const date = `${yyyy}-${mm}-${dd}`;
+            const time = interviewDate.toTimeString().split(' ')[0].substring(0, 5); // HH:mm
+            setInterviewForm({
+                date: date,
+                time: time,
+                link: detail.interviewLink || '',
+                description: detail.interviewDescription || ''
+            });
+        } else {
+            setInterviewForm({ date: '', time: '', link: '', description: '' });
+        }
+    }
+  }, [schedulingCandidate, selectedJobData]);
+
+  useEffect(() => {
+    if (selectedJobData?.applicantDetails) {
+      const initialStatuses: Record<string, string> = {};
+      selectedJobData.applicantDetails.forEach((d: any) => { if (d.candidateId) initialStatuses[d.candidateId.toString()] = d.status; });
+      setApplicantStatuses(initialStatuses);
+    }
+  }, [selectedJobData]);
 
   const handleDragStart = (e: React.DragEvent, applicantId: string) => {
     e.dataTransfer.setData("applicantId", applicantId);
@@ -1009,16 +1046,7 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
     if (applicantId) {
       setApplicantStatuses((prev) => ({ ...prev, [applicantId]: status }));
       toast.success(`Applicant moved to ${status}`);
-      
-      try {
-        await updateApplicantStatus({
-          jobId: selectedJobId,
-          candidateId: applicantId,
-          status: status,
-        }).unwrap();
-      } catch (err) {
-        console.error("Failed to notify candidate", err);
-      }
+      await updateApplicantStatus({ jobId: selectedJobId, candidateId: applicantId, status: status }).unwrap().catch(err => console.error("Failed to notify candidate", err));
     }
   };
 
@@ -1029,10 +1057,27 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
   const columns = [
     { id: "Applied", title: "Applied", color: "border-slate-300" },
     { id: "Reviewing", title: "Reviewing", color: "border-yellow-400" },
-    { id: "Interview", title: "Interview", color: "border-yellow-500" },
-    { id: "Offered", title: "Offered", color: "border-green-400" },
+    { id: "Selected", title: "Selected", color: "border-blue-400" },
+    { id: "Interview", title: "Interview", color: "border-amber-500" },
+    { id: "Offered", title: "Offered", color: "border-green-400" }, // Kept for offers after interview
     { id: "Rejected", title: "Rejected", color: "border-red-400" },
   ];
+
+  const handleScheduleSubmit = async () => {
+    if (!interviewForm.date || !interviewForm.time || !interviewForm.link) return toast.error('Date, Time, and Link are required');
+    try {
+      await scheduleInterview({
+        jobId: selectedJobId,
+        candidateId: schedulingCandidate._id,
+        ...interviewForm,
+      }).unwrap();
+      toast.success('Interview scheduled and candidate notified!');
+      setSchedulingCandidate(null);
+      setInterviewForm({ date: '', time: '', link: '', description: '' });
+    } catch (err) {
+      toast.error('Failed to schedule interview.');
+    }
+  };
 
   return (
     <div className="space-y-6 animate-fade-in-up">
@@ -1065,7 +1110,8 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
           <p className="text-sm text-gray-500 mt-2">When candidates apply for this job, they will appear here.</p>
         </div>
       ) : (
-        <div className="flex gap-4 overflow-x-auto pb-6 w-full custom-scrollbar">
+        <>
+        <div className="flex gap-3 overflow-x-auto pb-6 w-full custom-scrollbar hide-scrollbar">
           {columns.map((col) => {
             const colApplicants = applicants.filter(
               (a: any) => (applicantStatuses[a._id] || "Applied") === col.id
@@ -1075,7 +1121,7 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
                 key={col.id}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, col.id)}
-                className={`flex-1 min-w-[200px] xl:min-w-[220px] bg-gray-50/80 rounded-2xl border-t-4 ${col.color} p-3 flex flex-col max-h-[700px]`}
+                className={`flex-1 min-w-[160px] 2xl:min-w-[180px] bg-gray-50/80 rounded-2xl border-t-4 ${col.color} p-2.5 flex flex-col max-h-[700px]`}
               >
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-bold text-[#121212]">{col.title}</h3>
@@ -1089,7 +1135,7 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
                       key={applicant._id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, applicant._id)}
-                      className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group flex flex-col gap-3 transition-all"
+                      className="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group flex flex-col gap-2.5 transition-all"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-[#0B0C10] overflow-hidden flex-shrink-0 shadow-sm border border-gray-200 group-hover:bg-[#0B0C10] group-hover:text-[#FACC15] transition-colors">
@@ -1122,6 +1168,25 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
                         )}
                       </div>
 
+                      {col.id === "Interview" && (
+                        <div className="mt-2 border-t border-gray-100 pt-3">
+                          {(() => {
+                            const detail = selectedJobData.applicantDetails?.find((d: any) => d.candidateId.toString() === applicant._id.toString());
+                            if (detail?.interviewDate) {
+                              return (
+                                <div className="text-[10px] bg-yellow-50 p-2 rounded-lg text-yellow-800 flex justify-between items-center gap-2">
+                                  <p className="font-bold truncate">🗓️ {new Date(detail.interviewDate).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}</p>
+                                  <button onClick={(e) => {e.stopPropagation(); setSchedulingCandidate(applicant)}} className="p-1 hover:bg-yellow-200 rounded-full text-yellow-900">
+                                      <FaEdit size={10} />
+                                  </button>
+                                </div>
+                              );
+                            }
+                            return <button onClick={(e) => {e.stopPropagation(); setSchedulingCandidate(applicant)}} className="w-full py-1.5 bg-[#FACC15] text-[#0B0C10] text-xs font-bold rounded hover:bg-[#EAB308] transition-colors shadow-sm">Schedule Interview</button>;
+                          })()}
+                        </div>
+                      )}
+
                       <div className="flex items-center justify-between mt-1">
                         {applicant.resume ? (
                           <a 
@@ -1147,7 +1212,245 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
             );
           })}
         </div>
+        {schedulingCandidate && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-60 p-4 transition-all" onClick={() => setSchedulingCandidate(null)}>
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md animate-fade-in-up flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+              <div className="p-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center"><h2 className="text-xl font-bold text-[#121212]">{interviewForm.date ? 'Edit Interview' : 'Schedule Interview'}</h2><button onClick={() => setSchedulingCandidate(null)} className="text-gray-400 hover:text-[#0B0C10]"><FaTimes/></button></div>
+
+              <div className="p-6 space-y-4">
+                <p className="text-sm text-gray-600 mb-4">Set up an interview with <span className="font-bold text-[#0B0C10]">{schedulingCandidate.name}</span>.</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div><label className="text-xs font-bold text-gray-500 uppercase">Date</label><input type="date" value={interviewForm.date} onChange={e => setInterviewForm({...interviewForm, date: e.target.value})} className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#FACC15]/50 outline-none"/></div>
+                  <div><label className="text-xs font-bold text-gray-500 uppercase">Time</label><input type="time" value={interviewForm.time} onChange={e => setInterviewForm({...interviewForm, time: e.target.value})} className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#FACC15]/50 outline-none"/></div>
+                </div>
+                <div><label className="text-xs font-bold text-gray-500 uppercase">Meeting Link</label><input type="url" placeholder="e.g. Zoom, Google Meet link" value={interviewForm.link} onChange={e => setInterviewForm({...interviewForm, link: e.target.value})} className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#FACC15]/50 outline-none"/></div>
+                <div><label className="text-xs font-bold text-gray-500 uppercase">Software / Instructions</label><textarea placeholder="e.g. Please make sure to have Zoom installed..." value={interviewForm.description} onChange={e => setInterviewForm({...interviewForm, description: e.target.value})} className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#FACC15]/50 outline-none resize-none h-20"></textarea></div>
+              </div>
+              <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+                <button onClick={() => setSchedulingCandidate(null)} className="px-5 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-100">Cancel</button>
+                <button onClick={handleScheduleSubmit} disabled={isScheduling} className="px-5 py-2 bg-[#FACC15] text-[#0B0C10] rounded-xl text-sm font-bold shadow-md hover:bg-[#EAB308] disabled:opacity-50">{isScheduling ? 'Sending...' : 'Send Invite'}</button>
+              </div>
+            </div>
+          </div>
+        )}
+        </>
       )}
+    </div>
+  );
+};
+
+const PostJobModal = ({ user, onClose }: any) => {
+  const [postJob, { isLoading }] = usePostJobMutation();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [skillInput, setSkillInput] = useState("");
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    location: '',
+    workMode: 'On-site',
+    experience: 'Entry Level (0-2 Yrs)',
+    salaryType: 'Yearly',
+    salaryMin: '',
+    salaryMax: '',
+    skills: [] as string[],
+    screeningQuestion: '',
+    contactPreference: 'Email',
+    immediateJoiner: false
+  });
+
+  const handleNext = () => {
+    if (currentStep === 1) {
+      if (!formData.title || !formData.description) return toast.error("Title and Description are required");
+    }
+    if (currentStep === 2) {
+      if (formData.skills.length === 0) return toast.error("Please add at least one required skill");
+    }
+    setCurrentStep((prev) => prev + 1);
+  };
+
+  const handleBack = () => {
+    setCurrentStep((prev) => prev - 1);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.title || !formData.description) return toast.error("Title and Description are required");
+    try {
+      await postJob({
+        ...formData,
+        employerId: user._id,
+        salaryMin: Number(formData.salaryMin) || 0,
+        salaryMax: Number(formData.salaryMax) || 0,
+      }).unwrap();
+      toast.success("Job posted successfully!");
+      onClose();
+    } catch (error) { toast.error("Failed to post job"); }
+  };
+
+  const handleSkillAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (skillInput.trim() && !formData.skills.includes(skillInput.trim())) {
+        setFormData({ ...formData, skills: [...formData.skills, skillInput.trim()] });
+        setSkillInput("");
+      }
+    }
+  };
+
+  const removeSkill = (skillToRemove: string) => {
+    setFormData({ ...formData, skills: formData.skills.filter(s => s !== skillToRemove) });
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex justify-center items-center p-4 sm:p-6">
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
+      <div className="bg-white/95 backdrop-blur-xl border border-white/20 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2.5rem] w-full max-w-4xl relative z-10 flex flex-col overflow-hidden max-h-[95vh] animate-fade-in-up">
+        
+        {/* Header */}
+        <div className="px-8 py-6 border-b border-gray-100/50 flex justify-between items-center bg-white/50">
+          <div>
+            <h2 className="text-2xl font-black text-[#121212] tracking-tight">Post a New Job</h2>
+            <p className="text-sm font-medium text-gray-500 mt-1">Attract the best talent with a great job description.</p>
+          </div>
+          <button onClick={onClose} className="w-10 h-10 bg-gray-50 text-gray-400 rounded-full flex justify-center items-center hover:bg-gray-100 hover:text-[#121212] transition-colors"><FaTimes size={18}/></button>
+        </div>
+
+        {/* Steps Tracker */}
+        <div className="px-8 pt-6 pb-2 bg-gray-50/30">
+          <div className="flex items-center justify-between relative max-w-2xl mx-auto">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 rounded-full z-0"></div>
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#FACC15] rounded-full z-0 transition-all duration-500 ease-out" style={{ width: `${(currentStep - 1) * 50}%` }}></div>
+            
+            {[ { step: 1, label: "Role Overview" }, { step: 2, label: "Requirements" }, { step: 3, label: "Compensation" } ].map((s) => (
+              <div key={s.step} className="relative z-10 flex flex-col items-center gap-2">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-500 ${currentStep > s.step ? 'bg-[#121212] text-[#FACC15]' : currentStep === s.step ? 'bg-[#FACC15] text-[#121212] ring-4 ring-[#FACC15]/30 scale-110' : 'bg-white border-2 border-gray-200 text-gray-400'}`}>
+                  {currentStep > s.step ? <FaCheck /> : s.step}
+                </div>
+                <span className={`text-xs font-bold absolute -bottom-6 whitespace-nowrap transition-colors duration-300 ${currentStep === s.step ? 'text-[#121212]' : 'text-gray-400'}`}>{s.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Form Body */}
+        <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter' && (e.target as any).tagName !== 'TEXTAREA') e.preventDefault(); }} className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10">
+          
+          {/* Step 1 */}
+          {currentStep === 1 && (
+            <div className="space-y-6 animate-fade-in-up">
+              <div className="group">
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Job Title <span className="text-red-500">*</span></label>
+                <input type="text" autoFocus required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all" placeholder="e.g. Senior Frontend Developer" />
+              </div>
+              <div className="group">
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Job Description <span className="text-red-500">*</span></label>
+                <textarea required rows={5} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all resize-none custom-scrollbar" placeholder="Detail the role, responsibilities, and expectations..."></textarea>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="group">
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Location</label>
+                  <div className="relative">
+                    <FaMapMarkerAlt className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input type="text" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="w-full pl-12 pr-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all" placeholder="e.g. New York, NY" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 transition-colors">Work Mode</label>
+                  <div className="flex bg-gray-100 p-1.5 rounded-2xl">
+                    {['On-site', 'Remote', 'Hybrid'].map(mode => (
+                      <button type="button" key={mode} onClick={() => setFormData({...formData, workMode: mode})} className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 ${formData.workMode === mode ? 'bg-white text-[#121212] shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'}`}>{mode}</button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 2 */}
+          {currentStep === 2 && (
+            <div className="space-y-6 animate-fade-in-up">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 transition-colors">Experience Level</label>
+                <div className="grid grid-cols-3 gap-3 bg-gray-100 p-1.5 rounded-2xl">
+                  {['Entry Level (0-2 Yrs)', 'Mid Level (3-5 Yrs)', 'Senior Level (5+ Yrs)'].map(exp => (
+                    <button type="button" key={exp} onClick={() => setFormData({...formData, experience: exp})} className={`py-3 px-2 text-xs sm:text-sm font-bold rounded-xl transition-all duration-300 ${formData.experience === exp ? 'bg-white text-[#121212] shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'}`}>{exp.split(' (')[0]}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="group">
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Required Skills <span className="text-gray-400 normal-case font-medium text-[10px] ml-1">(Press Enter to add)</span> <span className="text-red-500">*</span></label>
+                <div className="min-h-[60px] p-2 bg-gray-50/50 border border-gray-200/80 rounded-2xl focus-within:bg-white focus-within:ring-4 focus-within:ring-[#FACC15]/20 focus-within:border-[#FACC15] transition-all flex flex-wrap gap-2 items-center">
+                  {formData.skills.map(skill => (
+                    <span key={skill} className="bg-[#121212] text-white px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 animate-fade-in-up">
+                      {skill}
+                      <button type="button" onClick={() => removeSkill(skill)} className="text-gray-400 hover:text-[#FACC15] transition-colors"><FaTimes size={12}/></button>
+                    </span>
+                  ))}
+                  <input type="text" value={skillInput} onChange={e => setSkillInput(e.target.value)} onKeyDown={handleSkillAdd} className="flex-1 min-w-[120px] bg-transparent outline-none px-2 py-1 text-sm text-[#121212] placeholder-gray-400" placeholder={formData.skills.length === 0 ? "e.g. React, Node.js..." : "Add another skill..."} />
+                </div>
+              </div>
+              <div className="group">
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Screening Question <span className="text-gray-400 normal-case font-medium text-[10px] ml-1">(Optional)</span></label>
+                <input type="text" value={formData.screeningQuestion} onChange={e => setFormData({...formData, screeningQuestion: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all" placeholder="e.g. Why do you want to work with us?" />
+              </div>
+            </div>
+          )}
+
+          {/* Step 3 */}
+          {currentStep === 3 && (
+            <div className="space-y-6 animate-fade-in-up">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 transition-colors">Salary Type</label>
+                <div className="flex bg-gray-100 p-1.5 rounded-2xl max-w-md">
+                  {['Yearly', 'Monthly', 'Hourly'].map(type => (
+                    <button type="button" key={type} onClick={() => setFormData({...formData, salaryType: type})} className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 ${formData.salaryType === type ? 'bg-white text-[#121212] shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'}`}>{type}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="group">
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Minimum Salary ($)</label>
+                  <input type="number" value={formData.salaryMin} onChange={e => setFormData({...formData, salaryMin: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all" placeholder="e.g. 80000" />
+                </div>
+                <div className="group">
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Maximum Salary ($)</label>
+                  <input type="number" value={formData.salaryMax} onChange={e => setFormData({...formData, salaryMax: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all" placeholder="e.g. 120000" />
+                </div>
+              </div>
+              <div className="pt-4 border-t border-gray-100">
+                <label className="flex items-center justify-between cursor-pointer p-5 bg-gray-50/80 rounded-2xl hover:bg-gray-100 transition-colors border border-gray-200/50">
+                  <div>
+                    <h4 className="text-base font-bold text-[#121212]">Immediate Joiner Required</h4>
+                    <p className="text-sm text-gray-500 mt-1">Activate this if you need candidates who can start working immediately.</p>
+                  </div>
+                  <div className="relative flex-shrink-0 ml-4">
+                    <input type="checkbox" className="sr-only" checked={formData.immediateJoiner} onChange={e => setFormData({...formData, immediateJoiner: e.target.checked})} />
+                    <div className={`block w-14 h-8 rounded-full transition-colors duration-300 ${formData.immediateJoiner ? 'bg-[#121212]' : 'bg-gray-300'}`}></div>
+                    <div className={`absolute left-1 top-1 bg-[#FACC15] w-6 h-6 rounded-full transition-transform duration-300 ${formData.immediateJoiner ? 'translate-x-6' : ''}`}></div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          )}
+        </form>
+
+        {/* Footer */}
+        <div className="px-8 py-5 border-t border-gray-100/50 bg-white/50 flex items-center justify-between">
+          <button type="button" onClick={currentStep > 1 ? handleBack : onClose} className="px-6 py-3 text-sm font-bold text-gray-500 hover:text-[#121212] transition-colors flex items-center gap-2">
+            {currentStep > 1 ? <><FaChevronLeft size={12}/> Back</> : "Cancel"}
+          </button>
+
+          {currentStep < 3 ? (
+            <button type="button" onClick={handleNext} className="px-8 py-3.5 bg-[#FACC15] text-[#121212] text-sm font-black rounded-xl hover:bg-[#EAB308] shadow-lg shadow-[#FACC15]/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
+              Next Step <FaArrowRight size={12} />
+            </button>
+          ) : (
+            <button type="submit" onClick={handleSubmit} disabled={isLoading} className="px-8 py-3.5 bg-[#121212] text-[#FACC15] text-sm font-black rounded-xl hover:bg-black shadow-xl shadow-black/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-50 disabled:transform-none">
+              {isLoading ? <FaSpinner className="animate-spin" /> : <FaCheck size={14} />} {isLoading ? 'Publishing...' : 'Publish Job'}
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
