@@ -9,23 +9,26 @@ export const createJob = async (req: Request, res: Response) => {
     await newJob.save();
 
     // Notify followers
-    const employer = await AuthModel.findById(newJob.employerId);
-    if (employer) {
-      const followers = await AuthModel.find({ followingCompanies: newJob.employerId });
-      const notifications = followers.map(follower => ({
-        userId: follower._id,
-        message: `${employer.companyName || employer.name} posted a new job: ${newJob.title}`,
-        link: `/jobs/${newJob._id}` // A link to the job, to be handled by frontend routing
-      }));
-      if (notifications.length > 0) {
-        await NotificationModel.insertMany(notifications);
+    try {
+      const employer = await AuthModel.findById(newJob.employerId);
+      if (employer) {
+        const followers = await AuthModel.find({ followingCompanies: newJob.employerId });
+        const notifications = followers.map(follower => ({
+          userId: follower._id,
+          message: `${employer.companyName || employer.name || 'A company'} posted a new job: ${newJob.title}`
+        }));
+        if (notifications.length > 0) {
+          await NotificationModel.insertMany(notifications);
+        }
       }
+    } catch (notifErr) {
+      console.error("Failed to send job notifications:", notifErr);
     }
 
     res.status(201).json(newJob);
   } catch (error: any) {
-    console.error("Error creating job:", error);
-    res.status(500).json({ message: error.message || "Failed to create job" });
+    console.error("❌ Error creating job:", error.message, error.errors || error);
+    res.status(500).json({ message: error.message || "Failed to create job", details: error.errors });
   }
 };
 

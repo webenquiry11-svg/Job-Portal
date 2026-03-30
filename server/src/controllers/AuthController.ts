@@ -13,7 +13,7 @@ export const register = async (req: Request, res: Response) => {
     }
     const hashedPassword = await bcrypt.hash(password, 12);
     const result = await AuthModel.create({ email, password: hashedPassword, name, role });
-    const token = jwt.sign({ email: result.email, id: result._id, role: result.role }, 'test', { expiresIn: '1h' });
+    const token = jwt.sign({ email: result.email, id: result._id, role: result.role }, 'test', { expiresIn: '7d' });
     res.status(201).json({ result, token });
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong' });
@@ -31,7 +31,7 @@ export const login = async (req: Request, res: Response) => {
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
-    const token = jwt.sign({ email: existingUser.email, id: existingUser._id, role: existingUser.role }, 'test', { expiresIn: '1h' });
+    const token = jwt.sign({ email: existingUser.email, id: existingUser._id, role: existingUser.role }, 'test', { expiresIn: '7d' });
     res.status(200).json({ result: existingUser, token });
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong' });

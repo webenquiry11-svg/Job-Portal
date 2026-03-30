@@ -1252,6 +1252,7 @@ const PostJobModal = ({ user, onClose }: any) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    industry: '', // Added new industry field
     location: '',
     workMode: 'On-site',
     experience: 'Entry Level (0-2 Yrs)',
@@ -1352,6 +1353,27 @@ const PostJobModal = ({ user, onClose }: any) => {
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Job Description <span className="text-red-500">*</span></label>
                 <textarea required rows={5} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all resize-none custom-scrollbar" placeholder="Detail the role, responsibilities, and expectations..."></textarea>
               </div>
+                  <div className="group">
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 transition-colors">Industry <span className="text-red-500">*</span></label>
+                    <select required value={formData.industry} onChange={e => setFormData({...formData, industry: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all appearance-none cursor-pointer">
+                      <option value="" disabled>Select an Industry</option>
+                      <option value="IT Services">IT Services</option>
+                      <option value="Advertising">Advertising</option>
+                      <option value="General">General</option>
+                      <option value="Finance">Finance</option>
+                      <option value="Healthcare">Healthcare</option>
+                      <option value="Education">Education</option>
+                      <option value="Retail">Retail</option>
+                      <option value="Manufacturing">Manufacturing</option>
+                      <option value="Hospitality">Hospitality</option>
+                      <option value="Media">Media</option>
+                      <option value="Telecommunications">Telecommunications</option>
+                      <option value="Transportation">Transportation</option>
+                      <option value="Energy">Energy</option>
+                      <option value="Real Estate">Real Estate</option>
+                      {/* Add more industries as needed */}
+                    </select>
+                  </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="group">
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Location</label>
