@@ -1070,12 +1070,18 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
   ];
 
   const handleScheduleSubmit = async () => {
-    if (!interviewForm.date || !interviewForm.time || !interviewForm.link) return toast.error('Date, Time, and Link are required');
+    if (!interviewForm.date || !interviewForm.time) return toast.error('Date and Time are required.');
     try {
+      // Create a date object from the local date and time inputs
+      const localInterviewDate = new Date(`${interviewForm.date}T${interviewForm.time}`);
+
       await scheduleInterview({
         jobId: selectedJobId,
         candidateId: schedulingCandidate._id,
-        ...interviewForm,
+        // Send the full ISO string to the server, which is timezone-aware (UTC)
+        interviewDate: localInterviewDate.toISOString(),
+        link: interviewForm.link,
+        description: interviewForm.description,
       }).unwrap();
       toast.success('Interview scheduled and candidate notified!');
       setSchedulingCandidate(null);

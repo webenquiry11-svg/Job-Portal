@@ -124,7 +124,7 @@ export const updateApplicantStatus = async (req: Request, res: Response) => {
 };
 
 export const scheduleInterview = async (req: Request, res: Response) => {
-  const { jobId, candidateId, date, time, link, description } = req.body;
+  const { jobId, candidateId, interviewDate, link, description } = req.body;
   try {
     const job = await JobModel.findById(jobId);
     if (!job) return res.status(404).json({ message: 'Job not found' });
@@ -134,20 +134,20 @@ export const scheduleInterview = async (req: Request, res: Response) => {
       if (!job.applicantDetails) job.applicantDetails = [];
       const newDetail = { candidateId: candidateId as any, status: 'Interview' };
       job.applicantDetails.push(newDetail);
-      // Mongoose subdocuments don't have their own .save(), so we get the reference from the parent array
       detail = job.applicantDetails[job.applicantDetails.length - 1];
     }
 
-    const interviewDate = new Date(`${date}T${time}`);
-    detail.interviewDate = interviewDate;
+    // The server now receives a full ISO string, which new Date() parses correctly into a UTC-based Date object.
+    const dateObject = new Date(interviewDate);
+    detail.interviewDate = dateObject;
     detail.interviewLink = link;
     detail.interviewDescription = description;
-    detail.status = 'Interview'; // Ensure status is set to Interview
+    detail.status = 'Interview';
     await job.save();
 
     await NotificationModel.create({
       userId: candidateId,
-      message: `Your interview for "${job.title}" has been scheduled for ${interviewDate.toLocaleString()}. Please check your dashboard for the link and instructions.`,
+      message: `Your interview for "${job.title}" has been scheduled for ${dateObject.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}. Please check your dashboard for details.`,
     });
 
     res.status(200).json({ message: 'Interview scheduled successfully' });
