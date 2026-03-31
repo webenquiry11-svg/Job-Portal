@@ -65,7 +65,7 @@ const CandidateDashboard = () => {
   const [selectedMessageUser, setSelectedMessageUser] = useState<any>(null);
   const [applicationFilter, setApplicationFilter] = useState('All');
 
-  const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery({});
+  const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery();
   const { data: notifications = [] } = useGetNotificationsQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
   const { data: freshUserData, isLoading: isLoadingFreshUser } = useGetCompanyByIdQuery(user?._id, {
     skip: !user?._id,
