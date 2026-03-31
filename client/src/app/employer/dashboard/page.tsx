@@ -424,13 +424,13 @@ const SidebarItem = ({
   <button
     onClick={onClick}
     title={collapsed ? label : undefined}
-    className={`w-full flex items-center justify-between py-3.5 rounded-xl transition-all duration-200 font-medium group relative ${collapsed ? "md:px-0 md:justify-center px-4" : "px-4"} ${active ? "bg-[#0B0C10] text-[#FACC15] shadow-lg shadow-black/30" : "text-gray-500 hover:bg-gray-100 hover:text-[#0B0C10]"}`}
+    className={`w-full flex items-center justify-between py-3.5 rounded-xl transition-all duration-200 font-medium group relative ${collapsed ? "md:px-0 md:justify-center px-4" : "px-4"} ${active ? "bg-gray-100 text-[#0B0C10] font-bold" : "text-gray-500 hover:bg-gray-100 hover:text-[#0B0C10]"}`}
   >
     <div
       className={`flex items-center ${collapsed ? "md:gap-0 gap-3" : "gap-3"}`}
     >
       <span
-        className={`text-xl flex-shrink-0 ${active ? "text-[#FACC15]" : "text-gray-400 group-hover:text-[#0B0C10]"}`}
+        className={`text-xl shrink-0 ${active ? "text-[#0B0C10]" : "text-gray-400 group-hover:text-[#0B0C10]"}`}
       >
         {icon}
       </span>
@@ -442,7 +442,7 @@ const SidebarItem = ({
     </div>
     {badge && (
       <span
-        className={`text-xs font-bold px-2 py-0.5 rounded-md whitespace-nowrap transition-all duration-300 ${collapsed ? "md:hidden" : ""} ${active ? "bg-[#FACC15]/20 text-[#FACC15]" : "bg-gray-200 text-[#0B0C10]"}`}
+        className={`text-xs font-bold px-2 py-0.5 rounded-md whitespace-nowrap transition-all duration-300 ${collapsed ? "md:hidden" : ""} ${active ? "bg-gray-200 text-[#0B0C10]" : "bg-gray-200 text-[#0B0C10]"}`}
       >
         {badge}
       </span>

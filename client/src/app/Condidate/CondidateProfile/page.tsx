@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaEdit, FaSave, FaFileAlt, FaPen, FaCheckCircle } from 'react-icons/fa';
 import toast from 'react-hot-toast';
+import { useUpdateProfileMutation } from '@/features/authApi';
 
 export {}; // This ensures the file is treated as a module.
 
 const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [updateProfile, { isLoading: isSaving }] = useUpdateProfileMutation();
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -16,6 +17,9 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [otpType, setOtpType] = useState<'email' | 'phone' | null>(null);
   const [otp, setOtp] = useState('');
+  const profileInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const resumeInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     name: '',
     headline: '',
@@ -107,13 +111,9 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
   };
 
   const handleSave = async () => {
-    setIsSaving(true);
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-
       if (!user?._id) {
         toast.error("Error: User ID is missing. Please try logging in again.");
-        setIsSaving(false);
         return;
       }
 
@@ -122,41 +122,40 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
       Object.entries(formData).forEach(([key, value]) => {
         formDataToSend.append(key, String(value));
       });
-      if (profileFile) {
-        formDataToSend.append('profilePicture', profileFile);
-      }
-      if (coverFile) {
-        formDataToSend.append('coverImage', coverFile);
-      }
-      if (resumeFile) {
-        formDataToSend.append('resume', resumeFile);
-      }
+      if (profileFile) formDataToSend.append('profilePicture', profileFile);
+      if (coverFile) formDataToSend.append('coverImage', coverFile);
+      if (resumeFile) formDataToSend.append('resume', resumeFile);
 
-      const response = await fetch(`${API_URL}/auth/update`, {
-        method: 'PATCH',
-        body: formDataToSend,
-      });
-      const dataRes = await response.json();
-      if (response.ok) {
-        setIsEditing(false);
-        const profile = JSON.parse(localStorage.getItem('profile') || '{}');
-        localStorage.setItem('profile', JSON.stringify({ ...profile, result: dataRes.result, token: dataRes.token || profile.token }));
-        if (setUser) setUser(dataRes.result);
-        toast.success("Profile saved successfully!");
-      } else {
-        console.error("Backend Error:", dataRes);
-        toast.error(`Upload Failed: ${dataRes.message}`);
-      }
-    } catch (error) {
+      const dataRes = await updateProfile(formDataToSend).unwrap();
+
+      setIsEditing(false);
+      const profile = JSON.parse(localStorage.getItem('profile') || '{}');
+      localStorage.setItem('profile', JSON.stringify({ ...profile, result: dataRes.result, token: dataRes.token || profile.token }));
+      if (setUser) setUser(dataRes.result);
+      toast.success("Profile saved successfully!");
+
+      // Reset file states after successful save
+      setProfileFile(null);
+      setCoverFile(null);
+      setResumeFile(null);
+      setPreviewUrl(null);
+      setCoverPreviewUrl(null);
+
+    } catch (error: any) {
       console.error('Error saving profile:', error);
-      toast.error("An error occurred while saving.");
-    } finally {
-      setIsSaving(false);
+      toast.error(error.data?.message || "An error occurred while saving.");
     }
   };
 
   const inputClass = "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A] transition-all text-sm";
   const labelClass = "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5";
+
+  const getImageUrl = (path: string | null | undefined) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    return `${API_URL}/${path.replace(/\\/g, '/')}`;
+  };
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 animate-fade-in-up">
@@ -184,14 +183,14 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
         {/* Cover Photo */}
         <div 
           className="h-32 md:h-48 bg-gradient-to-r from-[#0F172A] to-slate-700 relative bg-cover bg-center"
-          style={{ backgroundImage: (coverPreviewUrl || user?.coverImage) ? `url(${coverPreviewUrl || user?.coverImage})` : undefined }}
+          style={{ backgroundImage: (coverPreviewUrl || user?.coverImage) ? `url('${coverPreviewUrl || getImageUrl(user?.coverImage)}')` : undefined }}
         >
            {isEditing && (
-             <div className="absolute bottom-4 right-6">
-                 <label className="cursor-pointer bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-white/30 transition-all shadow-sm">
+             <div className="absolute bottom-4 right-6 z-10">
+                 <button type="button" onClick={() => coverInputRef.current?.click()} className="cursor-pointer bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-white/30 transition-all shadow-sm">
                      <FaPen /> Edit Cover
-                     <input type="file" accept="image/*" className="hidden" onChange={handleCoverChange} />
-                 </label>
+                 </button>
+                 <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={handleCoverChange} />
              </div>
            )}
         </div>
@@ -202,17 +201,17 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
              <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-full p-1.5 shadow-lg relative flex-shrink-0 group">
                 <div className="w-full h-full bg-slate-100 rounded-full flex items-center justify-center text-3xl md:text-5xl font-bold text-[#0F172A] overflow-hidden relative">
                    {previewUrl || user?.profilePicture ? (
-                     <img src={previewUrl || user?.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+                     <img src={previewUrl || getImageUrl(user?.profilePicture)} alt="Profile" className="w-full h-full object-cover" />
                    ) : (
                      formData.name?.charAt(0).toUpperCase() || 'U'
                    )}
                    {isEditing && (
-                     <label className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                     <button type="button" onClick={() => profileInputRef.current?.click()} className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity z-10 rounded-full">
                        <FaEdit className="text-white text-xl md:text-2xl mb-1" />
                        <span className="text-white text-[10px] md:text-xs font-medium">Change</span>
-                       <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-                     </label>
+                     </button>
                    )}
+                   <input ref={profileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                 </div>
              </div>
              <button 
@@ -318,7 +317,8 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
           <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8">
              <h3 className="text-lg font-bold text-[#121212] mb-4 flex items-center gap-2"><FaFileAlt className="text-gray-400"/> Resume</h3>
              <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:bg-gray-50 transition-colors relative group">
-                <input 
+                <input
+                  ref={resumeInputRef}
                   type="file" 
                   accept=".pdf,.doc,.docx" 
                   className={`absolute inset-0 w-full h-full opacity-0 ${isEditing ? 'cursor-pointer z-10' : 'hidden'}`} 
@@ -328,7 +328,7 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
                 <FaFileAlt className="text-3xl text-gray-300 mx-auto mb-3 group-hover:text-[#0F172A] transition-colors" />
                 <p className="text-sm font-bold text-[#121212] mb-1 truncate">{resumeFile ? resumeFile.name : (user?.resume ? 'Uploaded_Resume' : 'No Resume Found')}</p>
                 <p className="text-xs text-gray-500 mb-4">{isEditing ? 'Click here to upload new resume (PDF, DOCX)' : 'Click Edit Profile to update'}</p>
-                {isEditing && <button type="button" className="text-xs font-bold text-[#0F172A] hover:underline pointer-events-none">Replace Resume</button>}
+                {isEditing && <button type="button" onClick={() => resumeInputRef.current?.click()} className="text-xs font-bold text-[#0F172A] hover:underline">Replace Resume</button>}
              </div>
           </div>
         </div>
