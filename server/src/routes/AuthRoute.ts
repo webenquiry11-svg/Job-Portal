@@ -11,8 +11,10 @@ import {
   getPendingGstVerifications, 
   updateGstVerificationStatus, 
   toggleFollowCompany, 
-  getNotifications, 
-  markNotificationsAsRead 
+  getNotifications,
+  markNotificationsAsRead,
+  getCompanyById,
+  incrementProfileView
 } from '../controllers/AuthController';
 import upload from '../middleware/uploadMiddleware';
 
@@ -53,5 +55,9 @@ router.patch('/follow/:companyId', toggleFollowCompany);
 // Notification Routes
 router.get('/notifications/:userId', getNotifications);
 router.patch('/notifications/:userId/read', markNotificationsAsRead);
+
+// Company/Profile View Routes
+router.get('/company/:id', getCompanyById);
+router.put('/profile/view/:id', incrementProfileView);
 
 export default router;

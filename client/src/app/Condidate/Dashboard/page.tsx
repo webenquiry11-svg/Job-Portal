@@ -125,6 +125,8 @@ const CandidateDashboard = () => {
     router.push('/');
   };
 
+  const profileViews = freshUserData?.profileViews ?? user?.profileViews ?? 0;
+
   const unreadCount = notifications.filter((n: any) => !n.isRead).length;
 
   const handleBellClick = () => {

@@ -73,7 +73,7 @@ export const jobApi = createApi({
 
     // Company/Profile endpoints
     getCompanyById: builder.query<any, string>({
-      query: (companyId) => `/company/${companyId}`,
+      query: (companyId) => `/auth/company/${companyId}`,
       providesTags: (result, error, id) => [{ type: 'Company', id }],
     }),
     incrementProfileView: builder.mutation<{ profileViews: number }, string>({
