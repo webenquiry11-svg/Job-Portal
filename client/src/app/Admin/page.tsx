@@ -85,11 +85,12 @@ const AdminLogin = () => {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: adminCreds.email, otp })
       });
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
         setView('update');
-        toast.success('Identity verified!');
+        toast.success(data.message || 'Identity verified!');
       } else {
-        toast.error('Invalid verification code.');
+        toast.error(data.message || 'Invalid verification code.');
       }
     } catch (err) { toast.error('Server error.'); } 
     finally { setIsLoading(false); }

@@ -240,13 +240,13 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
           <div className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 mt-6">
              <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none"><FaMapMarkerAlt className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="location" value={formData.location} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-24 md:w-32" /> : <span className="truncate">{formData.location}</span>}</div>
              <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none">
-                <FaEnvelope className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="email" value={formData.email} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-32 md:w-48" /> : <span className="truncate">{formData.email}</span>}
-                {!isEditing && (user?.isEmailVerified ? <FaCheckCircle className="text-green-500 ml-1" title="Verified"/> : <button onClick={()=>handleRequestOtp('email')} className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded ml-1 hover:bg-blue-200">Verify</button>)}
+                <FaEnvelope className="text-[#0F172A] flex-shrink-0" /> 
+                {isEditing ? <input name="email" value={formData.email} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-32 md:w-48" /> : <span className="truncate">{formData.email}</span>}
+                {!isEditing && (user?.isEmailVerified 
+                  ? <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full ml-1 font-bold flex items-center gap-1"><FaCheckCircle/> Verified</span> 
+                  : <button onClick={()=>handleRequestOtp('email')} className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full ml-1 hover:bg-blue-200 font-bold">Verify</button>)}
              </div>
-             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none">
-                <FaPhone className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="phone" value={formData.phone} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-28" /> : <span className="truncate">{formData.phone}</span>}
-                {!isEditing && (user?.isPhoneVerified ? <FaCheckCircle className="text-green-500 ml-1" title="Verified"/> : <button onClick={()=>handleRequestOtp('phone')} className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded ml-1 hover:bg-blue-200">Verify</button>)}
-             </div>
+             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none"><FaPhone className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="phone" value={formData.phone} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-28" /> : <span className="truncate">{formData.phone || 'Not provided'}</span>}</div>
           </div>
           {isEditing && (
               <label className="flex items-center gap-2 text-xs text-gray-500 mt-4 cursor-pointer">

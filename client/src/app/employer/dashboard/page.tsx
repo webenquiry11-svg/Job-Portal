@@ -48,6 +48,8 @@ import {
   useUpdateApplicantStatusMutation,
   useScheduleInterviewMutation,
   useIncrementProfileViewMutation,
+  useRequestDeleteOtpMutation,
+  useDeleteAccountMutation,
 } from "@/features/jobapi";
 import {
   useGetMessagesQuery,
@@ -394,7 +396,7 @@ const EmployerDashboard = () => {
           )}
           {activeTab === "messages" && <MessagesSection user={user} />}
           {activeTab === "applicants" && <ApplicantsSection employerId={user._id} />}
-          {activeTab === "settings" && <div className="flex flex-col items-center justify-center h-64 bg-white rounded-3xl border border-gray-100 shadow-sm animate-fade-in-up"><FaBriefcase className="text-6xl text-slate-200 mb-4" /><h2 className="text-xl font-bold text-[#121212] capitalize">Settings</h2><p className="text-gray-500 text-sm mt-2">This section is currently under development.</p></div>}
+          {activeTab === "settings" && <SettingsSection user={user} />}
         </div>
       </main>
       {selectedJob && (
@@ -430,7 +432,7 @@ const SidebarItem = ({
       className={`flex items-center ${collapsed ? "md:gap-0 gap-3" : "gap-3"}`}
     >
       <span
-        className={`text-xl shrink-0 ${active ? "text-[#0B0C10]" : "text-gray-400 group-hover:text-[#0B0C10]"}`}
+        className={`text-xl flex-shrink-0 ${active ? "text-[#0B0C10]" : "text-gray-400 group-hover:text-[#0B0C10]"}`}
       >
         {icon}
       </span>
@@ -452,6 +454,94 @@ const SidebarItem = ({
     )}
   </button>
 );
+
+const SettingsSection = ({ user }: { user: any }) => {
+  const router = useRouter();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [requestDeleteOtp, { isLoading: isRequestingOtp }] = useRequestDeleteOtpMutation();
+  const [deleteAccount, { isLoading: isDeleting }] = useDeleteAccountMutation();
+
+  const handleDeleteRequest = async () => {
+    try {
+      await requestDeleteOtp({ _id: user._id }).unwrap();
+      toast.success('OTP sent to your email.');
+      setOtpSent(true);
+    } catch (err) {
+      toast.error('Failed to send OTP.');
+    }
+  };
+
+  const handleAccountDelete = async () => {
+    if (!otp) return toast.error('Please enter the OTP.');
+    try {
+      await deleteAccount({ _id: user._id, otp }).unwrap();
+      toast.success('Account deleted successfully. You will be logged out.');
+      localStorage.removeItem('profile');
+      router.push('/');
+    } catch (err: any) {
+      toast.error(err.data?.message || 'Failed to delete account.');
+    }
+  };
+
+  return (
+    <div className="space-y-8 animate-fade-in-up">
+      <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+        <h3 className="text-xl font-bold text-[#121212] mb-6">Account Settings</h3>
+        <div className="border-2 border-red-200 border-dashed rounded-2xl p-6">
+          <h4 className="font-bold text-red-700">Delete Account</h4>
+          <p className="text-sm text-gray-600 mt-2 mb-4">
+            Once you delete your account, you will be logged out and will not be able to log in again. This action is irreversible.
+          </p>
+          <button
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="px-6 py-2.5 bg-red-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all"
+          >
+            Delete My Account
+          </button>
+        </div>
+      </div>
+
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-md relative animate-fade-in-up">
+            <h3 className="text-xl font-bold text-red-600 mb-2">Are you absolutely sure?</h3>
+            {!otpSent ? (
+              <>
+                <p className="text-sm text-gray-500 mb-6">This action cannot be undone. We will send an OTP to your email to confirm this action.</p>
+                <div className="flex gap-3">
+                  <button onClick={() => setIsDeleteModalOpen(false)} className="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors">Cancel</button>
+                  <button onClick={handleDeleteRequest} disabled={isRequestingOtp} className="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-colors shadow-lg disabled:opacity-50">
+                    {isRequestingOtp ? 'Sending OTP...' : 'Send OTP & Continue'}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-gray-500 mb-6">An OTP has been sent to your email. Please enter it below to permanently delete your account.</p>
+                <input
+                  type="text"
+                  placeholder="Enter 6-digit OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-red-500 mb-4 text-center tracking-[0.5em] font-bold text-lg"
+                  maxLength={6}
+                />
+                <div className="flex gap-3">
+                  <button onClick={() => { setIsDeleteModalOpen(false); setOtpSent(false); setOtp(''); }} className="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors">Cancel</button>
+                  <button onClick={handleAccountDelete} disabled={isDeleting} className="flex-1 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors shadow-lg disabled:opacity-50">
+                    {isDeleting ? 'Deleting...' : 'Delete Account'}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const StatCard = ({ icon, label, value, color }: any) => (
   <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">

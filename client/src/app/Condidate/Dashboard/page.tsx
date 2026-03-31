@@ -37,7 +37,9 @@ import {
   useGetCompanyByIdQuery, 
   useGetJobsByEmployerQuery, 
   useGetNotificationsQuery,
-  useMarkNotificationsAsReadMutation,  useApplyForJobMutation
+  useMarkNotificationsAsReadMutation,
+  useApplyForJobMutation,
+  useRequestDeleteOtpMutation, useDeleteAccountMutation
 } from '@/features/jobapi';
 import { useToggleFollowCompanyMutation, useUpdateProfileMutation } from '@/features/authApi';
 import { useGetMessagesQuery, useSendMessageMutation, useMarkAsSeenMutation, useGetConversationsQuery, useGetUnreadMessageCountQuery } from '@/features/chatApi';
@@ -510,7 +512,7 @@ const CandidateDashboard = () => {
                         return filtered.map((job: any) => {
                           const detail = job.applicantDetails?.find((d: any) => d.candidateId === user._id);
                           return (
-                            <ApplicationRow key={job._id} title={job.title} company={job.employerId?.companyName || job.employerId?.name || 'Company'} logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} status={detail?.status || 'Applied'} date={new Date(job.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} detail={detail} />
+                            <ApplicationRow key={job._id} title={job.title} company={job.employerId?.companyName || job.employerId?.name || 'Company'} isVerifiedEmployer={job.employerId?.gstVerificationStatus === 'approved'} logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} status={detail?.status || 'Applied'} date={new Date(job.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} detail={detail} />
                           )
                         });
                       })()}
@@ -526,7 +528,8 @@ const CandidateDashboard = () => {
               </div>
             </div>
           )}
-          {activeTab !== 'dashboard' && activeTab !== 'explore' && activeTab !== 'profile' && activeTab !== 'saved' && activeTab !== 'messages' && activeTab !== 'applications' && (
+          {activeTab === 'settings' && <SettingsSection user={user} />}
+          {activeTab !== 'dashboard' && activeTab !== 'explore' && activeTab !== 'profile' && activeTab !== 'saved' && activeTab !== 'messages' && activeTab !== 'applications' && activeTab !== 'settings' && (
              <div className="flex flex-col items-center justify-center h-64 bg-white rounded-3xl border border-gray-100 shadow-sm animate-fade-in-up">
                <FaBriefcase className="text-6xl text-slate-200 mb-4" />
                <h2 className="text-xl font-bold text-[#121212] capitalize">{activeTab.replace('-', ' ')}</h2>
@@ -588,6 +591,94 @@ const StatCard = ({ icon, label, value, color }: any) => (
   </div>
 );
 
+const SettingsSection = ({ user }: { user: any }) => {
+  const router = useRouter();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [requestDeleteOtp, { isLoading: isRequestingOtp }] = useRequestDeleteOtpMutation();
+  const [deleteAccount, { isLoading: isDeleting }] = useDeleteAccountMutation();
+
+  const handleDeleteRequest = async () => {
+    try {
+      await requestDeleteOtp({ _id: user._id }).unwrap();
+      toast.success('OTP sent to your email.');
+      setOtpSent(true);
+    } catch (err) {
+      toast.error('Failed to send OTP.');
+    }
+  };
+
+  const handleAccountDelete = async () => {
+    if (!otp) return toast.error('Please enter the OTP.');
+    try {
+      await deleteAccount({ _id: user._id, otp }).unwrap();
+      toast.success('Account deleted successfully. You will be logged out.');
+      localStorage.removeItem('profile');
+      router.push('/');
+    } catch (err: any) {
+      toast.error(err.data?.message || 'Failed to delete account.');
+    }
+  };
+
+  return (
+    <div className="space-y-8 animate-fade-in-up">
+      <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+        <h3 className="text-xl font-bold text-[#121212] mb-6">Account Settings</h3>
+        <div className="border-2 border-red-200 border-dashed rounded-2xl p-6">
+          <h4 className="font-bold text-red-700">Delete Account</h4>
+          <p className="text-sm text-gray-600 mt-2 mb-4">
+            Once you delete your account, you will be logged out and will not be able to log in again. This action is irreversible.
+          </p>
+          <button
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="px-6 py-2.5 bg-red-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all"
+          >
+            Delete My Account
+          </button>
+        </div>
+      </div>
+
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-md relative animate-fade-in-up">
+            <h3 className="text-xl font-bold text-red-600 mb-2">Are you absolutely sure?</h3>
+            {!otpSent ? (
+              <>
+                <p className="text-sm text-gray-500 mb-6">This action cannot be undone. We will send an OTP to your email to confirm this action.</p>
+                <div className="flex gap-3">
+                  <button onClick={() => setIsDeleteModalOpen(false)} className="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors">Cancel</button>
+                  <button onClick={handleDeleteRequest} disabled={isRequestingOtp} className="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-colors shadow-lg disabled:opacity-50">
+                    {isRequestingOtp ? 'Sending OTP...' : 'Send OTP & Continue'}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-gray-500 mb-6">An OTP has been sent to your email. Please enter it below to permanently delete your account.</p>
+                <input
+                  type="text"
+                  placeholder="Enter 6-digit OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-red-500 mb-4 text-center tracking-[0.5em] font-bold text-lg"
+                  maxLength={6}
+                />
+                <div className="flex gap-3">
+                  <button onClick={() => { setIsDeleteModalOpen(false); setOtpSent(false); setOtp(''); }} className="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors">Cancel</button>
+                  <button onClick={handleAccountDelete} disabled={isDeleting} className="flex-1 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors shadow-lg disabled:opacity-50">
+                    {isDeleting ? 'Deleting...' : 'Delete Account'}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const CountdownTimer = ({ targetDate }: any) => {
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
@@ -632,7 +723,7 @@ const CountdownTimer = ({ targetDate }: any) => {
   return <div className="flex items-center gap-3 sm:gap-4">{timerComponents.length ? timerComponents : <span className="text-sm font-bold text-red-500">Time's up!</span>}</div>;
 };
 
-const ApplicationRow = ({ title, company, logo, status, date, detail }: any) => {
+const ApplicationRow = ({ title, company, logo, status, date, detail, isVerifiedEmployer }: any) => {
   let statusConfig = { color: 'text-gray-500 bg-gray-100 border-gray-200', icon: <FaSpinner className="animate-spin" /> };
   if (status === 'Applied') statusConfig = { color: 'text-yellow-600 bg-yellow-50 border-yellow-200', icon: <FaCheckCircle /> };
   if (status === 'Reviewing') statusConfig = { color: 'text-blue-600 bg-blue-50 border-blue-200', icon: <FaEye /> };
@@ -674,12 +765,14 @@ const ApplicationRow = ({ title, company, logo, status, date, detail }: any) => 
   );
 };
 
-const RecommendedJobCard = ({ job, onViewDetails, isSaved, onToggleSave, onViewCompany }: any) => {
-  const { title, employerId, location, salaryMin, salaryMax, skills } = job;
-  const company = employerId?.companyName || employerId?.name || 'Company';
-  const logo = company.charAt(0).toUpperCase();
-  const salary = `$${salaryMin} - $${salaryMax}`;
-  const tags = skills?.slice(0, 3) || [];
+const RecommendedJobCard = ({ job, onViewDetails, isSaved, onToggleSave, onViewCompany, isVerifiedEmployer, title: propTitle, company: propCompany, logo: propLogo, location: propLocation, salary: propSalary, tags: propTags }: any) => {
+  const title = job?.title || propTitle;
+  const employerId = job?.employerId;
+  const company = job ? (employerId?.companyName || employerId?.name || 'Company') : propCompany;
+  const logo = job ? company.charAt(0).toUpperCase() : propLogo;
+  const salary = job ? `$${job.salaryMin} - $${job.salaryMax}` : propSalary;
+  const tags = job ? (job.skills?.slice(0, 3) || []) : propTags;
+  const verified = job ? (employerId?.gstVerificationStatus === 'approved') : isVerifiedEmployer;
   const handleCompanyClick = (e: React.MouseEvent) => { e.stopPropagation(); if (employerId?._id && onViewCompany) onViewCompany(employerId._id); };
   return (
   <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
@@ -871,7 +964,14 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser, on
               <div className="flex flex-col md:flex-row gap-6 items-start justify-between">
                 <div className="flex flex-col md:flex-row gap-6 items-start flex-1">
                   <div className="w-24 h-24 md:w-28 md:h-28 bg-white rounded-2xl p-1.5 shadow-lg -mt-16 flex-shrink-0 border border-gray-100"><div className="w-full h-full bg-slate-50 rounded-xl flex items-center justify-center text-4xl font-bold text-[#0B0C10] overflow-hidden">{company.profilePicture ? <img src={company.profilePicture} alt={company.companyName} className="w-full h-full object-cover" /> : company.companyName?.charAt(0).toUpperCase() || 'C'}</div></div>
-                  <div className="flex-1 mt-2 md:mt-0"><h1 className="text-2xl md:text-3xl font-bold text-[#121212]">{company.companyName}</h1><p className="text-gray-500 text-sm md:text-base mt-1 font-medium">{company.tagline || 'Leading the way in innovation.'}</p>
+                  <div className="flex-1 mt-2 md:mt-0">
+                    <h1 className="text-2xl md:text-3xl font-bold text-[#121212] flex items-center flex-wrap gap-3">
+                      {company.companyName}
+                      {company.gstVerificationStatus === 'approved' && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-green-50 text-green-700 text-xs font-black uppercase tracking-wider border border-green-200 shadow-sm"><FaCheckCircle size={14} /> Verified</span>
+                      )}
+                    </h1>
+                    <p className="text-gray-500 text-sm md:text-base mt-1 font-medium">{company.tagline || 'Leading the way in innovation.'}</p>
                     <div className="flex flex-wrap items-center gap-3 mt-4 text-xs font-medium text-gray-500">
                       {company.location && <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100"><FaMapMarkerAlt className="text-[#0B0C10]" /> {company.location}</span>}
                       {company.industry && <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100"><FaBuilding className="text-[#0B0C10]" /> {company.industry}</span>}

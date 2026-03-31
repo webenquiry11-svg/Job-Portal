@@ -83,6 +83,40 @@ export const jobApi = createApi({
       }),
       invalidatesTags: (result, error, id) => [{ type: 'Company', id }],
     }),
+
+    // Admin
+    getAllUsersForAdmin: builder.query<any[], void>({
+      query: () => '/auth/admin/all-users',
+      providesTags: ['Company'], // Or a new 'User' tag
+    }),
+    getPendingGstVerifications: builder.query<any[], void>({
+      query: () => '/auth/admin/gst-verifications/pending',
+      providesTags: ['Company'],
+    }),
+    updateGstVerificationStatus: builder.mutation<any, { employerId: string; status: string }>({
+      query: (body) => ({
+        url: '/auth/admin/gst-verifications/update-status',
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: ['Company'],
+    }),
+
+    // Account Deletion Mutations (Consider moving to authApi.ts)
+    requestDeleteOtp: builder.mutation<any, { _id: string }>({
+      query: (body) => ({
+        url: '/auth/request-delete-otp',
+        method: 'POST',
+        body,
+      }),
+    }),
+    deleteAccount: builder.mutation<any, { _id: string; otp: string }>({
+      query: (body) => ({
+        url: '/auth/delete-account',
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
 });
 
@@ -98,4 +132,9 @@ export const {
   useGetNotificationsQuery, 
   useMarkNotificationsAsReadMutation,
   useIncrementProfileViewMutation,
+  useGetAllUsersForAdminQuery,
+  useGetPendingGstVerificationsQuery,
+  useUpdateGstVerificationStatusMutation,
+  useRequestDeleteOtpMutation,
+  useDeleteAccountMutation,
 } = jobApi;

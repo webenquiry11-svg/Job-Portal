@@ -14,7 +14,10 @@ import {
   getNotifications,
   markNotificationsAsRead,
   getCompanyById,
-  incrementProfileView
+  incrementProfileView,
+  requestAccountDeletionOtp,
+  deleteAccount,
+  getAllUsersForAdmin
 } from '../controllers/AuthController';
 import upload from '../middleware/uploadMiddleware';
 
@@ -43,6 +46,12 @@ router.patch('/update', (req, res, next) => {
 
 router.post('/request-otp', requestOtp);
 router.post('/verify-otp', verifyOtp);
+
+// Account Deletion Routes
+router.post('/request-delete-otp', requestAccountDeletionOtp);
+router.post('/delete-account', deleteAccount);
+
+// Admin Routes
 router.post('/admin/send-otp', sendAdminOtp);
 router.post('/admin/verify-otp', verifyAdminOtp);
 router.post('/employer/request-gst-verification', requestGstVerification);
@@ -59,5 +68,6 @@ router.patch('/notifications/:userId/read', markNotificationsAsRead);
 // Company/Profile View Routes
 router.get('/company/:id', getCompanyById);
 router.put('/profile/view/:id', incrementProfileView);
+router.get('/admin/all-users', getAllUsersForAdmin);
 
 export default router;
