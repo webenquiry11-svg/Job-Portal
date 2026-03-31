@@ -29,7 +29,7 @@ const CandidateDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery({});
+  const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery();
 
   useEffect(() => {
     // Check for authentication and role
