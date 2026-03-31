@@ -165,7 +165,7 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {allApplications.map((app: any, i) => (
+                    {allApplications.map((app: any, i: number) => (
                       <tr key={i} className="hover:bg-gray-50/50 transition-colors">
                         <td className="p-5 font-bold text-[#121212]">{app.candidateName} <span className="block font-medium text-xs text-gray-500 mt-1">{app.candidateEmail}</span></td>
                         <td className="p-5 font-semibold text-gray-700">{app.jobTitle}</td>
