@@ -773,6 +773,7 @@ const RecommendedJobCard = ({ job, onViewDetails, isSaved, onToggleSave, onViewC
   const salary = job ? `$${job.salaryMin} - $${job.salaryMax}` : propSalary;
   const tags = job ? (job.skills?.slice(0, 3) || []) : propTags;
   const verified = job ? (employerId?.gstVerificationStatus === 'approved') : isVerifiedEmployer;
+  const location = job?.location || propLocation;
   const handleCompanyClick = (e: React.MouseEvent) => { e.stopPropagation(); if (employerId?._id && onViewCompany) onViewCompany(employerId._id); };
   return (
   <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
