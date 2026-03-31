@@ -5,9 +5,10 @@ export const jobApi = createApi({
   baseQuery: fetchBaseQuery({ 
     baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000' 
   }),
-  tagTypes: ['Job', 'Notification', 'Application'], // 'Application' tag add kiya
+  tagTypes: ['Job', 'Notification', 'Company', 'Application'],
   endpoints: (builder) => ({
-    postJob: builder.mutation({
+    // Job endpoints
+    postJob: builder.mutation<any, any>({
       query: (jobData) => ({
         url: '/jobs/create',
         method: 'POST',
@@ -15,41 +16,40 @@ export const jobApi = createApi({
       }),
       invalidatesTags: ['Job'],
     }),
-    getJobsByEmployer: builder.query({
+    getJobsByEmployer: builder.query<any, string>({
       query: (employerId) => `/jobs/employer/${employerId}`,
       providesTags: ['Job'],
     }),
-    getAllJobs: builder.query({
+    getAllJobs: builder.query<any, void>({
       query: () => '/jobs/all',
       providesTags: ['Job'],
     }),
-    getCompanyById: builder.query({
-      query: (companyId) => `/company/${companyId}`,
-    }),
-    deleteJob: builder.mutation({
+    deleteJob: builder.mutation<any, string>({
       query: (jobId) => ({
         url: `/jobs/${jobId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Job'],
     }),
-    // Naya Apply Endpoint yahan hai
-    applyForJob: builder.mutation({
+    
+    // Application/Status endpoints
+    applyForJob: builder.mutation<any, any>({
       query: (applicationData) => ({
         url: '/jobs/apply',
         method: 'POST',
         body: applicationData,
       }),
-      invalidatesTags: ['Application', 'Job'], // Added 'Job' to refresh the job list
+      invalidatesTags: ['Application', 'Job'],
     }),
-    updateApplicantStatus: builder.mutation({
+    updateApplicantStatus: builder.mutation<any, any>({
       query: (data) => ({
-        url: '/jobs/applicant-status',
-        method: 'PATCH',
+        url: '/jobs/status',
+        method: 'PUT',
         body: data,
       }),
+      invalidatesTags: ['Job'],
     }),
-    scheduleInterview: builder.mutation({
+    scheduleInterview: builder.mutation<any, any>({
       query: (data) => ({
         url: '/jobs/schedule-interview',
         method: 'POST',
@@ -57,21 +57,35 @@ export const jobApi = createApi({
       }),
       invalidatesTags: ['Job'],
     }),
-    getNotifications: builder.query({
+
+    // Notification endpoints
+    getNotifications: builder.query<any, string>({
       query: (userId) => `/auth/notifications/${userId}`,
       providesTags: ['Notification'],
     }),
-    markNotificationsAsRead: builder.mutation({
+    markNotificationsAsRead: builder.mutation<any, string>({
       query: (userId) => ({
-        url: `/auth/notifications/${userId}/read`,
-        method: 'PATCH',
+        url: `/auth/notifications/read/${userId}`,
+        method: 'PUT',
       }),
       invalidatesTags: ['Notification'],
+    }),
+
+    // Company/Profile endpoints
+    getCompanyById: builder.query<any, string>({
+      query: (companyId) => `/company/${companyId}`,
+      providesTags: (result, error, id) => [{ type: 'Company', id }],
+    }),
+    incrementProfileView: builder.mutation<{ profileViews: number }, string>({
+      query: (userId) => ({
+        url: `/auth/profile/view/${userId}`,
+        method: 'PUT',
+      }),
+      invalidatesTags: (result, error, id) => [{ type: 'Company', id }],
     }),
   }),
 });
 
-// useApplyForJobMutation ko export list mein add kiya
 export const { 
   usePostJobMutation, 
   useGetJobsByEmployerQuery, 
@@ -82,5 +96,6 @@ export const {
   useUpdateApplicantStatusMutation,
   useScheduleInterviewMutation,
   useGetNotificationsQuery, 
-  useMarkNotificationsAsReadMutation 
+  useMarkNotificationsAsReadMutation,
+  useIncrementProfileViewMutation,
 } = jobApi;

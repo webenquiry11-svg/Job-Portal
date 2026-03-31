@@ -68,10 +68,21 @@ export const applyForJob = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'You have already applied for this job' });
     }
 
+    // Add to applicants array
     if (!job.applicants) {
       job.applicants = [];
     }
     job.applicants.push(candidateId as any);
+
+    // Add to applicantDetails with 'Applied' status
+    if (!job.applicantDetails) {
+      job.applicantDetails = [];
+    }
+    // Ensure no duplicate detail entry
+    if (!job.applicantDetails.some(d => d.candidateId.toString() === candidateId)) {
+      job.applicantDetails.push({ candidateId: candidateId as any, status: 'Applied' });
+    }
+
     await job.save();
 
     // Create notification for employer
@@ -147,7 +158,7 @@ export const scheduleInterview = async (req: Request, res: Response) => {
 
     await NotificationModel.create({
       userId: candidateId,
-      message: `Your interview for "${job.title}" has been scheduled for ${dateObject.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}. Please check your dashboard for details.`,
+      message: `Your interview for "${job.title}" has been scheduled. Please check your dashboard for the date, time, and meeting details.`,
     });
 
     res.status(200).json({ message: 'Interview scheduled successfully' });

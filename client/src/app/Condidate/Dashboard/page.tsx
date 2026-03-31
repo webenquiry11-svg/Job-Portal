@@ -37,8 +37,7 @@ import {
   useGetCompanyByIdQuery, 
   useGetJobsByEmployerQuery, 
   useGetNotificationsQuery,
-  useMarkNotificationsAsReadMutation,
-  useApplyForJobMutation
+  useMarkNotificationsAsReadMutation,  useApplyForJobMutation
 } from '@/features/jobapi';
 import { useToggleFollowCompanyMutation, useUpdateProfileMutation } from '@/features/authApi';
 import { useGetMessagesQuery, useSendMessageMutation, useMarkAsSeenMutation, useGetConversationsQuery, useGetUnreadMessageCountQuery } from '@/features/chatApi';
@@ -68,6 +67,10 @@ const CandidateDashboard = () => {
 
   const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery({});
   const { data: notifications = [] } = useGetNotificationsQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
+  const { data: freshUserData, isLoading: isLoadingFreshUser } = useGetCompanyByIdQuery(user?._id, {
+    skip: !user?._id,
+    pollingInterval: 30000, // Poll for updates every 30 seconds
+  });
   const [markNotificationsAsRead] = useMarkNotificationsAsReadMutation();
 
   const { data: unreadChatData } = useGetUnreadMessageCountQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
@@ -360,7 +363,7 @@ const CandidateDashboard = () => {
                 <StatCard icon={<FaBriefcase />} label="Applied Jobs" value={appliedJobs.length.toString()} color="bg-yellow-100 text-yellow-600" />
                 <StatCard icon={<FaBookmark />} label="Saved Jobs" value={savedJobIds.length.toString()} color="bg-slate-100 text-slate-600" />
                 <StatCard icon={<FaClock />} label="Interviews" value="2" color="bg-yellow-100 text-yellow-600" />
-                <StatCard icon={<FaEye />} label="Profile Views" value="84" color="bg-slate-100 text-slate-600" />
+                <StatCard icon={<FaEye />} label="Profile Views" value={isLoadingFreshUser ? '...' : profileViews.toLocaleString()} color="bg-slate-100 text-slate-600" />
               </div>
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 <div className="xl:col-span-2 space-y-6">

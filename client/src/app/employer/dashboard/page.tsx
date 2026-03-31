@@ -47,6 +47,7 @@ import {
   useMarkNotificationsAsReadMutation,
   useUpdateApplicantStatusMutation,
   useScheduleInterviewMutation,
+  useIncrementProfileViewMutation,
 } from "@/features/jobapi";
 import {
   useGetMessagesQuery,
@@ -476,7 +477,14 @@ const DashboardOverview = ({ user }: { user: any }) => {
     pollingInterval: 30000, // Poll for new views every 30 seconds
   });
 
-  const totalApplicants = jobs.reduce((acc: number, job: any) => acc + (job.applicants?.length || 0), 0);
+  const totalApplicants = jobs.reduce((acc: number, job: any) => acc + (job.applicantDetails?.length || 0), 0);
+  const pendingReviews = jobs.reduce((acc: number, job: any) => {
+    if (!job.applicantDetails) return acc;
+    const pendingInJob = job.applicantDetails.filter((detail: any) => 
+        detail.status === 'Applied' || detail.status === 'Reviewing'
+    ).length;
+    return acc + pendingInJob;
+  }, 0);
   const profileViews = companyData?.profileViews ?? user?.profileViews ?? 0;
 
   return (
@@ -506,7 +514,7 @@ const DashboardOverview = ({ user }: { user: any }) => {
         <StatCard
           icon={<FaClock />}
           label="Pending Reviews"
-          value={totalApplicants.toString()}
+          value={isLoadingJobs ? "..." : pendingReviews.toString()}
           color="bg-yellow-100 text-yellow-600"
         />
         <StatCard
@@ -1009,6 +1017,7 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
 
   const [updateApplicantStatus] = useUpdateApplicantStatusMutation();
   const [scheduleInterview, { isLoading: isScheduling }] = useScheduleInterviewMutation();
+  const [incrementProfileView] = useIncrementProfileViewMutation();
   const [schedulingCandidate, setSchedulingCandidate] = useState<any>(null);
   const [interviewForm, setInterviewForm] = useState({ date: '', time: '', link: '', description: '' });
   const [applicantStatuses, setApplicantStatuses] = useState<Record<string, string>>({});
@@ -1203,7 +1212,10 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
                         {applicant.resume ? (
                           <a 
                             href={applicant.resume.startsWith('http') ? applicant.resume : `${apiUrl}/${applicant.resume.replace(/\\/g, '/')}`}
-                            onClick={(e) => e.stopPropagation()} 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              incrementProfileView(applicant._id);
+                            }} 
                             target="_blank" 
                             rel="noreferrer"
                             className="text-xs font-bold text-[#0B0C10] hover:text-[#FACC15] hover:bg-[#0B0C10] bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 transition-colors"
