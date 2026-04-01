@@ -16,7 +16,7 @@ const Navbar = () => {
   if (pathname?.startsWith('/employer/dashboard') || pathname?.startsWith('/Condidate/Dashboard') || pathname?.startsWith('/dashboard') || pathname?.toLowerCase().startsWith('/admin') || pathname?.startsWith('/employer-profile')) {
     return null;
   }
-
+    
   return (
     <div className="sticky top-0 z-50 transition-all duration-300">
       <nav className="bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
