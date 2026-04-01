@@ -5,6 +5,7 @@ import { gsap } from 'gsap';
 import { FcGoogle } from 'react-icons/fc';
 import { FaMicrosoft, FaEnvelope, FaSearch, FaFileAlt, FaBell, FaBuilding, FaQuoteLeft, FaBriefcase, FaUsers, FaHeadset, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaArrowRight, FaTimes, FaFilter } from 'react-icons/fa';
 import LoginModal from './login/login';
+import Link from 'next/link';
 
 const LoginDashboard = () => {
   const imageContainerRef = useRef<HTMLDivElement>(null);
@@ -94,6 +95,12 @@ const LoginDashboard = () => {
               <FaEnvelope className="mr-3 text-gray-500" size={24} />
               Continue with Email
             </button>
+          </div>
+
+          <div className="pt-2 max-w-md mx-auto lg:mx-0">
+            <Link href="/Subscription/Pricing" className="w-full flex items-center justify-center py-3.5 px-4 border border-white/20 rounded-xl shadow-sm text-base font-bold text-white bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 transform hover:-translate-y-0.5">
+              View Pricing Plans
+            </Link>
           </div>
 
           <p className="text-xs text-slate-400 text-center lg:text-left pt-4">
@@ -330,9 +337,14 @@ const LoginDashboard = () => {
           <div className="container mx-auto px-6 md:px-12 text-center relative z-10">
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Ready to Start Your Career Journey?</h2>
               <p className="text-slate-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">Join thousands of professionals who have advanced their careers with JobPortal. Create your account today.</p>
-              <button onClick={() => setIsLoginModalOpen(true)} className="bg-[#FACC15] text-[#0B0C10] font-bold py-4 px-10 rounded-full shadow-xl hover:bg-[#EAB308] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
-                  Get Started Now
-              </button>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  <button onClick={() => setIsLoginModalOpen(true)} className="bg-[#FACC15] text-[#0B0C10] font-bold py-4 px-10 rounded-full shadow-xl hover:bg-[#EAB308] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
+                      Get Started Now
+                  </button>
+                  <Link href="/Subscription/Pricing" className="bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold py-4 px-10 rounded-full shadow-xl hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
+                      View Pricing Plans
+                  </Link>
+              </div>
           </div>
       </div>
 
