@@ -3,29 +3,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { FcGoogle } from 'react-icons/fc';
-import { FaMicrosoft, FaEnvelope, FaSearch, FaFileAlt, FaBell, FaBuilding, FaQuoteLeft, FaBriefcase, FaUsers, FaHeadset, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaArrowRight } from 'react-icons/fa';
+import { FaMicrosoft, FaEnvelope, FaSearch, FaFileAlt, FaBell, FaBuilding, FaQuoteLeft, FaBriefcase, FaUsers, FaHeadset, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaArrowRight, FaTimes, FaFilter } from 'react-icons/fa';
+import LoginModal from './login/login';
 
 const LoginDashboard = () => {
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const [displayText, setDisplayText] = useState('');
-
-  useEffect(() => {
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-    tl.fromTo(imageContainerRef.current,
-      { y: 100, opacity: 0, scale: 0.8 },
-      { y: 0, opacity: 1, scale: 1, duration: 1.2 }
-    );
-
-    // Floating animation
-    gsap.to(imageContainerRef.current, {
-      y: -15,
-      duration: 2.5,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut"
-    });
-  }, []);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   useEffect(() => {
     const text = "Fits Your Life";
@@ -67,20 +51,21 @@ const LoginDashboard = () => {
   return (
     <div className="flex-grow flex flex-col">
       {/* Hero Section */}
-      <div className="bg-white min-h-[calc(100vh-80px)] flex items-center relative overflow-hidden text-[#121212]">
+      <div className="min-h-[calc(100vh-80px)] flex items-center relative overflow-hidden text-white bg-cover bg-center" style={{ backgroundImage: "url(/herobg.png)" }}>
+        <div className="absolute inset-0 bg-black/60 z-0"></div>
 
         <div className="container mx-auto px-6 md:px-12 py-12 lg:py-20 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center relative z-10">
         {/* Left Side */}
         <div className="text-center lg:text-left space-y-8 max-w-2xl mx-auto lg:mx-0">
           <div className="space-y-4">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#121212] leading-tight tracking-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
               Find The Job That <br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FACC15] to-[#EAB308]">
                 {displayText}
                 <span className="text-[#FACC15] animate-pulse">|</span>
               </span>
             </h1>
-            <p className="text-lg text-gray-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
+            <p className="text-lg text-slate-200 leading-relaxed max-w-lg mx-auto lg:mx-0">
               We bring you the best job opportunities from top companies. Get started by creating an account or signing in.
             </p>
           </div>
@@ -91,7 +76,7 @@ const LoginDashboard = () => {
                 <div className="w-full border-t border-gray-100"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Sign in with</span>
+                <span className="px-2 bg-black/20 backdrop-blur-sm text-slate-300 rounded-md">Sign in with</span>
               </div>
             </div>
 
@@ -111,16 +96,34 @@ const LoginDashboard = () => {
             </button>
           </div>
 
-          <p className="text-xs text-gray-500 text-center lg:text-left pt-4">
+          <p className="text-xs text-slate-400 text-center lg:text-left pt-4">
             By continuing, you agree to our <a href="#" className="underline hover:text-[#EAB308]">Terms of Service</a> and <a href="#" className="underline hover:text-[#EAB308]">Privacy Policy</a>.
           </p>
         </div>
 
-        {/* Right Side - Image */}
-        <div className="hidden lg:block relative">
-          <div ref={imageContainerRef} className="relative">
-             <img src="/hiring-illustration.svg" alt="Hiring Illustration" className="w-full h-auto drop-shadow-2xl transform hover:scale-105 transition-transform duration-500" />
-          </div>
+        {/* Right Side - Search Form */}
+        <div className="hidden lg:flex items-center justify-center">
+            <div className="bg-white/10 backdrop-blur-lg p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/10">
+                <h3 className="text-2xl font-bold text-white mb-6 text-center">Find Your Next Opportunity</h3>
+                <form className="space-y-4">
+                    <div className="relative group">
+                        <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#0B0C10]" />
+                        <input type="text" placeholder="Job title, keyword, or company" className="w-full pl-11 pr-4 py-4 bg-white/80 text-[#121212] placeholder-gray-500 border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FACC15] focus:bg-white transition-all"/>
+                    </div>
+                    <div className="relative group">
+                        <FaMapMarkerAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#0B0C10]" />
+                        <input type="text" placeholder="City, state, or zip code" className="w-full pl-11 pr-4 py-4 bg-white/80 text-[#121212] placeholder-gray-500 border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FACC15] focus:bg-white transition-all"/>
+                    </div>
+                    <div className="flex gap-3 pt-2">
+                        <button type="submit" className="flex-1 py-4 bg-[#FACC15] text-[#0B0C10] font-bold rounded-xl shadow-lg shadow-[#FACC15]/20 hover:bg-[#EAB308] transition-all transform hover:-translate-y-0.5">
+                            Search Jobs
+                        </button>
+                        <button type="button" className="p-4 bg-white/20 text-white rounded-xl hover:bg-white/30 transition-all">
+                            <FaFilter />
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
       </div>
       </div>
@@ -253,7 +256,7 @@ const LoginDashboard = () => {
                                         <span key={i} className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition-colors">#{tag}</span>
                                     ))}
                                 </div>
-                                <button className="text-[#0B0C10] font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all hover:text-[#EAB308]">
+                                <button onClick={() => setIsLoginModalOpen(true)} className="text-[#0B0C10] font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all hover:text-[#EAB308]">
                                     Apply Now <FaArrowRight />
                                 </button>
                             </div>
@@ -261,9 +264,11 @@ const LoginDashboard = () => {
                     </div>
                 ))}
             </div>
-             <div className="text-center mt-12">
-                <button className="px-8 py-3.5 border-2 border-gray-200 text-gray-700 font-bold rounded-full hover:border-[#0B0C10] hover:text-[#FACC15] hover:bg-[#0B0C10] transition-all duration-300">View All Jobs</button>
-              </div>
+            <div className="text-center mt-12">
+                <button onClick={() => setIsLoginModalOpen(true)} className="px-8 py-3.5 bg-[#FACC15] text-[#0B0C10] font-bold rounded-full hover:bg-[#EAB308] shadow-lg shadow-[#FACC15]/20 transition-all duration-300 transform hover:-translate-y-1">
+                    View All Jobs
+                </button>
+            </div>
           </div>
       </div>
 
@@ -325,11 +330,16 @@ const LoginDashboard = () => {
           <div className="container mx-auto px-6 md:px-12 text-center relative z-10">
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Ready to Start Your Career Journey?</h2>
               <p className="text-slate-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">Join thousands of professionals who have advanced their careers with JobPortal. Create your account today.</p>
-              <button className="bg-[#FACC15] text-[#0B0C10] font-bold py-4 px-10 rounded-full shadow-xl hover:bg-[#EAB308] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
+              <button onClick={() => setIsLoginModalOpen(true)} className="bg-[#FACC15] text-[#0B0C10] font-bold py-4 px-10 rounded-full shadow-xl hover:bg-[#EAB308] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
                   Get Started Now
               </button>
           </div>
       </div>
+
+      {/* Login Modal */}
+      {isLoginModalOpen && (
+        <LoginModal onClose={() => setIsLoginModalOpen(false)} />
+      )}
     </div>
   );
 };

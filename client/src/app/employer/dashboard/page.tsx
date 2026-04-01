@@ -733,7 +733,7 @@ const MyJobsSection = ({
                     </span>
                   </td>
                   <td className="p-4 font-medium text-gray-600 hidden lg:table-cell">
-                    52
+                    {job.applicants?.length || 0}
                   </td>
                   <td className="p-4 text-gray-500 hidden lg:table-cell">
                     {new Date(job.createdAt).toLocaleDateString()}
