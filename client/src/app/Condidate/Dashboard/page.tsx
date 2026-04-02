@@ -26,6 +26,7 @@ import {
   FaBuilding,
   FaPlus,
   FaCheck,
+  FaPaperPlane,
   FaCommentDots,
   FaCheckDouble
 } from 'react-icons/fa';
@@ -939,6 +940,13 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser, on
   const { data: company, isLoading: isLoadingCompany } = useGetCompanyByIdQuery(companyId, { skip: !companyId });
   const { data: jobs = [], isLoading: isLoadingJobs } = useGetJobsByEmployerQuery(companyId, { skip: !companyId });
   const [toggleFollow, { isLoading: isFollowingLoading }] = useToggleFollowCompanyMutation();
+  const [incrementProfileView] = useIncrementProfileViewMutation();
+
+  useEffect(() => {
+    if (companyId && user?._id) {
+      incrementProfileView({ id: companyId, viewerId: user._id });
+    }
+  }, [companyId, user?._id, incrementProfileView]);
   const isFollowing = user?.followingCompanies?.includes(companyId);
 
   const handleFollowToggle = async () => {
@@ -978,6 +986,7 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser, on
                       {company.industry && <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100"><FaBuilding className="text-[#0B0C10]" /> {company.industry}</span>}
                       {company.companySize && <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100"><FaUsers className="text-[#0B0C10]" /> {company.companySize}</span>}
                       {company.website && <a href={company.website} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-[#0B0C10] hover:underline bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100"><FaGlobe /> Website</a>}
+                      <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100"><FaEye className="text-[#0B0C10]" /> {company.profileViews || 0} Views</span>
                     </div>
                   </div>
                 </div>
@@ -1074,65 +1083,78 @@ const CandidateMessagesSection = ({ user, allJobs, initialSelectedUser }: any) =
   );
 
   return (
-    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm flex h-[600px] overflow-hidden animate-fade-in-up">
-      {/* Sidebar */}
-      <div className="w-1/3 border-r border-gray-100 flex flex-col bg-white z-10">
-        <div className="p-6 border-b border-gray-100 bg-gray-50/50">
-          <h2 className="text-xl font-bold text-[#121212]">Messages</h2>
-          <div className="mt-4 relative">
-            <FaSearch className="absolute left-3 top-3 text-gray-400" />
+    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm flex h-[650px] overflow-hidden animate-fade-in-up relative">
+      {/* Left Sidebar - Connections List */}
+      <div className={`w-full md:w-80 border-r border-gray-100 flex-col bg-white z-10 flex-shrink-0 ${selectedUser ? 'hidden md:flex' : 'flex'}`}>
+        <div className="p-5 border-b border-gray-100 space-y-4">
+          <h3 className="font-bold text-xl text-[#121212]">Messages</h3>
+          <div className="relative">
+            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
             <input 
               type="text" 
               placeholder="Search companies..." 
               value={searchQuery} 
               onChange={(e) => setSearchQuery(e.target.value)} 
-              className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 transition-all shadow-sm"
+              className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-transparent rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 transition-all focus:bg-white focus:border-[#FACC15]"
             />
           </div>
         </div>
-        <div className="overflow-y-auto flex-1 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto custom-scrollbar bg-white">
           {filteredCompanies.map((company: any) => (
             <div
               key={company._id}
               onClick={() => setSelectedUser(company)}
-              className={`p-4 flex items-center gap-3 cursor-pointer transition-colors border-b border-gray-50 hover:bg-gray-50 ${selectedUser?._id === company._id ? 'bg-slate-50 border-l-4 border-l-[#FACC15]' : 'border-l-4 border-l-transparent'}`}
+              className={`flex items-center gap-4 cursor-pointer p-4 transition-colors border-b border-gray-50/50 ${selectedUser?._id === company._id ? "bg-slate-50 border-l-4 border-l-[#FACC15]" : "border-l-4 border-l-transparent hover:bg-gray-50"}`}
             >
-              <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 flex-shrink-0">
-                {company.profilePicture ? <img src={company.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/> : (company.companyName?.charAt(0) || company.name?.charAt(0) || 'C').toUpperCase()}
+              <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center font-bold text-[#0B0C10] flex-shrink-0 overflow-hidden shadow-sm">
+                {company.profilePicture ? (
+                  <img src={company.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/>
+                ) : (
+                  (company.companyName?.charAt(0) || company.name?.charAt(0) || 'C').toUpperCase()
+                )}
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <h4 className="font-bold text-sm text-[#121212] truncate">{company.companyName || company.name}</h4>
-                <p className="text-xs text-gray-500 truncate">{company.industry || 'Employer'}</p>
+                <p className="text-xs text-gray-500 truncate mt-0.5">Employer</p>
               </div>
             </div>
           ))}
           {filteredCompanies.length === 0 && (
-            <div className="p-8 text-center text-sm text-gray-400">{searchQuery ? "No companies found." : "No connections yet."}</div>
+            <div className="p-8 text-center text-sm text-gray-500 w-full">
+              {searchQuery ? "No companies found." : "No connections yet."}
+            </div>
           )}
         </div>
       </div>
+
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col bg-gray-50/50">
+      <div className={`flex-1 flex-col bg-[#F8FAFC] ${!selectedUser ? 'hidden md:flex' : 'flex'}`}>
         {selectedUser ? (
           <>
-            <div className="p-6 border-b border-gray-100 bg-white flex items-center gap-4 shadow-sm z-10">
-               <div className="w-10 h-10 bg-[#0B0C10] text-[#FACC15] rounded-full flex items-center justify-center font-bold shadow-md">
+            {/* Chat Header */}
+            <div className="px-6 py-4 border-b border-gray-200 bg-white flex items-center gap-4 shadow-sm z-10">
+               <button onClick={() => setSelectedUser(null)} className="md:hidden text-gray-500 hover:text-[#0B0C10] p-2 -ml-2 transition-colors">
+                 <FaChevronLeft size={18} />
+               </button>
+               <div className="w-11 h-11 bg-[#0B0C10] text-[#FACC15] rounded-full flex items-center justify-center font-bold shadow-md overflow-hidden shrink-0">
                  {selectedUser.profilePicture ? <img src={selectedUser.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/> : (selectedUser.companyName?.charAt(0) || selectedUser.name?.charAt(0) || 'C').toUpperCase()}
                </div>
                <div>
-                 <h3 className="font-bold text-[#121212]">{selectedUser.companyName || selectedUser.name}</h3>
-                 <p className="text-xs text-gray-500">Connected via Follow</p>
+                 <h3 className="font-bold text-base text-[#121212] leading-tight">{selectedUser.companyName || selectedUser.name}</h3>
+                 <p className="text-xs text-green-600 font-medium mt-0.5 flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-500"></span> Online</p>
                </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+            
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
               {messages.map((msg: any) => {
                 const isMine = String(msg.senderId) === String(user._id);
                 return (
                   <div key={msg._id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`px-4 py-2.5 rounded-2xl max-w-[75%] text-sm shadow-sm ${isMine ? 'bg-[#FACC15] text-[#0B0C10] rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm'}`}>
-                      {msg.message}
+                    <div className={`px-5 py-3 rounded-2xl max-w-[85%] text-sm shadow-sm ${isMine ? 'bg-[#0B0C10] text-white rounded-br-sm' : 'bg-white border border-gray-200 text-gray-800 rounded-bl-sm'}`}>
+                      <p className="leading-relaxed">{msg.message}</p>
                       {isMine && (
-                        <div className="text-right text-[10px] mt-1.5 -mb-1 flex items-center justify-end gap-1.5 opacity-70">
+                        <div className="text-right text-[10px] mt-2 -mb-1 flex items-center justify-end gap-1.5 opacity-70">
                           <span>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                           {msg.seen ? (
                             <FaCheckDouble className="inline text-blue-400" />
@@ -1147,25 +1169,31 @@ const CandidateMessagesSection = ({ user, allJobs, initialSelectedUser }: any) =
               })}
               <div ref={messagesEndRef} />
             </div>
-            <div className="p-4 bg-white border-t border-gray-100 flex gap-3 items-center">
+            
+            {/* Input Area */}
+            <div className="p-4 bg-white border-t border-gray-200 flex gap-3 items-center shadow-[0_-4px_10px_rgba(0,0,0,0.02)]">
               <input
                 type="text"
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Type your message..."
-                className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 transition-all"
+                placeholder="Type a message..."
+                className="flex-1 bg-gray-100 border border-transparent rounded-full px-6 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0B0C10] focus:bg-white transition-all"
               />
-              <button onClick={handleSend} disabled={isSending} className="px-8 py-3 bg-[#0B0C10] text-[#FACC15] font-bold rounded-xl text-sm hover:bg-[#1F2833] shadow-lg shadow-black/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed">
-                {isSending ? 'Sending...' : 'Send'}
+              <button onClick={handleSend} disabled={isSending} className="w-12 h-12 rounded-full flex items-center justify-center bg-[#FACC15] text-[#0B0C10] font-bold hover:bg-[#EAB308] shadow-md shadow-[#FACC15]/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+                {isSending ? <FaSpinner className="animate-spin" /> : <FaPaperPlane className="-ml-1" />}
               </button>
             </div>
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
-            <MdMessage className="text-6xl text-slate-200 mb-4" />
-            <p className="text-lg font-medium text-gray-500">Your Messages</p>
-            <p className="text-sm mt-1">Select a company from the sidebar to start chatting.</p>
+          <div className="flex-1 flex flex-col items-center justify-center text-gray-400 bg-[#F8FAFC]">
+            <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+              <MdMessage className="text-5xl text-slate-300" />
+            </div>
+            <h3 className="text-xl font-bold text-[#121212] mb-2">Your Messages</h3>
+            <p className="text-sm text-gray-500">
+              Select a conversation from the left to start chatting.
+            </p>
           </div>
         )}
       </div>
@@ -1174,3 +1202,22 @@ const CandidateMessagesSection = ({ user, allJobs, initialSelectedUser }: any) =
 };
 
 export default CandidateDashboard;
+function useIncrementProfileViewMutation(): [any] {
+  const incrementProfileView = async (params: { id: string; viewerId: string }) => {
+    try {
+      const response = await fetch(`/api/companies/${params.id}/increment-view`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ viewerId: params.viewerId }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to increment profile view');
+      }
+    } catch (error) {
+      console.error('Error incrementing profile view:', error);
+    }
+  };
+  return [incrementProfileView];
+}

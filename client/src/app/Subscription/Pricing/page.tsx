@@ -6,8 +6,9 @@ import { FaCheck, FaArrowLeft, FaTimes } from 'react-icons/fa';
 
 const PricingPage = () => {
   const [isAnnual, setIsAnnual] = useState(true);
+  const [userType, setUserType] = useState<'candidate' | 'employer'>('candidate');
 
-  const plans = [
+  const employerPlans = [
     {
       name: 'Basic',
       description: 'Perfect for startups and small businesses hiring for a single role.',
@@ -61,6 +62,62 @@ const PricingPage = () => {
     }
   ];
 
+  const candidatePlans = [
+    {
+      name: 'Basic',
+      description: 'Essential tools to start your career journey and apply to jobs.',
+      price: isAnnual ? '0' : '0',
+      duration: 'forever',
+      features: [
+        { text: 'Standard Profile Visibility', included: true },
+        { text: 'Apply to Unlimited Jobs', included: true },
+        { text: 'Basic Application Tracking', included: true },
+        { text: 'Email Support', included: true },
+        { text: 'Highlighted "Pro" Badge', included: false },
+        { text: 'See Who Viewed Your Profile', included: false },
+      ],
+      buttonText: 'Get Started Free',
+      popular: false,
+      color: 'bg-white text-[#121212] border-gray-200'
+    },
+    {
+      name: 'Pro Seeker',
+      description: 'Boost your profile and stand out to top recruiters automatically.',
+      price: isAnnual ? '9' : '12',
+      duration: 'per month',
+      features: [
+        { text: 'Highlighted "Pro" Badge', included: true },
+        { text: 'Priority Application Placement', included: true },
+        { text: 'See Who Viewed Your Profile', included: true },
+        { text: 'Advanced Application Tracking', included: true },
+        { text: 'Resume AI Analysis', included: true },
+        { text: '1-on-1 Career Coaching', included: false },
+      ],
+      buttonText: 'Upgrade to Pro',
+      popular: true,
+      color: 'bg-[#0B0C10] text-white border-[#0B0C10]'
+    },
+    {
+      name: 'Career Plus',
+      description: 'Maximum visibility and dedicated career support for fast growth.',
+      price: isAnnual ? '29' : '39',
+      duration: 'per month',
+      features: [
+        { text: 'Top 3 Placement in Applicant Lists', included: true },
+        { text: 'Direct Messaging to Recruiters', included: true },
+        { text: 'Unlimited Resume AI Analysis', included: true },
+        { text: '1-on-1 Career Coaching (Monthly)', included: true },
+        { text: 'Interview Prep Sessions', included: true },
+        { text: 'Priority 24/7 Support', included: true },
+      ],
+      buttonText: 'Get Career Plus',
+      popular: false,
+      color: 'bg-white text-[#121212] border-gray-200'
+    }
+  ];
+
+  const currentPlans = userType === 'employer' ? employerPlans : candidatePlans;
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans selection:bg-[#FACC15] selection:text-[#0B0C10]">
       {/* Header */}
@@ -78,17 +135,32 @@ const PricingPage = () => {
                Simple, transparent <span className="text-[#FACC15]">pricing</span>
              </h1>
              <p className="text-lg md:text-xl text-gray-400 mb-10 leading-relaxed">
-               Choose the perfect plan for your hiring needs. No hidden fees, cancel anytime.
+               Choose the perfect plan for your {userType === 'employer' ? 'hiring' : 'career'} needs. No hidden fees, cancel anytime.
              </p>
              
-             {/* Billing Toggle */}
-             <div className="inline-flex items-center bg-white/10 backdrop-blur-md p-1.5 rounded-full border border-white/10">
-               <button onClick={() => setIsAnnual(false)} className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${!isAnnual ? 'bg-white text-[#0B0C10] shadow-md' : 'text-gray-300 hover:text-white'}`}>
-                 Monthly
-               </button>
-               <button onClick={() => setIsAnnual(true)} className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${isAnnual ? 'bg-[#FACC15] text-[#0B0C10] shadow-md' : 'text-gray-300 hover:text-white'}`}>
-                 Annually <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] uppercase rounded-full tracking-wider">Save 20%</span>
-               </button>
+             {/* Toggles */}
+             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+               {/* User Type Toggle */}
+               <div className="inline-flex items-center bg-white/10 backdrop-blur-md p-1.5 rounded-full border border-white/10">
+                 <button onClick={() => setUserType('candidate')} className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${userType === 'candidate' ? 'bg-white text-[#0B0C10] shadow-md' : 'text-gray-300 hover:text-white'}`}>
+                   For Candidates
+                 </button>
+                 <button onClick={() => setUserType('employer')} className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${userType === 'employer' ? 'bg-white text-[#0B0C10] shadow-md' : 'text-gray-300 hover:text-white'}`}>
+                   For Employers
+                 </button>
+               </div>
+               
+               <div className="hidden sm:block w-px h-8 bg-gray-700"></div>
+               
+               {/* Billing Toggle */}
+               <div className="inline-flex items-center bg-white/10 backdrop-blur-md p-1.5 rounded-full border border-white/10">
+                 <button onClick={() => setIsAnnual(false)} className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${!isAnnual ? 'bg-white text-[#0B0C10] shadow-md' : 'text-gray-300 hover:text-white'}`}>
+                   Monthly
+                 </button>
+                 <button onClick={() => setIsAnnual(true)} className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${isAnnual ? 'bg-[#FACC15] text-[#0B0C10] shadow-md' : 'text-gray-300 hover:text-white'}`}>
+                   Annually <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] uppercase rounded-full tracking-wider">Save 20%</span>
+                 </button>
+               </div>
              </div>
            </div>
          </div>
@@ -97,7 +169,7 @@ const PricingPage = () => {
       {/* Pricing Cards */}
       <div className="container mx-auto px-6 pb-24 -mt-16 relative z-20">
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto items-start">
-           {plans.map((plan, idx) => (
+           {currentPlans.map((plan, idx) => (
              <div key={idx} className={`rounded-3xl border ${plan.popular ? 'border-[#FACC15] shadow-2xl shadow-[#FACC15]/10 md:-mt-8' : 'border-gray-200 shadow-lg shadow-gray-200/50'} ${plan.color} overflow-hidden transition-transform duration-300 hover:-translate-y-2`}>
                {plan.popular && <div className="bg-[#FACC15] text-[#0B0C10] text-center py-2 text-xs font-black uppercase tracking-widest">Most Popular Choice</div>}
                <div className="p-8 md:p-10">
@@ -122,7 +194,7 @@ const PricingPage = () => {
            ))}
         </div>
         <div className="text-center mt-20">
-          <p className="text-gray-500 font-medium">Need a custom plan for your enterprise? <a href="#" className="text-[#0B0C10] font-bold border-b-2 border-[#FACC15] hover:text-[#FACC15] transition-colors pb-0.5">Contact our sales team</a></p>
+          <p className="text-gray-500 font-medium">Need a custom plan for your {userType === 'employer' ? 'enterprise' : 'career transition'}? <a href="#" className="text-[#0B0C10] font-bold border-b-2 border-[#FACC15] hover:text-[#FACC15] transition-colors pb-0.5">Contact our sales team</a></p>
         </div>
       </div>
     </div>

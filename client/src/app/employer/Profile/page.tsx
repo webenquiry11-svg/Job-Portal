@@ -34,6 +34,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
 
   const { data: companyData } = useGetCompanyByIdQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
   const { data: jobs = [], isLoading: isLoadingJobs } = useGetJobsByEmployerQuery(user?._id, { skip: !user?._id });
+  const profileViews = companyData?.profileViews ?? user?.profileViews ?? 0;
 
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   const [successMessage, setSuccessMessage] = useState('');
@@ -117,6 +118,8 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                           <span>{formData.location || 'San Francisco, CA'}</span>
                           <span className="w-1 h-1 rounded-full bg-gray-300"></span>
                           <span>{companyData?.followersCount || 0} followers</span>
+                          <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                          <span>{profileViews} Views</span>
                           <span className="w-1 h-1 rounded-full bg-gray-300"></span>
                           <span>{formData.companySize}</span>
                       </div>
@@ -313,6 +316,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                         <span className="flex items-center gap-1.5"><FaBuilding className="text-[#0B0C10]" /> {formData.industry || 'Tech Industry'}</span>
                         <span className="flex items-center gap-1.5"><FaMapMarkerAlt className="text-[#0B0C10]" /> {formData.location || 'Location'}</span>
                         {companyData && <span className="flex items-center gap-1.5"><FaUsers className="text-[#0B0C10]" /> {companyData?.followersCount || 0} Followers</span>}
+                        <span className="flex items-center gap-1.5"><FaEye className="text-[#0B0C10]" /> {profileViews} Views</span>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">

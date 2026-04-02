@@ -298,11 +298,26 @@ export const markNotificationsAsRead = async (req: Request, res: Response) => {
 export const incrementProfileView = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const user = await AuthModel.findByIdAndUpdate(id, { $inc: { profileViews: 1 } }, { returnDocument: 'after' });
-    if (!user) {
+    const { viewerId } = req.body;
+
+    const userToUpdate = await AuthModel.findById(id);
+    if (!userToUpdate) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.status(200).json({ profileViews: (user as any).profileViews });
+
+    if (viewerId && String(id) === String(viewerId)) {
+      return res.status(200).json({ profileViews: (userToUpdate as any).profileViews || 0 });
+    }
+
+    let updatedUser;
+    if (viewerId) {
+      updatedUser = await AuthModel.findByIdAndUpdate(id, { $addToSet: { viewedBy: viewerId } }, { new: true, strict: false }).lean();
+      const uniqueViews = (updatedUser as any).viewedBy ? (updatedUser as any).viewedBy.length : ((updatedUser as any).profileViews || 0);
+      updatedUser = await AuthModel.findByIdAndUpdate(id, { profileViews: uniqueViews }, { returnDocument: 'after' });
+    } else {
+      updatedUser = await AuthModel.findByIdAndUpdate(id, { $inc: { profileViews: 1 } }, { returnDocument: 'after' });
+    }
+    res.status(200).json({ profileViews: (updatedUser as any).profileViews });
   } catch (error: any) {
     res.status(500).json({ message: 'Failed to increment profile view count', error: error.message });
   }

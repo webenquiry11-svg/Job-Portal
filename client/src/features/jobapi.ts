@@ -76,12 +76,13 @@ export const jobApi = createApi({
       query: (companyId) => `/auth/company/${companyId}`,
       providesTags: (result, error, id) => [{ type: 'Company', id }],
     }),
-    incrementProfileView: builder.mutation<{ profileViews: number }, string>({
-      query: (userId) => ({
-        url: `/auth/profile/view/${userId}`,
+    incrementProfileView: builder.mutation<{ profileViews: number }, { id: string; viewerId?: string }>({
+      query: (body) => ({
+        url: `/auth/profile/view/${body.id}`,
         method: 'PUT',
+        body: { viewerId: body.viewerId },
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Company', id }],
+      invalidatesTags: (result, error, { id }) => [{ type: 'Company', id }],
     }),
 
     // Admin

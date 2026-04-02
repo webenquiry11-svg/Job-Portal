@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaEdit, FaSave, FaFileAlt, FaPen, FaCheckCircle } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { useUpdateProfileMutation } from '@/features/authApi';
+import { useGetCompanyByIdQuery } from '@/features/jobapi';
 
 export {}; // This ensures the file is treated as a module.
 
@@ -32,6 +33,9 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
     education: '',
     showContact: true
   });
+
+  const { data: freshUserData } = useGetCompanyByIdQuery(user?._id, { skip: !user?._id, pollingInterval: 30000 });
+  const profileViews = freshUserData?.profileViews ?? user?.profileViews ?? 0;
 
   useEffect(() => {
     if (user) {
@@ -227,7 +231,10 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
              {isEditing ? (
                 <input name="name" value={formData.name} onChange={handleChange} className="text-2xl font-bold text-[#121212] bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 w-full max-w-sm mb-2 outline-none focus:ring-2 focus:ring-[#0F172A]" placeholder="Your Name" />
              ) : (
-                <h1 className="text-2xl md:text-3xl font-bold text-[#121212]">{formData.name}</h1>
+                <div className="flex items-center gap-4">
+                   <h1 className="text-2xl md:text-3xl font-bold text-[#121212]">{formData.name}</h1>
+                   <span className="flex items-center gap-1.5 text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full"><FaEye/> {profileViews} Views</span>
+                </div>
              )}
              
              {isEditing ? (

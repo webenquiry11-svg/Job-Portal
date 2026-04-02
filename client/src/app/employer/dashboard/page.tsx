@@ -27,6 +27,7 @@ import {
   FaEdit,
   FaCheck,
   FaCheckDouble,
+  FaPaperPlane,
   FaEnvelope,
   FaPhone,
 } from "react-icons/fa";
@@ -958,21 +959,21 @@ const MessagesSection = ({ user }: { user: any }) => {
   const chatUsers = Array.from(chatUsersMap.values());
 
   return (
-    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm flex h-[600px] overflow-hidden animate-fade-in-up">
-      {/* Sidebar */}
-      <div className="w-1/3 border-r border-gray-100 flex flex-col bg-white z-10">
-        <div className="p-6 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-[#121212]">Messages</h2>
-          <p className="text-xs text-gray-500 mt-1">Chat with your followers</p>
+    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm flex h-162.5 overflow-hidden animate-fade-in-up relative">
+      {/* Left Sidebar - Contacts List */}
+      <div className={`w-full md:w-80 border-r border-gray-100 flex-col bg-white z-10 shrink-0 ${selectedUser ? 'hidden md:flex' : 'flex'}`}>
+        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+          <h3 className="font-bold text-xl text-[#121212]">Messages</h3>
+          <span className="bg-gray-100 text-gray-600 text-xs font-bold px-2.5 py-1 rounded-full">{chatUsers.length}</span>
         </div>
-        <div className="overflow-y-auto flex-1 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto custom-scrollbar bg-white">
           {chatUsers.map((follower: any) => (
             <div
               key={follower._id}
               onClick={() => setSelectedUser(follower)}
-              className={`p-4 flex items-center gap-3 cursor-pointer transition-colors border-b border-gray-50 hover:bg-gray-50 ${selectedUser?._id === follower._id ? "bg-slate-50 border-l-4 border-l-[#FACC15]" : "border-l-4 border-l-transparent"}`}
+              className={`flex items-center gap-4 cursor-pointer p-4 transition-colors border-b border-gray-50/50 ${selectedUser?._id === follower._id ? "bg-slate-50 border-l-4 border-l-[#FACC15]" : "border-l-4 border-l-transparent hover:bg-gray-50"}`}
             >
-              <div className="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 flex-shrink-0">
+              <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center font-bold text-[#0B0C10] flex-shrink-0 overflow-hidden shadow-sm">
                 {follower.profilePicture ? (
                   <img
                     src={follower.profilePicture}
@@ -983,47 +984,50 @@ const MessagesSection = ({ user }: { user: any }) => {
                   follower.name?.charAt(0).toUpperCase() || "U"
                 )}
               </div>
-              <div className="min-w-0">
-                <h4 className="font-bold text-sm text-[#121212] truncate">
-                  {follower.name}
-                </h4>
-                <p className="text-xs text-gray-500 truncate">
-                  {follower.headline || "Candidate"}
-                </p>
+              <div className="min-w-0 flex-1">
+                <h4 className="font-bold text-sm text-[#121212] truncate">{follower.name}</h4>
+                <p className="text-xs text-gray-500 truncate mt-0.5">{follower.headline || 'Candidate'}</p>
               </div>
             </div>
           ))}
           {chatUsers.length === 0 && (
-            <div className="p-8 text-center text-sm text-gray-400">
+            <div className="p-8 text-center text-sm text-gray-500 w-full">
               No followers to chat with yet.
             </div>
           )}
         </div>
       </div>
+
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col bg-gray-50/50">
+      <div className={`flex-1 flex-col bg-[#F8FAFC] ${!selectedUser ? 'hidden md:flex' : 'flex'}`}>
         {selectedUser ? (
           <>
-            <div className="p-6 border-b border-gray-100 bg-white flex items-center gap-4 shadow-sm z-10">
-              <div className="w-10 h-10 bg-[#0B0C10] text-[#FACC15] rounded-full flex items-center justify-center font-bold shadow-md">
+            {/* Chat Header */}
+            <div className="px-6 py-4 border-b border-gray-200 bg-white flex items-center gap-4 shadow-sm z-10">
+              <button onClick={() => setSelectedUser(null)} className="md:hidden text-gray-500 hover:text-[#0B0C10] p-2 -ml-2 transition-colors">
+                <FaChevronLeft size={18} />
+              </button>
+              <div className="w-11 h-11 bg-[#0B0C10] text-[#FACC15] rounded-full flex items-center justify-center font-bold shadow-md overflow-hidden shrink-0">
                 {selectedUser.profilePicture ? (
                   <img
                     src={selectedUser.profilePicture}
                     alt=""
-                    className="w-full h-full rounded-full object-cover"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   selectedUser.name?.charAt(0).toUpperCase() || "U"
                 )}
               </div>
               <div>
-                <h3 className="font-bold text-[#121212]">
+                <h3 className="font-bold text-base text-[#121212] leading-tight">
                   {selectedUser.name}
                 </h3>
-                <p className="text-xs text-gray-500">Connected via Follow</p>
+                <p className="text-xs text-green-600 font-medium mt-0.5 flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-500"></span> Online</p>
               </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+            
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
               {messages.map((msg: any) => {
                 const isMine = String(msg.senderId) === String(user._id);
                 return (
@@ -1032,11 +1036,11 @@ const MessagesSection = ({ user }: { user: any }) => {
                     className={`flex ${isMine ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`px-4 py-2.5 rounded-2xl max-w-[75%] text-sm shadow-sm ${isMine ? "bg-[#FACC15] text-[#0B0C10] rounded-tr-sm" : "bg-white border border-gray-100 text-gray-800 rounded-tl-sm"}`}
+                      className={`px-5 py-3 rounded-2xl max-w-[85%] text-sm shadow-sm ${isMine ? "bg-[#FACC15] text-[#0B0C10] rounded-br-sm" : "bg-white border border-gray-200 text-gray-800 rounded-bl-sm"}`}
                     >
-                      {msg.message}
+                      <p className="leading-relaxed">{msg.message}</p>
                       {isMine && (
-                        <div className="text-right text-[10px] mt-1.5 -mb-1 flex items-center justify-end gap-1.5 opacity-70">
+                        <div className="text-right text-[10px] mt-2 -mb-1 flex items-center justify-end gap-1.5 opacity-70">
                           <span>
                             {new Date(msg.createdAt).toLocaleTimeString([], {
                               hour: "2-digit",
@@ -1056,30 +1060,34 @@ const MessagesSection = ({ user }: { user: any }) => {
               })}
               <div ref={messagesEndRef} />
             </div>
-            <div className="p-4 bg-white border-t border-gray-100 flex gap-3 items-center">
+            
+            {/* Input Area */}
+            <div className="p-4 bg-white border-t border-gray-200 flex gap-3 items-center shadow-[0_-4px_10px_rgba(0,0,0,0.02)]">
               <input
                 type="text"
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                placeholder="Type your message..."
-                className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 transition-all"
+                placeholder="Type a message..."
+                className="flex-1 bg-gray-100 border border-transparent rounded-full px-6 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0B0C10] focus:bg-white transition-all"
               />
               <button
                 onClick={handleSend}
                 disabled={isSending}
-                className="px-8 py-3 bg-[#0B0C10] text-[#FACC15] font-bold rounded-xl text-sm hover:bg-[#1F2833] shadow-lg shadow-black/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-12 h-12 rounded-full flex items-center justify-center bg-[#0B0C10] text-[#FACC15] font-bold hover:bg-[#1F2833] shadow-md shadow-black/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
               >
-                {isSending ? "Sending..." : "Send"}
+                {isSending ? <FaSpinner className="animate-spin" /> : <FaPaperPlane className="-ml-1" />}
               </button>
             </div>
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
-            <MdMessage className="text-6xl text-slate-200 mb-4" />
-            <p className="text-lg font-medium text-gray-500">Your Messages</p>
-            <p className="text-sm mt-1">
-              Select a conversation from the sidebar to start chatting.
+          <div className="flex-1 flex flex-col items-center justify-center text-gray-400 bg-[#F8FAFC]">
+            <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+              <MdMessage className="text-5xl text-slate-300" />
+            </div>
+            <h3 className="text-xl font-bold text-[#121212] mb-2">Your Messages</h3>
+            <p className="text-sm text-gray-500">
+              Select a conversation from the left to start chatting.
             </p>
           </div>
         )}
@@ -1304,7 +1312,7 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
                             href={applicant.resume.startsWith('http') ? applicant.resume : `${apiUrl}/${applicant.resume.replace(/\\/g, '/')}`}
                             onClick={(e) => {
                               e.stopPropagation();
-                              incrementProfileView(applicant._id);
+                              incrementProfileView({ id: applicant._id, viewerId: employerId });
                             }} 
                             target="_blank" 
                             rel="noreferrer"
