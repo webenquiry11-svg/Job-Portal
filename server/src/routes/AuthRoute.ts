@@ -34,10 +34,11 @@ router.patch('/update', (req, res, next) => {
     { name: 'resume', maxCount: 1 } // <--- Resume field yahan add kar di hai
   ])(req, res, (err) => {
     if (err) {
-      console.error("Upload Error:", err);
+      console.error("Upload Error Details:", err);
       return res.status(500).json({ 
         message: "File Upload Failed. Check your backend configurations.", 
-        error: err.message 
+        error: err.message,
+        details: err.toString()
       });
     }
     next();
