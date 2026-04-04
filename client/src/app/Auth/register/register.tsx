@@ -50,7 +50,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
     }
 
     try {
-      let result = await register({ ...formData, role }).unwrap();
+      const result = await register({ ...formData, role }).unwrap();
+      let finalProfileData = { ...result };
       
       // Immediately upload resume if candidate attached one
       if (resumeFile && role === 'seeker') {
@@ -59,16 +60,16 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
            uploadData.append('_id', result.result._id);
            uploadData.append('resume', resumeFile);
            const updateRes = await updateProfile(uploadData).unwrap();
-           result.result = updateRes.result;
+           finalProfileData = { ...finalProfileData, result: updateRes.result };
          } catch (resumeError) {
            console.error('Resume upload failed during registration:', resumeError);
            toast.error('Registered successfully, but resume upload failed. You can upload it from your profile later.');
          }
       }
 
-      localStorage.setItem('profile', JSON.stringify({ ...result }));
+      localStorage.setItem('profile', JSON.stringify(finalProfileData));
       toast.success('Registration successful! Welcome aboard.');
-      console.log('Registration success:', result);
+      console.log('Registration success:', finalProfileData);
       setTimeout(() => {
         onClose();
         if (role === 'employer') {
