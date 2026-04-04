@@ -60,13 +60,19 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
       if (resumeFile && role === 'seeker') {
          try {
            const uploadData = new FormData();
-           uploadData.append('_id', result.result._id);
+           uploadData.append('_id', String(result.result._id));
+           
+           // Attach all form data so backend middlewares have full context (similar to profile update)
+           Object.entries(formData).forEach(([key, value]) => {
+             uploadData.append(key, String(value));
+           });
+           
            uploadData.append('resume', resumeFile);
            const updateRes = await updateProfile(uploadData).unwrap();
            finalProfileData = { ...finalProfileData, result: updateRes.result };
-         } catch (resumeError) {
+         } catch (resumeError: any) {
            console.error('Resume upload failed during registration:', resumeError);
-           toast.error('Registered successfully, but resume upload failed. You can upload it from your profile later.');
+           toast.error(resumeError?.data?.message || 'Registered successfully, but resume upload failed.');
          }
       }
 
@@ -253,13 +259,13 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
               <div className="flex text-sm text-gray-600">
                 <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-[#0F172A] hover:text-[#1E293B] focus-within:outline-none">
                   <span>Upload a file</span>
-                  <input id="file-upload" name="file-upload" type="file" accept=".pdf,.doc,.docx" className="sr-only" onChange={(e) => {
+                  <input id="file-upload" name="file-upload" type="file" accept=".pdf" className="sr-only" onChange={(e) => {
                     if(e.target.files && e.target.files[0]) setResumeFile(e.target.files[0]);
                   }} />
                 </label>
                 <p className="pl-1">or drag and drop</p>
               </div>
-              <p className="text-xs text-gray-500">PDF, DOCX up to 10MB</p>
+              <p className="text-xs text-gray-500">PDF up to 10MB</p>
               {resumeFile && (
                  <p className="text-sm font-bold text-[#0F172A] mt-2 border border-[#0F172A]/20 bg-[#0F172A]/5 py-1 px-3 rounded-full inline-block">
                     {resumeFile.name}
