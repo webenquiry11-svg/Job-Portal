@@ -54,11 +54,16 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
       
       // Immediately upload resume if candidate attached one
       if (resumeFile && role === 'seeker') {
-         const uploadData = new FormData();
-         uploadData.append('_id', result.result._id);
-         uploadData.append('resume', resumeFile);
-         const updateRes = await updateProfile(uploadData).unwrap();
-         result.result = updateRes.result;
+         try {
+           const uploadData = new FormData();
+           uploadData.append('_id', result.result._id);
+           uploadData.append('resume', resumeFile);
+           const updateRes = await updateProfile(uploadData).unwrap();
+           result.result = updateRes.result;
+         } catch (resumeError) {
+           console.error('Resume upload failed during registration:', resumeError);
+           toast.error('Registered successfully, but resume upload failed. You can upload it from your profile later.');
+         }
       }
 
       localStorage.setItem('profile', JSON.stringify({ ...result }));

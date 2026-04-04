@@ -49,24 +49,31 @@ export const login = async (req: Request, res: Response) => {
 
 export const updateProfile = async (req: Request, res: Response) => {
   const { _id } = req.body;
-  const updates = req.body;
+  const updates = { ...req.body };
 
-  if (req.file) {
-    if (req.file.fieldname === 'resume') {
-        updates.resume = req.file.path;
-    } else {
-        updates.profilePicture = req.file.path;
+  if (req.files) {
+    const files = req.files as any;
+    if (files.resume && files.resume.length > 0) {
+        updates.resume = files.resume[0].path;
+    }
+    if (files.profilePicture && files.profilePicture.length > 0) {
+        updates.profilePicture = files.profilePicture[0].path;
+    }
+    if (files.coverImage && files.coverImage.length > 0) {
+        updates.coverImage = files.coverImage[0].path;
     }
   }
   delete updates._id;
 
   try {
-    const updatedUser = await AuthModel.findByIdAndUpdate(_id, updates, { returnDocument: 'after' }).select('-password');
+    // Use $set and strict: false to ensure the resume field gets saved even if not explicitly in the schema
+    const updatedUser = await AuthModel.findByIdAndUpdate(_id, { $set: updates }, { new: true, strict: false }).select('-password');
     if (!updatedUser) {
       return res.status(404).json({ message: 'User not found' });
     }
     res.status(200).json({ result: updatedUser });
   } catch (error) {
+    console.error("Error updating profile:", error);
     res.status(500).json({ message: 'Something went wrong' });
   }
 };
