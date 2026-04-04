@@ -130,14 +130,14 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                       )}
                   </div>
                   <button 
-                      onClick={() => setIsPublicView(false)}
-                      className="px-6 py-2.5 bg-[#0B0C10] hover:bg-[#1F2833] text-[#FACC15] font-bold rounded-full transition-all shadow-lg shadow-black/20 text-sm flex items-center gap-2 shrink-0"
+                          onClick={() => setIsPublicView(false)}
+                          className="w-full lg:w-auto justify-center px-6 py-2.5 bg-[#0B0C10] hover:bg-[#1F2833] text-[#FACC15] font-bold rounded-full transition-all shadow-lg shadow-black/20 text-sm flex items-center gap-2 shrink-0"
                   >
                       <FaEdit /> Edit Profile
                   </button>
               </div>
           </div>
-          
+
           {/* Navigation Tabs */}
           <div className="px-8 border-t border-gray-100 flex items-center gap-8 overflow-x-auto">
             {['About', 'Jobs', 'People'].map((tab) => (
@@ -297,47 +297,49 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
             </div>
         </div>
         
-        <div className="px-8 pb-8 pt-16 relative">
-            <div className="absolute -top-16 left-8 p-1.5 bg-white rounded-3xl shadow-lg">
-                <div className="w-32 h-32 bg-[#0B0C10] rounded-2xl flex items-center justify-center text-5xl font-bold text-[#FACC15] relative overflow-hidden group/avatar cursor-pointer border-4 border-white shadow-xl">
-                {formData.companyName.charAt(0).toUpperCase()}
-                    <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity">
-                        <FaCamera className="text-white text-2xl mb-1" />
-                        <span className="text-white text-[10px] font-bold">Change Logo</span>
+        <div className="px-6 sm:px-8 pb-8 relative">
+            <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start md:items-end">
+                <div className="p-1.5 bg-white rounded-3xl shadow-lg -mt-12 sm:-mt-16 flex-shrink-0 z-10">
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 bg-[#0B0C10] rounded-2xl flex items-center justify-center text-4xl sm:text-5xl font-bold text-[#FACC15] relative overflow-hidden group/avatar cursor-pointer border-4 border-white shadow-xl">
+                    {formData.companyName.charAt(0).toUpperCase()}
+                        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity">
+                            <FaCamera className="text-white text-2xl mb-1" />
+                            <span className="text-white text-[10px] font-bold">Change Logo</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 ml-36 md:ml-36">
-                <div>
-                    <h1 className="text-3xl font-bold text-[#121212]">{formData.companyName || 'Your Company Name'}</h1>
-                    <p className="text-lg text-gray-600 max-w-2xl leading-relaxed mt-1">{formData.tagline || 'Add a tagline to describe your company'}</p>
-                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-500 font-medium">
-                        <span className="flex items-center gap-1.5"><FaBuilding className="text-[#0B0C10]" /> {formData.industry || 'Tech Industry'}</span>
-                        <span className="flex items-center gap-1.5"><FaMapMarkerAlt className="text-[#0B0C10]" /> {formData.location || 'Location'}</span>
-                        {companyData && <span className="flex items-center gap-1.5"><FaUsers className="text-[#0B0C10]" /> {companyData?.followersCount || 0} Followers</span>}
-                        <span className="flex items-center gap-1.5"><FaEye className="text-[#0B0C10]" /> {profileViews} Views</span>
+                <div className="flex-1 w-full pt-2 md:pt-0 flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6">
+                    <div>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-[#121212]">{formData.companyName || 'Your Company Name'}</h1>
+                        <p className="text-base sm:text-lg text-gray-600 max-w-2xl leading-relaxed mt-1">{formData.tagline || 'Add a tagline to describe your company'}</p>
+                        <div className="flex flex-wrap items-center gap-3 mt-3 text-xs sm:text-sm text-gray-500 font-medium">
+                            <span className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-md"><FaBuilding className="text-[#0B0C10]" /> {formData.industry || 'Tech Industry'}</span>
+                            <span className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-md"><FaMapMarkerAlt className="text-[#0B0C10]" /> {formData.location || 'Location'}</span>
+                            {companyData && <span className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-md"><FaUsers className="text-[#0B0C10]" /> {companyData?.followersCount || 0} Followers</span>}
+                            <span className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-md"><FaEye className="text-[#0B0C10]" /> {profileViews} Views</span>
+                        </div>
                     </div>
-                </div>
-                <div className="flex items-center gap-3">
-                    {successMessage && (
-                        <span className="text-green-600 text-sm font-bold flex items-center gap-2 bg-green-50 px-3 py-1.5 rounded-lg animate-fade-in-up">
-                            <FaCheckCircle /> Saved
-                        </span>
-                    )}
-                    <button 
-                        onClick={() => setIsPublicView(true)}
-                        className="px-4 py-3 bg-white border border-gray-200 text-gray-600 font-bold rounded-xl transition-all text-sm flex items-center gap-2 hover:bg-slate-50 hover:text-[#0B0C10]"
-                    >
-                        <FaEye /> View as Public
-                    </button>
-                    <button 
-                        onClick={handleSubmit} 
-                        disabled={isLoading}
-                        className="px-6 py-3 bg-[#FACC15] hover:bg-[#EAB308] text-[#0B0C10] font-bold rounded-xl transition-all shadow-lg shadow-[#FACC15]/20 text-sm flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:translate-y-0"
-                    >
-                        {isLoading ? 'Saving...' : <><FaSave /> Save Changes</>}
-                    </button>
+                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
+                        {successMessage && (
+                            <span className="text-green-600 text-sm font-bold flex items-center justify-center gap-2 bg-green-50 px-3 py-1.5 rounded-lg animate-fade-in-up w-full sm:w-auto">
+                                <FaCheckCircle /> Saved
+                            </span>
+                        )}
+                        <button 
+                            onClick={() => setIsPublicView(true)}
+                            className="w-full sm:w-auto justify-center px-4 py-3 bg-white border border-gray-200 text-gray-600 font-bold rounded-xl transition-all text-sm flex items-center gap-2 hover:bg-slate-50 hover:text-[#0B0C10]"
+                        >
+                            <FaEye /> View as Public
+                        </button>
+                        <button 
+                            onClick={handleSubmit} 
+                            disabled={isLoading}
+                            className="w-full sm:w-auto justify-center px-6 py-3 bg-[#FACC15] hover:bg-[#EAB308] text-[#0B0C10] font-bold rounded-xl transition-all shadow-lg shadow-[#FACC15]/20 text-sm flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:translate-y-0"
+                        >
+                            {isLoading ? 'Saving...' : <><FaSave /> Save Changes</>}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -619,7 +621,7 @@ const ChatBox = ({ currentUser, otherUser, onClose }: any) => {
   }, [otherUser, currentUser, messages, markAsSeen]);
 
   return (
-    <div className="fixed bottom-6 right-6 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden flex flex-col h-[400px] animate-fade-in-up">
+    <div className="fixed bottom-0 sm:bottom-6 right-0 sm:right-6 w-full sm:w-80 bg-white sm:rounded-2xl rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] sm:shadow-2xl border border-gray-200 z-50 overflow-hidden flex flex-col h-[60vh] sm:h-[400px] animate-fade-in-up">
       <div className="bg-[#0B0C10] p-4 flex items-center justify-between text-[#FACC15] shadow-md z-10">
         <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-sm">

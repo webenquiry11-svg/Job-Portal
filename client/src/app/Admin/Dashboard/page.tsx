@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 const AdminDashboard = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn');
@@ -64,8 +65,11 @@ const AdminDashboard = () => {
   return (
     <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
       
+      {isSidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-30 md:hidden backdrop-blur-sm transition-opacity" onClick={() => setIsSidebarOpen(false)}></div>
+      )}
       {/* Premium Sidebar */}
-      <aside className="w-72 bg-[#0B0C10] text-white flex flex-col shadow-2xl z-20 transition-all">
+      <aside className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 w-72 bg-[#0B0C10] text-white flex flex-col shadow-2xl z-40 transition-transform duration-300 ease-in-out`}>
         <div className="p-8 flex items-center gap-3 border-b border-gray-800">
           <div className="bg-[#FACC15] p-2.5 rounded-xl shadow-lg shadow-[#FACC15]/20">
             <FaUserShield className="text-[#0B0C10] text-xl" />
@@ -73,11 +77,11 @@ const AdminDashboard = () => {
           <span className="text-2xl font-black tracking-tight">Admin<span className="text-[#FACC15]">Portal</span></span>
         </div>
         <nav className="flex-1 px-4 space-y-2 py-6 overflow-y-auto custom-scrollbar">
-          <SidebarItem icon={<FaChartPie />} label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
-          <SidebarItem icon={<FaBuilding />} label="Employers" active={activeTab === 'employers'} onClick={() => setActiveTab('employers')} />
-          <SidebarItem icon={<FaUser />} label="Candidates" active={activeTab === 'candidates'} onClick={() => setActiveTab('candidates')} />
-          <SidebarItem icon={<FaBriefcase />} label="Applications" active={activeTab === 'applications'} onClick={() => setActiveTab('applications')} />
-          <SidebarItem icon={<FaFileInvoiceDollar />} label="GST Approvals" badge={pendingGsts.length} active={activeTab === 'gst'} onClick={() => setActiveTab('gst')} />
+          <SidebarItem icon={<FaChartPie />} label="Overview" active={activeTab === 'overview'} onClick={() => { setActiveTab('overview'); setIsSidebarOpen(false); }} />
+          <SidebarItem icon={<FaBuilding />} label="Employers" active={activeTab === 'employers'} onClick={() => { setActiveTab('employers'); setIsSidebarOpen(false); }} />
+          <SidebarItem icon={<FaUser />} label="Candidates" active={activeTab === 'candidates'} onClick={() => { setActiveTab('candidates'); setIsSidebarOpen(false); }} />
+          <SidebarItem icon={<FaBriefcase />} label="Applications" active={activeTab === 'applications'} onClick={() => { setActiveTab('applications'); setIsSidebarOpen(false); }} />
+          <SidebarItem icon={<FaFileInvoiceDollar />} label="GST Approvals" badge={pendingGsts.length} active={activeTab === 'gst'} onClick={() => { setActiveTab('gst'); setIsSidebarOpen(false); }} />
         </nav>
         <div className="p-6 border-t border-gray-800 bg-[#060709]">
           <button onClick={handleLogout} className="flex items-center justify-center gap-3 w-full px-4 py-3 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-xl transition-all font-bold">
@@ -91,7 +95,12 @@ const AdminDashboard = () => {
         
         {/* Top Header */}
         <header className="bg-white px-8 py-5 border-b border-gray-200 flex justify-between items-center shadow-sm z-10">
-          <h1 className="text-2xl font-black text-[#121212] capitalize">{activeTab.replace('-', ' ')}</h1>
+          <div className="flex items-center gap-4">
+            <button onClick={() => setIsSidebarOpen(true)} className="md:hidden text-gray-500 hover:text-[#121212] p-2 -ml-2 rounded-full hover:bg-gray-100">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <h1 className="text-2xl font-black text-[#121212] capitalize">{activeTab.replace('-', ' ')}</h1>
+          </div>
           <div className="flex items-center gap-4">
              <div className="w-10 h-10 bg-[#0B0C10] rounded-full flex justify-center items-center text-[#FACC15] font-bold shadow-md ring-4 ring-yellow-500/10">A</div>
              <span className="font-bold text-[#121212] hidden sm:block">Super Admin</span>
@@ -122,7 +131,7 @@ const AdminDashboard = () => {
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 animate-fade-in-up">
               <h2 className="text-xl font-bold text-[#121212] mb-6 flex items-center gap-3"><FaFileInvoiceDollar className="text-[#FACC15]" /> Review GST Requests</h2>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
+              <table className="w-full text-sm text-left whitespace-nowrap lg:whitespace-normal">
                   <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
                     <tr>
                       <th className="p-5 rounded-tl-xl">Company Name</th>
@@ -138,8 +147,8 @@ const AdminDashboard = () => {
                         <td className="p-5 font-mono text-[#0B0C10] bg-gray-50/80 px-4 py-1.5 rounded-lg inline-block mt-3 border border-gray-200">{e.gstNumber}</td>
                         <td className="p-5 text-gray-600">{e.email}</td>
                         <td className="p-5 text-right space-x-3">
-                          <button onClick={() => handleGstAction(e._id, 'approved')} disabled={isUpdatingGst} className="px-5 py-2.5 bg-green-50 text-green-700 hover:bg-green-100 rounded-xl font-bold transition-all shadow-sm">Approve</button>
-                          <button onClick={() => handleGstAction(e._id, 'rejected')} disabled={isUpdatingGst} className="px-5 py-2.5 bg-red-50 text-red-700 hover:bg-red-100 rounded-xl font-bold transition-all shadow-sm">Reject</button>
+                          <button onClick={() => handleGstAction(e._id, 'approved')} disabled={isUpdatingGst} className="px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-xl font-bold transition-all shadow-sm">Approve</button>
+                          <button onClick={() => handleGstAction(e._id, 'rejected')} disabled={isUpdatingGst} className="px-4 py-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-xl font-bold transition-all shadow-sm">Reject</button>
                         </td>
                       </tr>
                     ))}
@@ -155,7 +164,7 @@ const AdminDashboard = () => {
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 animate-fade-in-up">
               <h2 className="text-xl font-bold text-[#121212] mb-6 flex items-center gap-3"><FaBriefcase className="text-[#FACC15]" /> Candidate Applications Tracking</h2>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
+              <table className="w-full text-sm text-left whitespace-nowrap lg:whitespace-normal">
                   <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
                     <tr>
                       <th className="p-5 rounded-tl-xl">Candidate</th>
@@ -191,7 +200,7 @@ const AdminDashboard = () => {
                 {activeTab === 'employers' ? <><FaBuilding className="text-[#FACC15]"/> Platform Employers</> : <><FaUser className="text-[#FACC15]"/> Platform Candidates</>}
               </h2>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
+              <table className="w-full text-sm text-left whitespace-nowrap lg:whitespace-normal">
                   <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
                     <tr>
                       <th className="p-5 rounded-tl-xl">Name</th>

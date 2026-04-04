@@ -696,7 +696,7 @@ const MyJobsSection = ({
 
       {jobs.length > 0 ? (
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm whitespace-nowrap md:whitespace-normal">
             <thead className="bg-gray-50 text-left">
               <tr>
                 <th className="p-4 font-bold text-gray-500 uppercase tracking-wider">

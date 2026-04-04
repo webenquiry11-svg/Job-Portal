@@ -168,7 +168,7 @@ const PricingPage = () => {
 
       {/* Pricing Cards */}
       <div className="container mx-auto px-6 pb-24 -mt-16 relative z-20">
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-start">
            {currentPlans.map((plan, idx) => (
              <div key={idx} className={`rounded-3xl border ${plan.popular ? 'border-[#FACC15] shadow-2xl shadow-[#FACC15]/10 md:-mt-8' : 'border-gray-200 shadow-lg shadow-gray-200/50'} ${plan.color} overflow-hidden transition-transform duration-300 hover:-translate-y-2`}>
                {plan.popular && <div className="bg-[#FACC15] text-[#0B0C10] text-center py-2 text-xs font-black uppercase tracking-widest">Most Popular Choice</div>}

@@ -109,10 +109,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
 
   const renderStep1 = () => (
     <>
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-[#121212]">Create an Account</h2>
-        <p className="text-sm text-gray-500 mt-2">Join thousands of professionals today.</p>
-      </div>
       <form className="space-y-4" onSubmit={(e) => { 
         e.preventDefault(); 
         if (formData.password !== formData.confirmPassword) {
@@ -154,11 +150,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
 
   const renderStep2 = () => (
     <>
-      <button onClick={handleBack} className="absolute top-4 left-4 text-gray-500 hover:text-gray-800 transition-colors">
-        <FaArrowLeft size={20} />
-      </button>
-      <h2 className="text-2xl font-bold text-center mb-2 text-[#121212]">Join as a Job Seeker or Employer</h2>
-      <p className="text-center text-gray-500 mb-8 text-sm">Get started by telling us what you're looking for.</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div
           onClick={() => { setRole('seeker'); handleNext(); }}
@@ -182,10 +173,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
 
   const renderSeekerStep3 = () => (
     <>
-      <button onClick={handleBack} className="absolute top-4 left-4 text-gray-500 hover:text-gray-800 transition-colors">
-        <FaArrowLeft size={20} />
-      </button>
-      <h2 className="text-2xl font-bold text-center mb-6 text-[#121212]">Basic Information</h2>
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleNext(); }}>
         <div>
           <label htmlFor="headline" className={labelClass}>Professional Headline</label>
@@ -210,10 +197,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
 
   const renderSeekerStep4 = () => (
     <>
-      <button onClick={handleBack} className="absolute top-4 left-4 text-gray-500 hover:text-gray-800 transition-colors">
-        <FaArrowLeft size={20} />
-      </button>
-      <h2 className="text-2xl font-bold text-center mb-6 text-[#121212]">Experience & Education</h2>
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleNext(); }}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -242,10 +225,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
 
   const renderSeekerStep5 = () => (
     <>
-      <button onClick={handleBack} className="absolute top-4 left-4 text-gray-500 hover:text-gray-800 transition-colors">
-        <FaArrowLeft size={20} />
-      </button>
-      <h2 className="text-2xl font-bold text-center mb-6 text-[#121212]">Skills & Resume</h2>
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         <div>
           <label htmlFor="skills" className={labelClass}>Skills</label>
@@ -256,7 +235,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
           <div className="mt-1 flex justify-center px-6 pt-8 pb-8 border-2 border-gray-200 border-dashed rounded-xl hover:border-slate-700 hover:bg-slate-50 transition-all duration-300 cursor-pointer group">
             <div className="space-y-1 text-center">
               <FaCloudUploadAlt className="mx-auto h-12 w-12 text-gray-400 group-hover:text-slate-600 transition-colors" />
-              <div className="flex text-sm text-gray-600">
+              <div className="flex flex-col sm:flex-row items-center justify-center text-sm text-gray-600">
                 <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-[#0F172A] hover:text-[#1E293B] focus-within:outline-none">
                   <span>Upload a file</span>
                   <input id="file-upload" name="file-upload" type="file" accept=".pdf" className="sr-only" onChange={(e) => {
@@ -297,10 +276,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
 
   const renderEmployerStep3 = () => (
     <>
-      <button onClick={handleBack} className="absolute top-4 left-4 text-gray-500 hover:text-gray-800 transition-colors">
-        <FaArrowLeft size={20} />
-      </button>
-      <h2 className="text-2xl font-bold text-center mb-6 text-[#121212]">Tell us about your company</h2>
       <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         <div>
           <label htmlFor="company-name" className={labelClass}>Company Name</label>
@@ -382,16 +357,43 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-all duration-300">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-2 sm:p-4 transition-all duration-300">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative animate-fade-in-up overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]">
         {/* Progress Bar */}
-        <div className="relative h-1.5 bg-gray-100 w-full">
+        <div className="relative h-1.5 bg-gray-100 w-full shrink-0">
            <div className="absolute top-0 left-0 h-full bg-[#0F172A] transition-all duration-500 ease-out" style={{ width: `${progress}%` }}></div>
         </div>
-        <button onClick={onClose} className="absolute top-5 right-5 text-gray-400 hover:text-gray-800 transition-colors z-10">
-          <FaTimes size={24} />
-        </button>
-        <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
+        
+        {/* Fixed Header */}
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100 shrink-0 bg-white z-10">
+          {step > 1 ? (
+            <button onClick={handleBack} className="p-2 -ml-2 text-gray-500 hover:text-[#0F172A] hover:bg-gray-100 rounded-full transition-colors">
+              <FaArrowLeft size={18} />
+            </button>
+          ) : (
+            <div className="w-8"></div>
+          )}
+          
+          <div className="flex-1 text-center px-2 min-w-0">
+            <h2 className="text-lg sm:text-xl font-bold text-[#121212] truncate">
+              {step === 1 && "Create an Account"}
+              {step === 2 && "Choose Account Type"}
+              {step === 3 && role === 'seeker' && "Basic Information"}
+              {step === 4 && role === 'seeker' && "Experience & Education"}
+              {step === 5 && role === 'seeker' && "Skills & Resume"}
+              {step === 3 && role === 'employer' && "Tell us about your company"}
+            </h2>
+            {step === 1 && <p className="text-xs sm:text-sm text-gray-500 mt-0.5 truncate">Join thousands of professionals today.</p>}
+            {step === 2 && <p className="text-xs sm:text-sm text-gray-500 mt-0.5 truncate">What are you looking for?</p>}
+          </div>
+
+          <button onClick={onClose} className="p-2 -mr-2 text-gray-400 hover:text-[#EF4444] hover:bg-red-50 rounded-full transition-colors">
+            <FaTimes size={20} />
+          </button>
+        </div>
+
+        {/* Scrollable Body */}
+        <div className="p-5 sm:p-8 overflow-y-auto custom-scrollbar flex-1 bg-white">
           {renderCurrentStep()}
         </div>
       </div>

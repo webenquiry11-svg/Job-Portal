@@ -109,8 +109,8 @@ const LoginDashboard = () => {
         </div>
 
         {/* Right Side - Search Form */}
-        <div className="hidden lg:flex items-center justify-center">
-            <div className="bg-white/10 backdrop-blur-lg p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/10">
+        <div className="flex items-center justify-center mt-10 lg:mt-0 w-full">
+            <div className="bg-white/10 backdrop-blur-lg p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/10">
                 <h3 className="text-2xl font-bold text-white mb-6 text-center">Find Your Next Opportunity</h3>
                 <form className="space-y-4">
                     <div className="relative group">
