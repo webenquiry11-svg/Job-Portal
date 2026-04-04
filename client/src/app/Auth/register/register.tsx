@@ -78,9 +78,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
           router.push('/Condidate/Dashboard');
         }
       }, 2000);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to register:', error);
-      toast.error('Registration failed. Please try again.');
+      toast.error(error?.data?.message || 'Registration failed. Please try again.');
     }
   };
 
