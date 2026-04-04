@@ -53,6 +53,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
       const result = await register({ ...formData, role }).unwrap();
       let finalProfileData = { ...result };
       
+      // Token ko pehle hi save karein taaki resume upload ki request authenticate ho sake
+      localStorage.setItem('profile', JSON.stringify(finalProfileData));
+
       // Immediately upload resume if candidate attached one
       if (resumeFile && role === 'seeker') {
          try {
@@ -67,6 +70,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
          }
       }
 
+      // Final updated data ko wapas save karein
       localStorage.setItem('profile', JSON.stringify(finalProfileData));
       toast.success('Registration successful! Welcome aboard.');
       console.log('Registration success:', finalProfileData);
