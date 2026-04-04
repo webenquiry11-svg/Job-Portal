@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { FaTimes, FaUser, FaBuilding, FaArrowLeft, FaCloudUploadAlt, FaCheck } from 'react-icons/fa';
-import { useRegisterMutation } from '@/features/authApi';
+import { useRegisterMutation, useUpdateProfileMutation } from '@/features/authApi';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
@@ -16,6 +16,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
   const [role, setRole] = useState<'seeker' | 'employer' | null>(null);
   const [isRobotChecked, setIsRobotChecked] = useState(false);
   const [register, { isLoading }] = useRegisterMutation();
+  const [updateProfile] = useUpdateProfileMutation();
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -48,7 +50,17 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
     }
 
     try {
-      const result = await register({ ...formData, role }).unwrap();
+      let result = await register({ ...formData, role }).unwrap();
+      
+      // Immediately upload resume if candidate attached one
+      if (resumeFile && role === 'seeker') {
+         const uploadData = new FormData();
+         uploadData.append('_id', result.result._id);
+         uploadData.append('resume', resumeFile);
+         const updateRes = await updateProfile(uploadData).unwrap();
+         result.result = updateRes.result;
+      }
+
       localStorage.setItem('profile', JSON.stringify({ ...result }));
       toast.success('Registration successful! Welcome aboard.');
       console.log('Registration success:', result);
@@ -224,11 +236,18 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
               <div className="flex text-sm text-gray-600">
                 <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-[#0F172A] hover:text-[#1E293B] focus-within:outline-none">
                   <span>Upload a file</span>
-                  <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                  <input id="file-upload" name="file-upload" type="file" accept=".pdf,.doc,.docx" className="sr-only" onChange={(e) => {
+                    if(e.target.files && e.target.files[0]) setResumeFile(e.target.files[0]);
+                  }} />
                 </label>
                 <p className="pl-1">or drag and drop</p>
               </div>
               <p className="text-xs text-gray-500">PDF, DOCX up to 10MB</p>
+              {resumeFile && (
+                 <p className="text-sm font-bold text-[#0F172A] mt-2 border border-[#0F172A]/20 bg-[#0F172A]/5 py-1 px-3 rounded-full inline-block">
+                    {resumeFile.name}
+                 </p>
+              )}
             </div>
           </div>
         </div>

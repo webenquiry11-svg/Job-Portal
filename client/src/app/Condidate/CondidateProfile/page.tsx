@@ -40,15 +40,15 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
   useEffect(() => {
     if (user) {
       setFormData({
-        name: user.name || 'Candidate Name',
-        headline: user.headline || 'Add a professional headline',
+        name: user.name || '',
+        headline: user.headline || '',
         email: user.email || '',
-        phone: user.phone || 'Add phone number',
-        location: user.location || 'Add location',
-        about: user.about || 'Write a brief summary about your professional background and career goals.',
-        skills: user.skills || 'React, TypeScript, Node.js', // Dummy default if empty
-        experience: user.experience || 'Not specified',
-        education: user.education || 'Not specified',
+        phone: user.phone || '',
+        location: user.location || '',
+        about: user.about || '',
+        skills: user.skills || '', // Used empty default to avoid confusing the user
+        experience: user.experience || '',
+        education: user.education || '',
         showContact: user.showContact !== false
       });
     }
@@ -240,12 +240,12 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
              {isEditing ? (
                 <input name="headline" value={formData.headline} onChange={handleChange} className="text-sm text-gray-600 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 w-full max-w-md outline-none focus:ring-2 focus:ring-[#0F172A]" placeholder="Professional Headline" />
              ) : (
-                <p className="text-gray-500 font-medium text-sm md:text-base">{formData.headline}</p>
+                <p className="text-gray-500 font-medium text-sm md:text-base">{formData.headline || 'No headline added'}</p>
              )}
           </div>
 
           <div className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 mt-6">
-             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none"><FaMapMarkerAlt className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="location" value={formData.location} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-24 md:w-32" /> : <span className="truncate">{formData.location}</span>}</div>
+             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none"><FaMapMarkerAlt className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="location" value={formData.location} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-24 md:w-32" /> : <span className="truncate">{formData.location || 'Location not specified'}</span>}</div>
              <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none">
                 <FaEnvelope className="text-[#0F172A] flex-shrink-0" /> 
                 {isEditing ? <input name="email" value={formData.email} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-32 md:w-48" /> : <span className="truncate">{formData.email}</span>}
@@ -274,7 +274,7 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
              {isEditing ? (
                 <textarea name="about" value={formData.about} onChange={handleChange} rows={4} className={inputClass} placeholder="Tell companies about yourself..." />
              ) : (
-                <p className="text-gray-600 leading-relaxed text-sm">{formData.about}</p>
+                <p className="text-gray-600 leading-relaxed text-sm">{formData.about || 'Write a brief summary about your professional background and career goals.'}</p>
              )}
           </div>
 
@@ -291,7 +291,7 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
                      <option value="Executive">Executive</option>
                    </select>
                  ) : (
-                   <p className="text-[#121212] font-medium text-sm">{formData.experience}</p>
+                   <p className="text-[#121212] font-medium text-sm">{formData.experience || 'Not specified'}</p>
                  )}
                </div>
                <div>
@@ -299,7 +299,7 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
                  {isEditing ? (
                    <input name="education" value={formData.education} onChange={handleChange} className={inputClass} placeholder="e.g., B.S. Computer Science" />
                  ) : (
-                   <p className="text-[#121212] font-medium text-sm">{formData.education}</p>
+                   <p className="text-[#121212] font-medium text-sm">{formData.education || 'Not specified'}</p>
                  )}
                </div>
              </div>

@@ -164,6 +164,11 @@ const CandidateDashboard = () => {
 
   const appliedJobs = allJobs.filter((job: any) => job.applicants?.includes(user?._id));
 
+  const interviewsCount = appliedJobs.filter((job: any) => {
+    const detail = job.applicantDetails?.find((d: any) => d.candidateId === user?._id);
+    return detail?.status === 'Interview';
+  }).length;
+
   if (isLoading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -367,7 +372,7 @@ const CandidateDashboard = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard icon={<FaBriefcase />} label="Applied Jobs" value={appliedJobs.length.toString()} color="bg-yellow-100 text-yellow-600" />
                 <StatCard icon={<FaBookmark />} label="Saved Jobs" value={savedJobIds.length.toString()} color="bg-slate-100 text-slate-600" />
-                <StatCard icon={<FaClock />} label="Interviews" value="2" color="bg-yellow-100 text-yellow-600" />
+                <StatCard icon={<FaClock />} label="Interviews" value={interviewsCount.toString()} color="bg-yellow-100 text-yellow-600" />
                 <StatCard icon={<FaEye />} label="Profile Views" value={isLoadingFreshUser ? '...' : profileViews.toLocaleString()} color="bg-slate-100 text-slate-600" />
               </div>
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">

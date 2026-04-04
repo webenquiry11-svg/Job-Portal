@@ -6,14 +6,18 @@ import jwt from 'jsonwebtoken';
 import { sendOtpEmail } from '../utils/mailer';
 
 export const register = async (req: Request, res: Response) => {
-  const { email, password, name, role } = req.body;
+  const { email, password, name, role, headline, location, phone, experience, education, skills, companyName, companySize, industry, website, yourRole, description } = req.body;
   try {
     const existingUser = await AuthModel.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
     const hashedPassword = await bcrypt.hash(password, 12);
-    const result = await AuthModel.create({ email, password: hashedPassword, name, role });
+    const result = await AuthModel.create({ 
+      email, password: hashedPassword, name, role, 
+      headline, location, phone, experience, education, skills, 
+      companyName, companySize, industry, website, yourRole, description 
+    });
     const token = jwt.sign({ email: result.email, id: result._id, role: result.role }, 'test', { expiresIn: '7d' });
     res.status(201).json({ result, token });
   } catch (error) {
