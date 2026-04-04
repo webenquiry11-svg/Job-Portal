@@ -102,7 +102,14 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
         <h2 className="text-2xl font-bold text-[#121212]">Create an Account</h2>
         <p className="text-sm text-gray-500 mt-2">Join thousands of professionals today.</p>
       </div>
-      <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleNext(); }}>
+      <form className="space-y-4" onSubmit={(e) => { 
+        e.preventDefault(); 
+        if (formData.password !== formData.confirmPassword) {
+          toast.error("Passwords do not match");
+          return;
+        }
+        handleNext(); 
+      }}>
         <div>
           <label htmlFor="name" className={labelClass}>Full Name</label>
           <input id="name" name="name" type="text" placeholder="John Doe" required className={inputClass} value={formData.name} onChange={handleChange} />

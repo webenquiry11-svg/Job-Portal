@@ -19,7 +19,7 @@ export const register = async (req: Request, res: Response) => {
       companyName, companySize, industry, website, yourRole, description 
     });
     const token = jwt.sign({ email: result.email, id: result._id, role: result.role }, 'test', { expiresIn: '7d' });
-    res.status(201).json({ result, token });
+    res.status(201).json({ result: result.toObject ? result.toObject() : result, token });
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong' });
   }
@@ -28,7 +28,7 @@ export const register = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
-    const existingUser = await AuthModel.findOne({ email });
+    const existingUser = await AuthModel.findOne({ email }).lean();
     if (!existingUser) {
       return res.status(404).json({ message: "User doesn't exist" });
     }
@@ -67,7 +67,7 @@ export const updateProfile = async (req: Request, res: Response) => {
 
   try {
     // Use $set and strict: false to ensure the resume field gets saved even if not explicitly in the schema
-    const updatedUser = await AuthModel.findByIdAndUpdate(_id, { $set: updates }, { new: true, strict: false }).select('-password');
+    const updatedUser = await AuthModel.findByIdAndUpdate(_id, { $set: updates }, { new: true, strict: false }).select('-password').lean();
     if (!updatedUser) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -337,7 +337,7 @@ export const incrementProfileView = async (req: Request, res: Response) => {
 export const getCompanyById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const company = await AuthModel.findById(id).select('-password');
+    const company = await AuthModel.findById(id).select('-password').lean();
     if (!company) {
       return res.status(404).json({ message: 'Company not found' });
     }
