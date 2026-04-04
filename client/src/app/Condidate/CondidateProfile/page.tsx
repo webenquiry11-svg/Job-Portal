@@ -333,9 +333,15 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
                   disabled={!isEditing} 
                 />
                 <FaFileAlt className="text-3xl text-gray-300 mx-auto mb-3 group-hover:text-[#0F172A] transition-colors" />
-                <p className="text-sm font-bold text-[#121212] mb-1 truncate">{resumeFile ? resumeFile.name : (user?.resume ? 'Uploaded_Resume' : 'No Resume Found')}</p>
-                <p className="text-xs text-gray-500 mb-4">{isEditing ? 'Click here to upload new resume (PDF, DOCX)' : 'Click Edit Profile to update'}</p>
-                {isEditing && <button type="button" onClick={() => resumeInputRef.current?.click()} className="text-xs font-bold text-[#0F172A] hover:underline">Replace Resume</button>}
+                <p className="text-sm font-bold text-[#121212] mb-1 truncate">{resumeFile ? resumeFile.name : (user?.resume ? 'Your Resume' : 'No Resume Found')}</p>
+                <p className="text-xs text-gray-500 mb-4">{isEditing ? 'Click here to upload new resume (PDF, DOCX)' : (user?.resume ? 'Currently active resume' : 'Click Edit Profile to upload')}</p>
+                {isEditing ? (
+                   <button type="button" onClick={() => resumeInputRef.current?.click()} className="text-xs font-bold text-[#0F172A] hover:underline relative z-20">Replace Resume</button>
+                ) : user?.resume ? (
+                   <a href={getImageUrl(user.resume)} target="_blank" rel="noreferrer" className="inline-block mt-2 px-6 py-2.5 bg-[#0F172A] text-white text-xs font-bold rounded-xl hover:bg-[#1E293B] shadow-md transition-colors relative z-20">
+                       View / Download
+                   </a>
+                ) : null}
              </div>
           </div>
         </div>
