@@ -32,9 +32,13 @@ const Navbar = () => {
           
           {/* Premium Pill-shaped Navigation */}
           <div className="hidden md:flex items-center space-x-1 bg-gray-50/80 p-1.5 rounded-full border border-gray-100 shadow-inner">
-            {['Find Jobs', 'Companies', 'Salaries'].map((item) => (
-              <Link key={item} href={`/${item.toLowerCase().replace(' ', '-')}`} className="text-sm font-bold text-gray-600 hover:text-[#0B0C10] py-2 px-5 rounded-full hover:bg-white hover:shadow-sm transition-all duration-300">
-                {item}
+            {[
+              { name: 'Find Jobs', path: '/#jobs-section' },
+              { name: 'Job Categories', path: '/#categories-section' },
+              { name: 'Pricing', path: '/Subscription/Pricing' }
+            ].map((item) => (
+              <Link key={item.name} href={item.path} className="text-sm font-bold text-gray-600 hover:text-[#0B0C10] py-2 px-5 rounded-full hover:bg-white hover:shadow-sm transition-all duration-300">
+                {item.name}
               </Link>
             ))}
           </div>
@@ -63,9 +67,13 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-100">
             <div className="px-6 py-4 space-y-3">
-              {['Find Jobs', 'Companies', 'Salaries'].map((item) => (
-                <Link key={item} href={`/${item.toLowerCase().replace(' ', '-')}`} className="block text-base font-bold text-gray-600 hover:text-[#0B0C10] py-3 px-4 rounded-xl hover:bg-gray-50 transition-colors">
-                  {item}
+              {[
+                { name: 'Find Jobs', path: '/#jobs-section' },
+                { name: 'Job Categories', path: '/#categories-section' },
+                { name: 'Pricing', path: '/Subscription/Pricing' }
+              ].map((item) => (
+                <Link key={item.name} href={item.path} className="block text-base font-bold text-gray-600 hover:text-[#0B0C10] py-3 px-4 rounded-xl hover:bg-gray-50 transition-colors">
+                  {item.name}
                 </Link>
               ))}
               <div className="border-t border-gray-100 pt-5 space-y-3">

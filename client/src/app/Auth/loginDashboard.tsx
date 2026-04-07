@@ -94,7 +94,7 @@ const LoginDashboard = () => {
           <div className="space-y-4">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
               Find The Job That <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FACC15] to-[#EAB308]">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-[#FACC15] to-[#EAB308]">
                 {displayText}
                 <span className="text-[#FACC15] animate-pulse">|</span>
               </span>
@@ -274,7 +274,7 @@ const LoginDashboard = () => {
       </div>
       
       {/* Popular Categories Section */}
-      <div className="bg-white py-24">
+      <div id="categories-section" className="bg-white py-24 scroll-mt-16">
           <div className="container mx-auto px-6 md:px-12">
               <div className="text-center mb-16">
                   <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-4">Popular Categories</h2>
