@@ -115,7 +115,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
           toast.error("Passwords do not match");
           return;
         }
-        handleNext(); 
+        handleNext();
       }}>
         <div>
           <label htmlFor="name" className={labelClass}>Full Name</label>

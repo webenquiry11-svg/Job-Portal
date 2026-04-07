@@ -290,7 +290,7 @@ const EmployerDashboard = () => {
                 {isNotificationOpen && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setIsNotificationOpen(false)}></div>
-                    <div className="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 animate-fade-in-up transform origin-top-right">
+                    <div className="fixed sm:absolute top-20 sm:top-full sm:mt-2 left-4 right-4 sm:left-auto sm:right-0 w-auto sm:w-80 md:w-96 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 animate-fade-in-up transform sm:origin-top-right">
                       <div className="px-4 py-2 border-b border-gray-100 flex justify-between items-center">
                         <h3 className="font-bold text-[#121212]">Notifications</h3>
                         {unreadCount > 0 && <span className="text-xs font-bold bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">{unreadCount} New</span>}
@@ -340,7 +340,7 @@ const EmployerDashboard = () => {
                       className="fixed inset-0 z-40"
                       onClick={() => setIsProfileMenuOpen(false)}
                     ></div>
-                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 animate-fade-in-up transform origin-top-right">
+                    <div className="fixed sm:absolute top-20 sm:top-full sm:mt-2 left-4 right-4 sm:left-auto sm:right-0 w-auto sm:w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 animate-fade-in-up transform sm:origin-top-right">
                       <div className="px-4 py-3 border-b border-gray-50 mb-1">
                         <p className="text-sm font-bold text-[#121212]">
                           {user?.companyName}
