@@ -71,9 +71,9 @@ export const sendWelcomeEmail = async (to: string, name: string, role: string) =
             <table width="600" border="0" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);">
               <!-- Header -->
               <tr>
-                <td align="center" bgcolor="#0B0C10" style="padding: 40px 20px; border-bottom: 4px solid #FACC15;">
+                <td align="center" bgcolor="#0B0C10" style="padding: 40px 20px; border-bottom: 4px solid #e49d04;">
                   <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 900; letter-spacing: -0.5px;">
-                Click4<span style="color: #FACC15;">Jobs</span>
+                Click4<span style="color: #e49d04;">Jobs</span>
                   </h1>
                   <p style="color: #a1a1aa; margin: 10px 0 0 0; font-size: 16px; font-weight: 500;">Welcome to the future of hiring.</p>
                 </td>
@@ -92,7 +92,7 @@ export const sendWelcomeEmail = async (to: string, name: string, role: string) =
                   <table border="0" cellpadding="0" cellspacing="0" width="100%">
                     <tr>
                       <td align="center">
-                        <a href="${dashboardLink}" style="display: inline-block; background-color: #FACC15; color: #0B0C10; text-decoration: none; padding: 16px 36px; border-radius: 8px; font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Access Your Dashboard</a>
+                        <a href="${dashboardLink}" style="display: inline-block; background-color: #e49d04; color: #0B0C10; text-decoration: none; padding: 16px 36px; border-radius: 8px; font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Access Your Dashboard</a>
                       </td>
                     </tr>
                   </table>

@@ -193,10 +193,10 @@ const CandidateDashboard = () => {
         </button>
 
         <div className={`p-8 flex items-center gap-3 transition-all duration-300 ${isSidebarCollapsed ? 'md:justify-center md:px-4' : ''}`}>
-           <div className="bg-[#FACC15] p-2.5 rounded-xl shadow-lg shadow-[#FACC15]/20 flex-shrink-0">
+           <div className="bg-[#e49d04] p-2.5 rounded-xl shadow-lg shadow-[#e49d04]/20 flex-shrink-0">
              <FaBriefcase className="text-[#0B0C10] text-lg" />
            </div>
-           <span className={`text-xl font-bold text-[#0B0C10] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? 'md:max-w-0 md:opacity-0' : 'max-w-xs opacity-100'}`}>Click4<span className="text-[#FACC15]">Jobs</span></span>
+           <span className={`text-xl font-bold text-[#0B0C10] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? 'md:max-w-0 md:opacity-0' : 'max-w-xs opacity-100'}`}>Click4<span className="text-[#e49d04]">Jobs</span></span>
         </div>
         
         <nav className="flex-1 px-4 space-y-2 overflow-y-auto py-4 custom-scrollbar">
@@ -241,7 +241,7 @@ const CandidateDashboard = () => {
                   ref={searchInputRef}
                   type="text" 
                   placeholder="Search jobs by title, skills, or company..." 
-                  className="w-full pl-11 pr-12 py-2.5 bg-white border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-[#FACC15] focus:border-transparent transition-all shadow-sm"
+                  className="w-full pl-11 pr-12 py-2.5 bg-white border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-[#e49d04] focus:border-transparent transition-all shadow-sm"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -261,7 +261,7 @@ const CandidateDashboard = () => {
                     <div className="space-y-4">
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Industry</label>
-                        <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#FACC15] transition-all" value={filterIndustry} onChange={(e) => setFilterIndustry(e.target.value)}>
+                        <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#e49d04] transition-all" value={filterIndustry} onChange={(e) => setFilterIndustry(e.target.value)}>
                           <option value="">All Industries</option>
                           <option value="IT Services">IT Services</option>
                           <option value="Advertising">Advertising</option>
@@ -270,7 +270,7 @@ const CandidateDashboard = () => {
                       </div>
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Work Mode</label>
-                        <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#FACC15] transition-all" value={filterWorkMode} onChange={(e) => setFilterWorkMode(e.target.value)}>
+                        <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#e49d04] transition-all" value={filterWorkMode} onChange={(e) => setFilterWorkMode(e.target.value)}>
                           <option value="">All Modes</option>
                           <option value="Remote">Remote</option>
                           <option value="On-site">On-site</option>
@@ -279,7 +279,7 @@ const CandidateDashboard = () => {
                       </div>
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Experience Level</label>
-                        <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#FACC15] transition-all" value={filterExperience} onChange={(e) => setFilterExperience(e.target.value)}>
+                        <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#e49d04] transition-all" value={filterExperience} onChange={(e) => setFilterExperience(e.target.value)}>
                           <option value="">Any Experience</option>
                           <option value="Entry Level (0-2 Yrs)">Entry Level (0-2 Yrs)</option>
                           <option value="Mid Level (3-5 Yrs)">Mid Level (3-5 Yrs)</option>
@@ -288,7 +288,7 @@ const CandidateDashboard = () => {
                       </div>
                       <div className="pt-2 flex gap-3">
                         <button onClick={() => { setFilterIndustry(''); setFilterWorkMode(''); setFilterExperience(''); setIsFilterOpen(false); }} className="flex-1 py-2.5 bg-gray-50 text-gray-600 font-bold text-sm rounded-xl hover:bg-gray-100 transition-colors">Clear</button>
-                        <button onClick={() => setIsFilterOpen(false)} className="flex-1 py-2.5 bg-[#FACC15] text-[#0B0C10] font-bold text-sm rounded-xl hover:bg-[#EAB308] transition-colors shadow-md shadow-[#FACC15]/10">Apply</button>
+                        <button onClick={() => setIsFilterOpen(false)} className="flex-1 py-2.5 bg-[#e49d04] text-[#0B0C10] font-bold text-sm rounded-xl hover:bg-[#cc8c03] transition-colors shadow-md shadow-[#e49d04]/10">Apply</button>
                       </div>
                     </div>
                   </div>
@@ -331,8 +331,8 @@ const CandidateDashboard = () => {
             </div>
 
             <div className="relative">
-              <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)} className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group focus:outline-none focus:ring-2 focus:ring-[#FACC15]">
-                 <div className="w-9 h-9 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#FACC15] font-bold text-sm shadow-inner overflow-hidden">
+              <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)} className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group focus:outline-none focus:ring-2 focus:ring-[#e49d04]">
+                 <div className="w-9 h-9 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#e49d04] font-bold text-sm shadow-inner overflow-hidden">
                    {user?.profilePicture ? <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" /> : user?.name?.charAt(0).toUpperCase() || 'U'}
                  </div>
                  <div className="hidden sm:block text-left">
@@ -379,7 +379,7 @@ const CandidateDashboard = () => {
                 <div className="xl:col-span-2 space-y-6">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xl font-bold text-[#121212]">Recent Applications</h3>
-                    <button onClick={() => setActiveTab('applications')} className="text-sm font-bold text-[#0B0C10] hover:text-[#EAB308]">View All</button>
+                    <button onClick={() => setActiveTab('applications')} className="text-sm font-bold text-[#0B0C10] hover:text-[#cc8c03]">View All</button>
                   </div>
                   <div className="space-y-4">
                     {appliedJobs.length > 0 ? (
@@ -471,7 +471,7 @@ const CandidateDashboard = () => {
                   <div className="col-span-full py-16 flex flex-col items-center justify-center bg-white rounded-3xl border border-dashed border-gray-200">
                     <FaBookmark className="text-5xl text-gray-200 mb-4" />
                     <p className="text-gray-500 font-medium">You haven't saved any jobs yet.</p>
-                    <button onClick={() => { setActiveTab('dashboard'); window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => searchInputRef.current?.focus(), 300); }} className="mt-4 px-6 py-2 bg-[#FACC15] text-[#0B0C10] text-sm font-bold rounded-xl hover:bg-[#EAB308] transition-colors shadow-lg shadow-[#FACC15]/20">Explore Jobs</button>
+                    <button onClick={() => { setActiveTab('dashboard'); window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => searchInputRef.current?.focus(), 300); }} className="mt-4 px-6 py-2 bg-[#e49d04] text-[#0B0C10] text-sm font-bold rounded-xl hover:bg-[#cc8c03] transition-colors shadow-lg shadow-[#e49d04]/20">Explore Jobs</button>
                   </div>
                 )}
               </div>
@@ -488,7 +488,7 @@ const CandidateDashboard = () => {
                   <select 
                     value={applicationFilter} 
                     onChange={(e) => setApplicationFilter(e.target.value)}
-                    className="w-full sm:w-auto px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FACC15] transition-all cursor-pointer shadow-sm"
+                    className="w-full sm:w-auto px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#e49d04] transition-all cursor-pointer shadow-sm"
                   >
                     <option value="All">All Statuses</option>
                     <option value="Applied">Applied</option>
@@ -528,7 +528,7 @@ const CandidateDashboard = () => {
                       <FaBriefcase className="mx-auto text-5xl text-gray-200 mb-4" />
                       <h3 className="text-lg font-bold text-[#121212]">No applications yet</h3>
                       <p className="text-gray-500 mt-2">When you apply for a job, it will appear here.</p>
-                      <button onClick={() => setActiveTab('explore')} className="mt-6 px-6 py-2.5 bg-[#FACC15] text-[#0B0C10] font-bold rounded-xl shadow-lg hover:bg-[#EAB308] transition-all">Explore Jobs</button>
+                      <button onClick={() => setActiveTab('explore')} className="mt-6 px-6 py-2.5 bg-[#e49d04] text-[#0B0C10] font-bold rounded-xl shadow-lg hover:bg-[#cc8c03] transition-all">Explore Jobs</button>
                    </div>
                 )}
               </div>
@@ -741,9 +741,9 @@ const ApplicationRow = ({ title, company, logo, status, date, detail, isVerified
       <div className="flex flex-col p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow group">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-xl font-bold text-[#0B0C10] group-hover:bg-[#0B0C10] group-hover:text-[#FACC15] transition-colors">{logo}</div>
+              <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-xl font-bold text-[#0B0C10] group-hover:bg-[#0B0C10] group-hover:text-[#e49d04] transition-colors">{logo}</div>
               <div>
-                  <h4 className="font-bold text-[#121212] text-sm md:text-base group-hover:text-[#EAB308] transition-colors">{title}</h4>
+                  <h4 className="font-bold text-[#121212] text-sm md:text-base group-hover:text-[#cc8c03] transition-colors">{title}</h4>
                   <p className="text-xs font-medium text-gray-500">{company}</p>
               </div>
           </div>
@@ -788,7 +788,7 @@ const RecommendedJobCard = ({ job, onViewDetails, isSaved, onToggleSave, onViewC
               <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-lg font-bold text-[#0B0C10] flex-shrink-0">{logo}</div>
               <div className="min-w-0">
                   <h4 className="font-bold text-[#121212] text-sm group-hover:text-[#0B0C10] transition-colors truncate">{title}</h4>
-                  <span onClick={handleCompanyClick} className="text-xs font-medium text-gray-500 hover:underline hover:text-slate-800 transition-colors truncate block cursor-pointer">{company}</span>
+                  <span onClick={handleCompanyClick} className="text-xs font-medium text-gray-500 hover:underline hover:text-[#e49d04] transition-colors truncate block cursor-pointer">{company}</span>
               </div>
           </div>
           <button onClick={onToggleSave} className={`transition-colors flex-shrink-0 ml-2 ${isSaved ? 'text-amber-500 hover:text-amber-600' : 'text-gray-300 hover:text-[#0B0C10]'}`}><FaBookmark /></button>
@@ -802,7 +802,7 @@ const RecommendedJobCard = ({ job, onViewDetails, isSaved, onToggleSave, onViewC
               <span key={i} className="text-[10px] font-bold px-2 py-1 bg-slate-50 text-slate-600 rounded-md border border-slate-100">{tag}</span>
           ))}
       </div>
-      <div className="mt-auto"><button onClick={onViewDetails} className="w-full py-2.5 bg-slate-50 text-[#0B0C10] font-bold text-sm rounded-xl hover:bg-[#0B0C10] hover:text-[#FACC15] transition-colors border border-slate-100 group-hover:border-[#0B0C10]">View Job Details</button></div>
+      <div className="mt-auto"><button onClick={onViewDetails} className="w-full py-2.5 bg-slate-50 text-[#0B0C10] font-bold text-sm rounded-xl hover:bg-[#0B0C10] hover:text-[#e49d04] transition-colors border border-slate-100 group-hover:border-[#0B0C10]">View Job Details</button></div>
   </div>
 )};
 
@@ -819,7 +819,7 @@ const JobDetailsModal = ({ job, onClose, user, onApply }: any) => {
                 position: 'top-center',
                 style: {
                   background: '#0B0C10',
-                  color: '#FACC15',
+                  color: '#e49d04',
                   fontWeight: 'bold',
                   padding: '16px',
                   borderRadius: '12px',
@@ -837,7 +837,7 @@ const JobDetailsModal = ({ job, onClose, user, onApply }: any) => {
     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
       <div className="p-6 md:px-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
         <h2 className="text-2xl font-bold text-[#121212] flex items-center gap-3">
-          <div className="bg-[#FACC15] p-2 rounded-xl shadow-md"><FaBriefcase className="text-[#0B0C10] text-sm" /></div>
+          <div className="bg-[#e49d04] p-2 rounded-xl shadow-md"><FaBriefcase className="text-[#0B0C10] text-sm" /></div>
           Job Details
         </h2>
         <button onClick={onClose} className="text-gray-400 hover:text-gray-800 transition-colors bg-white p-2 rounded-full border border-gray-200 shadow-sm hover:shadow-md"><FaTimes size={18} /></button>
@@ -859,7 +859,7 @@ const JobDetailsModal = ({ job, onClose, user, onApply }: any) => {
         <div className="mt-6 flex items-center gap-4">{job.immediateJoiner && <span className="px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg text-xs font-bold">Immediate Joiner Required</span>}<span className="text-xs font-medium text-gray-500">Contact via: <span className="font-bold text-gray-700">{job.contactPreference}</span></span></div>
       </div>
       <div className="p-6 border-t border-gray-100 flex items-center justify-end bg-gray-50/50 rounded-b-3xl">
-        <button onClick={handleApply} disabled={isApplying} className="px-8 py-3 bg-[#FACC15] text-[#0B0C10] font-black rounded-xl hover:bg-[#EAB308] shadow-lg shadow-[#FACC15]/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm disabled:opacity-50">
+        <button onClick={handleApply} disabled={isApplying} className="px-8 py-3 bg-[#e49d04] text-[#0B0C10] font-black rounded-xl hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm disabled:opacity-50">
           {isApplying ? 'Applying...' : 'Apply Now'} <FaArrowRight />
         </button>
       </div>
@@ -904,7 +904,7 @@ const ResumeUploadModal = ({ user, setUser, jobToApply, onClose }: any) => {
         position: 'top-center',
         style: {
                   background: '#0B0C10',
-                  color: '#FACC15',
+                  color: '#e49d04',
           fontWeight: 'bold',
           padding: '16px',
           borderRadius: '12px',
@@ -932,7 +932,7 @@ const ResumeUploadModal = ({ user, setUser, jobToApply, onClose }: any) => {
         </div>
         <div className="p-6 bg-gray-50/50 border-t border-gray-100 flex justify-end gap-3">
           <button onClick={onClose} className="px-5 py-2.5 text-sm font-bold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50">Cancel</button>
-          <button onClick={handleUploadAndApply} disabled={isUploading || isApplying} className="px-5 py-2.5 text-sm font-bold text-[#0B0C10] bg-[#FACC15] rounded-xl hover:bg-[#EAB308] shadow-md disabled:opacity-50">
+          <button onClick={handleUploadAndApply} disabled={isUploading || isApplying} className="px-5 py-2.5 text-sm font-bold text-[#0B0C10] bg-[#e49d04] rounded-xl hover:bg-[#cc8c03] shadow-md disabled:opacity-50">
             {isUploading ? 'Uploading...' : isApplying ? 'Applying...' : 'Upload & Apply'}
           </button>
         </div>
@@ -996,11 +996,11 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser, on
                   </div>
                 </div>
                 <div className="mt-4 md:mt-0 flex-shrink-0 w-full md:w-auto flex flex-col sm:flex-row gap-3">
-                  <button onClick={handleFollowToggle} disabled={isFollowingLoading} className={`w-full md:w-auto px-6 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-70 ${isFollowing ? 'bg-gray-100 text-gray-600 border border-gray-200' : 'bg-[#FACC15] text-[#0B0C10] shadow-lg shadow-[#FACC15]/20'}`}>
+                  <button onClick={handleFollowToggle} disabled={isFollowingLoading} className={`w-full md:w-auto px-6 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-70 ${isFollowing ? 'bg-gray-100 text-gray-600 border border-gray-200' : 'bg-[#e49d04] text-[#0B0C10] shadow-lg shadow-[#e49d04]/20'}`}>
                     {isFollowingLoading ? <FaSpinner className="animate-spin" /> : (isFollowing ? <><FaCheck /> Following</> : <><FaPlus /> Follow</>)}
                   </button>
                   {isFollowing && (
-                    <button onClick={() => onMessageClick(company)} className="w-full md:w-auto px-6 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm bg-[#0B0C10] text-[#FACC15] hover:bg-[#1F2833] border border-transparent">
+                    <button onClick={() => onMessageClick(company)} className="w-full md:w-auto px-6 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm bg-[#0B0C10] text-[#e49d04] hover:bg-[#1F2833] border border-transparent">
                       <FaCommentDots /> Message
                     </button>
                   )}
@@ -1012,7 +1012,7 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser, on
                 <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8"><h2 className="text-xl font-bold text-[#121212] mb-4">About Us</h2><p className="text-gray-600 leading-relaxed whitespace-pre-wrap text-sm md:text-base">{company.description || 'No description available.'}</p></div>
                 <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8"><h2 className="text-xl font-bold text-[#121212] mb-6">Open Positions ({jobs.length})</h2>
                   {isLoadingJobs ? <div className="flex items-center justify-center py-8"><FaSpinner className="animate-spin text-2xl text-gray-300" /></div> : jobs.length > 0 ? (
-                    <div className="space-y-4">{jobs.map((job: any) => (<div key={job._id} className="bg-gray-50 rounded-2xl p-5 border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4"><div><h3 className="font-bold text-[#121212]">{job.title}</h3><p className="text-xs text-gray-500 mt-1">{job.location} • {job.workMode} • ${job.salaryMin}-${job.salaryMax}</p></div><button onClick={() => { onClose(); onJobClick(job); }} className="px-5 py-2 bg-white border border-gray-200 text-[#0B0C10] text-sm font-bold rounded-xl hover:bg-[#FACC15] hover:border-[#FACC15] shadow-sm transition-colors whitespace-nowrap">View Details</button></div>))}</div>
+                    <div className="space-y-4">{jobs.map((job: any) => (<div key={job._id} className="bg-gray-50 rounded-2xl p-5 border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4"><div><h3 className="font-bold text-[#121212]">{job.title}</h3><p className="text-xs text-gray-500 mt-1">{job.location} • {job.workMode} • ${job.salaryMin}-${job.salaryMax}</p></div><button onClick={() => { onClose(); onJobClick(job); }} className="px-5 py-2 bg-white border border-gray-200 text-[#0B0C10] text-sm font-bold rounded-xl hover:bg-[#e49d04] hover:border-[#e49d04] shadow-sm transition-colors whitespace-nowrap">View Details</button></div>))}</div>
                   ) : <p className="text-gray-500 text-sm text-center py-4">No open positions.</p>}
                 </div>
               </div>
@@ -1100,7 +1100,7 @@ const CandidateMessagesSection = ({ user, allJobs, initialSelectedUser }: any) =
               placeholder="Search companies..." 
               value={searchQuery} 
               onChange={(e) => setSearchQuery(e.target.value)} 
-              className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-transparent rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 transition-all focus:bg-white focus:border-[#FACC15]"
+              className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-transparent rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#e49d04]/50 transition-all focus:bg-white focus:border-[#e49d04]"
             />
           </div>
         </div>
@@ -1109,7 +1109,7 @@ const CandidateMessagesSection = ({ user, allJobs, initialSelectedUser }: any) =
             <div
               key={company._id}
               onClick={() => setSelectedUser(company)}
-              className={`flex items-center gap-4 cursor-pointer p-4 transition-colors border-b border-gray-50/50 ${selectedUser?._id === company._id ? "bg-slate-50 border-l-4 border-l-[#FACC15]" : "border-l-4 border-l-transparent hover:bg-gray-50"}`}
+              className={`flex items-center gap-4 cursor-pointer p-4 transition-colors border-b border-gray-50/50 ${selectedUser?._id === company._id ? "bg-slate-50 border-l-4 border-l-[#e49d04]" : "border-l-4 border-l-transparent hover:bg-gray-50"}`}
             >
               <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center font-bold text-[#0B0C10] flex-shrink-0 overflow-hidden shadow-sm">
                 {company.profilePicture ? (
@@ -1141,7 +1141,7 @@ const CandidateMessagesSection = ({ user, allJobs, initialSelectedUser }: any) =
                <button onClick={() => setSelectedUser(null)} className="md:hidden text-gray-500 hover:text-[#0B0C10] p-2 -ml-2 transition-colors">
                  <FaChevronLeft size={18} />
                </button>
-               <div className="w-11 h-11 bg-[#0B0C10] text-[#FACC15] rounded-full flex items-center justify-center font-bold shadow-md overflow-hidden shrink-0">
+               <div className="w-11 h-11 bg-[#0B0C10] text-[#e49d04] rounded-full flex items-center justify-center font-bold shadow-md overflow-hidden shrink-0">
                  {selectedUser.profilePicture ? <img src={selectedUser.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/> : (selectedUser.companyName?.charAt(0) || selectedUser.name?.charAt(0) || 'C').toUpperCase()}
                </div>
                <div>
@@ -1185,7 +1185,7 @@ const CandidateMessagesSection = ({ user, allJobs, initialSelectedUser }: any) =
                 placeholder="Type a message..."
                 className="flex-1 bg-gray-100 border border-transparent rounded-full px-6 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0B0C10] focus:bg-white transition-all"
               />
-              <button onClick={handleSend} disabled={isSending} className="w-12 h-12 rounded-full flex items-center justify-center bg-[#FACC15] text-[#0B0C10] font-bold hover:bg-[#EAB308] shadow-md shadow-[#FACC15]/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+              <button onClick={handleSend} disabled={isSending} className="w-12 h-12 rounded-full flex items-center justify-center bg-[#e49d04] text-[#0B0C10] font-bold hover:bg-[#cc8c03] shadow-md shadow-[#e49d04]/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
                 {isSending ? <FaSpinner className="animate-spin" /> : <FaPaperPlane className="-ml-1" />}
               </button>
             </div>

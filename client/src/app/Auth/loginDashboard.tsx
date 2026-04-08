@@ -134,9 +134,9 @@ const LoginDashboard = () => {
           <div className="space-y-4">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
               Find The Job That <br/>
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-[#FACC15] to-[#EAB308]">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-[#e49d04] to-[#cc8c03]">
                 {displayText}
-                <span className="text-[#FACC15] animate-pulse">|</span>
+                <span className="text-[#e49d04] animate-pulse">|</span>
               </span>
             </h1>
             <p className="text-lg text-slate-200 leading-relaxed max-w-lg mx-auto lg:mx-0">
@@ -188,14 +188,14 @@ const LoginDashboard = () => {
                 <form className="space-y-4" onSubmit={handleSearch}>
                     <div className="relative group">
                         <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#0B0C10]" />
-                        <input type="text" value={searchTitle} onChange={e => setSearchTitle(e.target.value)} placeholder="Job title, keyword, or company" className="w-full pl-11 pr-4 py-4 bg-white/80 text-[#121212] placeholder-gray-500 border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FACC15] focus:bg-white transition-all"/>
+                    <input type="text" value={searchTitle} onChange={e => setSearchTitle(e.target.value)} placeholder="Job title, keyword, or company" className="w-full pl-11 pr-4 py-4 bg-white/80 text-[#121212] placeholder-gray-500 border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-[#e49d04] focus:bg-white transition-all"/>
                     </div>
                     <div className="relative group">
                         <FaMapMarkerAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#0B0C10]" />
-                        <input type="text" value={searchLocation} onChange={e => setSearchLocation(e.target.value)} placeholder="City, state, or zip code" className="w-full pl-11 pr-4 py-4 bg-white/80 text-[#121212] placeholder-gray-500 border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FACC15] focus:bg-white transition-all"/>
+                    <input type="text" value={searchLocation} onChange={e => setSearchLocation(e.target.value)} placeholder="City, state, or zip code" className="w-full pl-11 pr-4 py-4 bg-white/80 text-[#121212] placeholder-gray-500 border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-[#e49d04] focus:bg-white transition-all"/>
                     </div>
                     <div className="flex gap-3 pt-2 relative">
-                        <button type="submit" className="flex-1 py-4 bg-[#FACC15] text-[#0B0C10] font-bold rounded-xl shadow-lg shadow-[#FACC15]/20 hover:bg-[#EAB308] transition-all transform hover:-translate-y-0.5">
+                    <button type="submit" className="flex-1 py-4 bg-[#e49d04] text-[#0B0C10] font-bold rounded-xl shadow-lg shadow-[#e49d04]/20 hover:bg-[#cc8c03] transition-all transform hover:-translate-y-0.5">
                             Search Jobs
                         </button>
                         <button type="button" onClick={() => setIsFilterOpen(!isFilterOpen)} className={`p-4 ${isFilterOpen ? 'bg-white/40' : 'bg-white/20'} text-white rounded-xl hover:bg-white/30 transition-all`}>
@@ -214,7 +214,7 @@ const LoginDashboard = () => {
                               <div className="space-y-4">
                                 <div>
                                   <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Industry</label>
-                                  <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15] transition-all" value={filterIndustry} onChange={(e) => setFilterIndustry(e.target.value)}>
+                              <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#e49d04] transition-all" value={filterIndustry} onChange={(e) => setFilterIndustry(e.target.value)}>
                                     <option value="">All Industries</option>
                                     <option value="IT Services">IT Services</option>
                                     <option value="Advertising">Advertising</option>
@@ -228,7 +228,7 @@ const LoginDashboard = () => {
                                 </div>
                                 <div>
                                   <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Work Mode</label>
-                                  <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15] transition-all" value={filterWorkMode} onChange={(e) => setFilterWorkMode(e.target.value)}>
+                              <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#e49d04] transition-all" value={filterWorkMode} onChange={(e) => setFilterWorkMode(e.target.value)}>
                                     <option value="">All Modes</option>
                                     <option value="Remote">Remote</option>
                                     <option value="On-site">On-site</option>
@@ -237,7 +237,7 @@ const LoginDashboard = () => {
                                 </div>
                                 <div>
                                   <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Experience Level</label>
-                                  <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15] transition-all" value={filterExperience} onChange={(e) => setFilterExperience(e.target.value)}>
+                              <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#e49d04] transition-all" value={filterExperience} onChange={(e) => setFilterExperience(e.target.value)}>
                                     <option value="">Any Experience</option>
                                     <option value="Entry Level (0-2 Yrs)">Entry Level (0-2 Yrs)</option>
                                     <option value="Mid Level (3-5 Yrs)">Mid Level (3-5 Yrs)</option>
@@ -247,7 +247,7 @@ const LoginDashboard = () => {
                                 </div>
                                 <div className="pt-2 flex gap-3">
                                   <button type="button" onClick={() => { setFilterIndustry(''); setFilterWorkMode(''); setFilterExperience(''); setIsFilterOpen(false); document.getElementById('jobs-section')?.scrollIntoView({ behavior: 'smooth' }); }} className="flex-1 py-2.5 bg-gray-100 text-gray-600 font-bold text-sm rounded-xl hover:bg-gray-200 transition-colors">Clear</button>
-                                  <button type="button" onClick={() => { setIsFilterOpen(false); document.getElementById('jobs-section')?.scrollIntoView({ behavior: 'smooth' }); }} className="flex-1 py-2.5 bg-[#FACC15] text-[#0B0C10] font-bold text-sm rounded-xl hover:bg-[#EAB308] transition-colors shadow-md shadow-[#FACC15]/10">Apply</button>
+                              <button type="button" onClick={() => { setIsFilterOpen(false); document.getElementById('jobs-section')?.scrollIntoView({ behavior: 'smooth' }); }} className="flex-1 py-2.5 bg-[#e49d04] text-[#0B0C10] font-bold text-sm rounded-xl hover:bg-[#cc8c03] transition-colors shadow-md shadow-[#e49d04]/10">Apply</button>
                                 </div>
                               </div>
                             </div>
@@ -284,8 +284,8 @@ const LoginDashboard = () => {
             
             <div className="grid md:grid-cols-3 gap-8">
                 <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                    <div className="w-14 h-14 bg-[#0B0C10] text-[#FACC15] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div className="w-14 h-14 bg-[#0B0C10] text-[#e49d04] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                         <FaSearch size={24} />
                     </div>
                     <h3 className="text-xl font-bold text-[#121212] mb-3">1. Search Jobs</h3>
@@ -293,7 +293,7 @@ const LoginDashboard = () => {
                 </div>
 
                 <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FACC15] to-[#EAB308] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#e49d04] to-[#cc8c03] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
                     <div className="w-14 h-14 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                         <FaFileAlt size={24} />
                     </div>
@@ -302,8 +302,8 @@ const LoginDashboard = () => {
                 </div>
 
                 <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                    <div className="w-14 h-14 bg-[#0B0C10] text-[#FACC15] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div className="w-14 h-14 bg-[#0B0C10] text-[#e49d04] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                         <FaBell size={24} />
                     </div>
                     <h3 className="text-xl font-bold text-[#121212] mb-3">3. Get Notified</h3>
@@ -322,20 +322,20 @@ const LoginDashboard = () => {
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   {[
-                      { name: 'Development', count: '1.2k+ Jobs', icon: <FaBriefcase />, color: 'bg-[#0B0C10] text-[#FACC15]' },
+                      { name: 'Development', count: '1.2k+ Jobs', icon: <FaBriefcase />, color: 'bg-[#0B0C10] text-[#e49d04]' },
                       { name: 'Design', count: '800+ Jobs', icon: <FaFileAlt />, color: 'bg-yellow-100 text-yellow-600' },
-                      { name: 'Marketing', count: '600+ Jobs', icon: <FaSearch />, color: 'bg-[#0B0C10] text-[#FACC15]' },
+                      { name: 'Marketing', count: '600+ Jobs', icon: <FaSearch />, color: 'bg-[#0B0C10] text-[#e49d04]' },
                       { name: 'Management', count: '400+ Jobs', icon: <FaUsers />, color: 'bg-yellow-100 text-yellow-600' },
-                      { name: 'Finance', count: '300+ Jobs', icon: <FaBuilding />, color: 'bg-[#0B0C10] text-[#FACC15]' },
+                      { name: 'Finance', count: '300+ Jobs', icon: <FaBuilding />, color: 'bg-[#0B0C10] text-[#e49d04]' },
                       { name: 'Customer Service', count: '900+ Jobs', icon: <FaHeadset />, color: 'bg-yellow-100 text-yellow-600' },
-                      { name: 'Health Care', count: '500+ Jobs', icon: <FaBriefcase />, color: 'bg-[#0B0C10] text-[#FACC15]' },
+                      { name: 'Health Care', count: '500+ Jobs', icon: <FaBriefcase />, color: 'bg-[#0B0C10] text-[#e49d04]' },
                       { name: 'Sales', count: '700+ Jobs', icon: <FaBell />, color: 'bg-yellow-100 text-yellow-600' },
                   ].map((cat, idx) => (
                       <div key={idx} className="group p-6 bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 hover:-translate-y-1">
                           <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4 transition-transform duration-300 group-hover:scale-110 ${cat.color}`}>
                               {cat.icon}
                           </div>
-                          <h3 className="font-bold text-[#121212] text-lg mb-1 group-hover:text-[#EAB308] transition-colors">{cat.name}</h3>
+                          <h3 className="font-bold text-[#121212] text-lg mb-1 group-hover:text-[#cc8c03] transition-colors">{cat.name}</h3>
                           <p className="text-sm text-gray-500">{cat.count}</p>
                       </div>
                   ))}
@@ -367,11 +367,11 @@ const LoginDashboard = () => {
                         <div className="relative z-10">
                             <div className="flex items-start justify-between mb-6">
                                 <div className="flex items-center gap-5 min-w-0">
-                                    <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center font-bold text-2xl shadow-lg transform group-hover:scale-105 transition-transform duration-300 bg-[#0B0C10] text-[#FACC15]`}>
+                                    <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center font-bold text-2xl shadow-lg transform group-hover:scale-105 transition-transform duration-300 bg-[#0B0C10] text-[#e49d04]`}>
                                         {(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()}
                                     </div>
                                     <div className="min-w-0">
-                                        <h3 className="font-bold text-xl text-[#121212] group-hover:text-[#EAB308] transition-colors mb-1 truncate">{job.title}</h3>
+                                        <h3 className="font-bold text-xl text-[#121212] group-hover:text-[#cc8c03] transition-colors mb-1 truncate">{job.title}</h3>
                                         <p className="text-gray-500 font-medium text-sm truncate">{job.employerId?.companyName || job.employerId?.name || 'Company'}</p>
                                     </div>
                                 </div>
@@ -379,7 +379,7 @@ const LoginDashboard = () => {
                             </div>
 
                             <div className="grid grid-cols-2 gap-4 mb-6">
-                                <div className="flex items-center text-gray-500 text-sm truncate"><FaMapMarkerAlt className="mr-2 text-[#FACC15] shrink-0" /> <span className="truncate">{job.location || 'Remote'}</span></div>
+                                    <div className="flex items-center text-gray-500 text-sm truncate"><FaMapMarkerAlt className="mr-2 text-[#e49d04] shrink-0" /> <span className="truncate">{job.location || 'Remote'}</span></div>
                                 <div className="flex items-center text-gray-500 text-sm truncate"><FaMoneyBillWave className="mr-2 text-green-500 shrink-0" /> <span className="truncate">${job.salaryMin || 0} - ${job.salaryMax || 0}</span></div>
                                 <div className="flex items-center text-gray-500 text-sm truncate"><FaClock className="mr-2 text-blue-500 shrink-0" /> <span className="truncate">{new Date(job.createdAt).toLocaleDateString()}</span></div>
                             </div>
@@ -390,7 +390,7 @@ const LoginDashboard = () => {
                                         <span key={i} className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition-colors truncate max-w-[80px]">#{tag}</span>
                                     ))}
                                 </div>
-                                <button onClick={(e) => { e.stopPropagation(); setIsLoginModalOpen(true); }} className="text-[#0B0C10] font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all hover:text-[#EAB308] shrink-0">
+                                <button onClick={(e) => { e.stopPropagation(); setIsLoginModalOpen(true); }} className="text-[#0B0C10] font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all hover:text-[#cc8c03] shrink-0">
                                     Apply Now <FaArrowRight />
                                 </button>
                             </div>
@@ -415,7 +415,7 @@ const LoginDashboard = () => {
                     } else {
                         setIsLoginModalOpen(true);
                     }
-                }} className="px-8 py-3.5 bg-[#FACC15] text-[#0B0C10] font-bold rounded-full hover:bg-[#EAB308] shadow-lg shadow-[#FACC15]/20 transition-all duration-300 transform hover:-translate-y-1">
+                }} className="px-8 py-3.5 bg-[#e49d04] text-[#0B0C10] font-bold rounded-full hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all duration-300 transform hover:-translate-y-1">
                     {isSearching ? 'Clear Search' : 'View All Jobs'}
                 </button>
             </div>
@@ -437,7 +437,7 @@ const LoginDashboard = () => {
                     </div>
                     <p className="text-gray-600 italic mb-6 flex-grow leading-relaxed">"I found my dream job within a week of signing up. The process was incredibly smooth and the company recommendations were spot on."</p>
                     <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
-                        <div className="w-10 h-10 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#FACC15] font-bold shadow-md text-sm">SJ</div>
+                        <div className="w-10 h-10 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#e49d04] font-bold shadow-md text-sm">SJ</div>
                         <div>
                             <h4 className="font-bold text-[#121212] text-sm">Sarah Johnson</h4>
                             <p className="text-xs text-[#0B0C10] font-medium">Software Engineer</p>
@@ -450,10 +450,10 @@ const LoginDashboard = () => {
                     <div className="mb-6"><FaQuoteLeft className="text-yellow-200 text-4xl" /></div>
                     <p className="text-gray-600 italic mb-6 flex-grow leading-relaxed">"As a recruiter, this platform has been a game-changer. We've found some of our best talent here. Highly recommended!"</p>
                     <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
-                        <div className="w-10 h-10 bg-[#FACC15] rounded-full flex items-center justify-center text-[#0B0C10] font-bold shadow-md text-sm">MC</div>
+                        <div className="w-10 h-10 bg-[#e49d04] rounded-full flex items-center justify-center text-[#0B0C10] font-bold shadow-md text-sm">MC</div>
                         <div>
                             <h4 className="font-bold text-[#121212] text-sm">Michael Chen</h4>
-                            <p className="text-xs text-[#FACC15] font-medium">HR Manager</p>
+                            <p className="text-xs text-[#e49d04] font-medium">HR Manager</p>
                         </div>
                     </div>
                 </div>
@@ -463,7 +463,7 @@ const LoginDashboard = () => {
                     <div className="mb-6"><FaQuoteLeft className="text-slate-200 text-4xl" /></div>
                     <p className="text-gray-600 italic mb-6 flex-grow leading-relaxed">"The interface is so user-friendly and the job alerts kept me in the loop. I didn't miss a single opportunity."</p>
                     <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
-                        <div className="w-10 h-10 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#FACC15] font-bold shadow-md text-sm">ED</div>
+                        <div className="w-10 h-10 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#e49d04] font-bold shadow-md text-sm">ED</div>
                         <div>
                             <h4 className="font-bold text-[#121212] text-sm">Emily Davis</h4>
                             <p className="text-xs text-[#0B0C10] font-medium">Product Designer</p>
@@ -481,7 +481,7 @@ const LoginDashboard = () => {
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Ready to Start Your Career Journey?</h2>
                   <p className="text-slate-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">Join thousands of professionals who have advanced their careers with Click4Jobs. Create your account today.</p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <button onClick={() => setIsLoginModalOpen(true)} className="bg-[#FACC15] text-[#0B0C10] font-bold py-4 px-10 rounded-full shadow-xl hover:bg-[#EAB308] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
+                  <button onClick={() => setIsLoginModalOpen(true)} className="bg-[#e49d04] text-[#0B0C10] font-bold py-4 px-10 rounded-full shadow-xl hover:bg-[#cc8c03] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
                       Get Started Now
                   </button>
                   <Link href="/Subscription/Pricing" className="bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold py-4 px-10 rounded-full shadow-xl hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
@@ -517,7 +517,7 @@ const JobDetailsModal = ({ job, onClose, onApply }: any) => {
     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
       <div className="p-6 md:px-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
         <h2 className="text-2xl font-bold text-[#121212] flex items-center gap-3">
-          <div className="bg-[#FACC15] p-2 rounded-xl shadow-md"><FaBriefcase className="text-[#0B0C10] text-sm" /></div>
+          <div className="bg-[#e49d04] p-2 rounded-xl shadow-md"><FaBriefcase className="text-[#0B0C10] text-sm" /></div>
           Job Details
         </h2>
         <button onClick={onClose} className="text-gray-400 hover:text-gray-800 transition-colors bg-white p-2 rounded-full border border-gray-200 shadow-sm hover:shadow-md"><FaTimes size={18} /></button>
@@ -539,7 +539,7 @@ const JobDetailsModal = ({ job, onClose, onApply }: any) => {
         <div className="mt-6 flex items-center gap-4">{job.immediateJoiner && <span className="px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg text-xs font-bold">Immediate Joiner Required</span>}<span className="text-xs font-medium text-gray-500">Contact via: <span className="font-bold text-gray-700">{job.contactPreference}</span></span></div>
       </div>
       <div className="p-6 border-t border-gray-100 flex items-center justify-end bg-gray-50/50 rounded-b-3xl">
-        <button onClick={onApply} className="px-8 py-3 bg-[#FACC15] text-[#0B0C10] font-black rounded-xl hover:bg-[#EAB308] shadow-lg shadow-[#FACC15]/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
+        <button onClick={onApply} className="px-8 py-3 bg-[#e49d04] text-[#0B0C10] font-black rounded-xl hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
           Login to Apply <FaArrowRight />
         </button>
       </div>

@@ -151,13 +151,13 @@ const EmployerDashboard = () => {
         <div
           className={`p-8 flex items-center gap-3 transition-all duration-300 ${isSidebarCollapsed ? "md:justify-center md:px-4" : ""}`}
         >
-          <div className="bg-[#FACC15] p-2.5 rounded-xl shadow-lg shadow-[#FACC15]/20 flex-shrink-0">
+          <div className="bg-[#e49d04] p-2.5 rounded-xl shadow-lg shadow-[#e49d04]/20 flex-shrink-0">
             <FaBriefcase className="text-[#0B0C10] text-lg" />
           </div>
           <span
             className={`text-xl font-bold text-[#121212] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? "md:max-w-0 md:opacity-0" : "max-w-xs opacity-100"}`}
           >
-            Click4<span className="text-[#FACC15]">Jobs</span>
+            Click4<span className="text-[#e49d04]">Jobs</span>
           </span>
         </div>
 
@@ -277,7 +277,7 @@ const EmployerDashboard = () => {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setIsPostJobModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-[#FACC15] text-[#0B0C10] font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-[#FACC15]/20 hover:bg-[#EAB308] transition-all"
+                className="flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-[#e49d04] text-[#0B0C10] font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-[#e49d04]/20 hover:bg-[#cc8c03] transition-all"
               >
                 <FaPlus /> <span className="hidden sm:inline">Post New Job</span><span className="sm:hidden">Post Job</span>
               </button>
@@ -311,9 +311,9 @@ const EmployerDashboard = () => {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                  className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+                  className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group focus:outline-none focus:ring-2 focus:ring-[#e49d04]"
                 >
-                  <div className="w-9 h-9 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#FACC15] font-bold text-sm shadow-inner overflow-hidden">
+                  <div className="w-9 h-9 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#e49d04] font-bold text-sm shadow-inner overflow-hidden">
                     {user?.profilePicture ? (
                       <img
                         src={user.profilePicture}
@@ -688,7 +688,7 @@ const MyJobsSection = ({
         <h2 className="text-3xl font-bold text-[#121212]">My Job Postings</h2>
         <button
           onClick={onPostJobClick}
-          className="px-5 py-2.5 bg-[#FACC15] text-[#0B0C10] font-bold text-sm rounded-xl shadow-lg shadow-[#FACC15]/20 hover:bg-[#EAB308] transition-all"
+          className="px-5 py-2.5 bg-[#e49d04] text-[#0B0C10] font-bold text-sm rounded-xl shadow-lg shadow-[#e49d04]/20 hover:bg-[#cc8c03] transition-all"
         >
           Post New Job
         </button>
@@ -763,7 +763,7 @@ const MyJobsSection = ({
           </p>
           <button
             onClick={onPostJobClick}
-            className="px-6 py-2.5 bg-[#FACC15] text-[#0B0C10] font-bold text-sm rounded-xl shadow-lg shadow-[#FACC15]/20 hover:bg-[#EAB308] transition-all"
+            className="px-6 py-2.5 bg-[#e49d04] text-[#0B0C10] font-bold text-sm rounded-xl shadow-lg shadow-[#e49d04]/20 hover:bg-[#cc8c03] transition-all"
           >
             Post a Job
           </button>
@@ -804,7 +804,7 @@ const JobDetailsModal = ({ job, onClose }: any) => {
       >
         <div className="p-6 md:px-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
           <h2 className="text-2xl font-bold text-[#121212] flex items-center gap-3">
-            <div className="bg-[#FACC15] p-2 rounded-xl shadow-md">
+            <div className="bg-[#e49d04] p-2 rounded-xl shadow-md">
               <FaBriefcase className="text-[#0B0C10] text-sm" />
             </div>
             Job Details
@@ -891,7 +891,7 @@ const JobDetailsModal = ({ job, onClose }: any) => {
           >
             <FaTimes /> {isDeleting ? "Deleting..." : "Delete Job"}
           </button>
-          <button className="px-8 py-3 bg-[#FACC15] text-[#0B0C10] font-bold rounded-xl hover:bg-[#EAB308] shadow-lg shadow-[#FACC15]/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
+          <button className="px-8 py-3 bg-[#e49d04] text-[#0B0C10] font-bold rounded-xl hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
             <FaEdit /> Edit Job
           </button>
         </div>
@@ -971,7 +971,7 @@ const MessagesSection = ({ user }: { user: any }) => {
             <div
               key={follower._id}
               onClick={() => setSelectedUser(follower)}
-              className={`flex items-center gap-4 cursor-pointer p-4 transition-colors border-b border-gray-50/50 ${selectedUser?._id === follower._id ? "bg-slate-50 border-l-4 border-l-[#FACC15]" : "border-l-4 border-l-transparent hover:bg-gray-50"}`}
+              className={`flex items-center gap-4 cursor-pointer p-4 transition-colors border-b border-gray-50/50 ${selectedUser?._id === follower._id ? "bg-slate-50 border-l-4 border-l-[#e49d04]" : "border-l-4 border-l-transparent hover:bg-gray-50"}`}
             >
               <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center font-bold text-[#0B0C10] flex-shrink-0 overflow-hidden shadow-sm">
                 {follower.profilePicture ? (
@@ -1007,7 +1007,7 @@ const MessagesSection = ({ user }: { user: any }) => {
               <button onClick={() => setSelectedUser(null)} className="md:hidden text-gray-500 hover:text-[#0B0C10] p-2 -ml-2 transition-colors">
                 <FaChevronLeft size={18} />
               </button>
-              <div className="w-11 h-11 bg-[#0B0C10] text-[#FACC15] rounded-full flex items-center justify-center font-bold shadow-md overflow-hidden shrink-0">
+              <div className="w-11 h-11 bg-[#0B0C10] text-[#e49d04] rounded-full flex items-center justify-center font-bold shadow-md overflow-hidden shrink-0">
                 {selectedUser.profilePicture ? (
                   <img
                     src={selectedUser.profilePicture}
@@ -1036,7 +1036,7 @@ const MessagesSection = ({ user }: { user: any }) => {
                     className={`flex ${isMine ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`px-5 py-3 rounded-2xl max-w-[85%] text-sm shadow-sm ${isMine ? "bg-[#FACC15] text-[#0B0C10] rounded-br-sm" : "bg-white border border-gray-200 text-gray-800 rounded-bl-sm"}`}
+                      className={`px-5 py-3 rounded-2xl max-w-[85%] text-sm shadow-sm ${isMine ? "bg-[#e49d04] text-[#0B0C10] rounded-br-sm" : "bg-white border border-gray-200 text-gray-800 rounded-bl-sm"}`}
                     >
                       <p className="leading-relaxed">{msg.message}</p>
                       {isMine && (
@@ -1074,7 +1074,7 @@ const MessagesSection = ({ user }: { user: any }) => {
               <button
                 onClick={handleSend}
                 disabled={isSending}
-                className="w-12 h-12 rounded-full flex items-center justify-center bg-[#0B0C10] text-[#FACC15] font-bold hover:bg-[#1F2833] shadow-md shadow-black/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                className="w-12 h-12 rounded-full flex items-center justify-center bg-[#0B0C10] text-[#e49d04] font-bold hover:bg-[#1F2833] shadow-md shadow-black/20 transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
               >
                 {isSending ? <FaSpinner className="animate-spin" /> : <FaPaperPlane className="-ml-1" />}
               </button>
@@ -1206,7 +1206,7 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
           <select 
             value={selectedJobId} 
             onChange={(e) => setSelectedJobId(e.target.value)}
-            className="w-full sm:w-auto px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 font-bold text-[#121212] shadow-sm cursor-pointer"
+            className="w-full sm:w-auto px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#e49d04]/50 font-bold text-[#121212] shadow-sm cursor-pointer"
           >
             {jobs.map((job: any) => (
               <option key={job._id} value={job._id}>{job.title}</option>
@@ -1257,7 +1257,7 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
                       className="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group flex flex-col gap-2.5 transition-all"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-[#0B0C10] overflow-hidden flex-shrink-0 shadow-sm border border-gray-200 group-hover:bg-[#0B0C10] group-hover:text-[#FACC15] transition-colors">
+                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-[#0B0C10] overflow-hidden flex-shrink-0 shadow-sm border border-gray-200 group-hover:bg-[#0B0C10] group-hover:text-[#e49d04] transition-colors">
                           {applicant.profilePicture ? (
                             <img src={applicant.profilePicture.startsWith('http') ? applicant.profilePicture : `${apiUrl}/${applicant.profilePicture.replace(/\\/g, '/')}`} alt={applicant.name} className="w-full h-full object-cover" />
                           ) : (
@@ -1301,7 +1301,7 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
                                 </div>
                               );
                             }
-                            return <button onClick={(e) => {e.stopPropagation(); setSchedulingCandidate(applicant)}} className="w-full py-1.5 bg-[#FACC15] text-[#0B0C10] text-xs font-bold rounded hover:bg-[#EAB308] transition-colors shadow-sm">Schedule Interview</button>;
+                            return <button onClick={(e) => {e.stopPropagation(); setSchedulingCandidate(applicant)}} className="w-full py-1.5 bg-[#e49d04] text-[#0B0C10] text-xs font-bold rounded hover:bg-[#cc8c03] transition-colors shadow-sm">Schedule Interview</button>;
                           })()}
                         </div>
                       )}
@@ -1316,7 +1316,7 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
                             }} 
                             target="_blank" 
                             rel="noreferrer"
-                            className="text-xs font-bold text-[#0B0C10] hover:text-[#FACC15] hover:bg-[#0B0C10] bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 transition-colors"
+                            className="text-xs font-bold text-[#0B0C10] hover:text-[#e49d04] hover:bg-[#0B0C10] bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 transition-colors"
                           >
                             View / Download Resume
                           </a>
@@ -1342,15 +1342,15 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
               <div className="p-6 space-y-4">
                 <p className="text-sm text-gray-600 mb-4">Set up an interview with <span className="font-bold text-[#0B0C10]">{schedulingCandidate.name}</span>.</p>
                 <div className="grid grid-cols-2 gap-4">
-                  <div><label className="text-xs font-bold text-gray-500 uppercase">Date</label><input type="date" value={interviewForm.date} onChange={e => setInterviewForm({...interviewForm, date: e.target.value})} className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#FACC15]/50 outline-none"/></div>
-                  <div><label className="text-xs font-bold text-gray-500 uppercase">Time</label><input type="time" value={interviewForm.time} onChange={e => setInterviewForm({...interviewForm, time: e.target.value})} className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#FACC15]/50 outline-none"/></div>
+                  <div><label className="text-xs font-bold text-gray-500 uppercase">Date</label><input type="date" value={interviewForm.date} onChange={e => setInterviewForm({...interviewForm, date: e.target.value})} className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#e49d04]/50 outline-none"/></div>
+                  <div><label className="text-xs font-bold text-gray-500 uppercase">Time</label><input type="time" value={interviewForm.time} onChange={e => setInterviewForm({...interviewForm, time: e.target.value})} className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#e49d04]/50 outline-none"/></div>
                 </div>
-                <div><label className="text-xs font-bold text-gray-500 uppercase">Meeting Link</label><input type="url" placeholder="e.g. Zoom, Google Meet link" value={interviewForm.link} onChange={e => setInterviewForm({...interviewForm, link: e.target.value})} className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#FACC15]/50 outline-none"/></div>
-                <div><label className="text-xs font-bold text-gray-500 uppercase">Software / Instructions</label><textarea placeholder="e.g. Please make sure to have Zoom installed..." value={interviewForm.description} onChange={e => setInterviewForm({...interviewForm, description: e.target.value})} className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#FACC15]/50 outline-none resize-none h-20"></textarea></div>
+                <div><label className="text-xs font-bold text-gray-500 uppercase">Meeting Link</label><input type="url" placeholder="e.g. Zoom, Google Meet link" value={interviewForm.link} onChange={e => setInterviewForm({...interviewForm, link: e.target.value})} className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#e49d04]/50 outline-none"/></div>
+                <div><label className="text-xs font-bold text-gray-500 uppercase">Software / Instructions</label><textarea placeholder="e.g. Please make sure to have Zoom installed..." value={interviewForm.description} onChange={e => setInterviewForm({...interviewForm, description: e.target.value})} className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#e49d04]/50 outline-none resize-none h-20"></textarea></div>
               </div>
               <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
                 <button onClick={() => setSchedulingCandidate(null)} className="px-5 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-100">Cancel</button>
-                <button onClick={handleScheduleSubmit} disabled={isScheduling} className="px-5 py-2 bg-[#FACC15] text-[#0B0C10] rounded-xl text-sm font-bold shadow-md hover:bg-[#EAB308] disabled:opacity-50">{isScheduling ? 'Sending...' : 'Send Invite'}</button>
+                <button onClick={handleScheduleSubmit} disabled={isScheduling} className="px-5 py-2 bg-[#e49d04] text-[#0B0C10] rounded-xl text-sm font-bold shadow-md hover:bg-[#cc8c03] disabled:opacity-50">{isScheduling ? 'Sending...' : 'Send Invite'}</button>
               </div>
             </div>
           </div>
@@ -1442,11 +1442,11 @@ const PostJobModal = ({ user, onClose }: any) => {
         <div className="px-8 pt-6 pb-2 bg-gray-50/30">
           <div className="flex items-center justify-between relative max-w-2xl mx-auto">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 rounded-full z-0"></div>
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#FACC15] rounded-full z-0 transition-all duration-500 ease-out" style={{ width: `${(currentStep - 1) * 50}%` }}></div>
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#e49d04] rounded-full z-0 transition-all duration-500 ease-out" style={{ width: `${(currentStep - 1) * 50}%` }}></div>
             
             {[ { step: 1, label: "Role Overview" }, { step: 2, label: "Requirements" }, { step: 3, label: "Compensation" } ].map((s) => (
               <div key={s.step} className="relative z-10 flex flex-col items-center gap-2">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-500 ${currentStep > s.step ? 'bg-[#121212] text-[#FACC15]' : currentStep === s.step ? 'bg-[#FACC15] text-[#121212] ring-4 ring-[#FACC15]/30 scale-110' : 'bg-white border-2 border-gray-200 text-gray-400'}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-500 ${currentStep > s.step ? 'bg-[#121212] text-[#e49d04]' : currentStep === s.step ? 'bg-[#e49d04] text-[#121212] ring-4 ring-[#e49d04]/30 scale-110' : 'bg-white border-2 border-gray-200 text-gray-400'}`}>
                   {currentStep > s.step ? <FaCheck /> : s.step}
                 </div>
                 <span className={`text-xs font-bold absolute -bottom-6 whitespace-nowrap transition-colors duration-300 ${currentStep === s.step ? 'text-[#121212]' : 'text-gray-400'}`}>{s.label}</span>
@@ -1463,15 +1463,15 @@ const PostJobModal = ({ user, onClose }: any) => {
             <div className="space-y-6 animate-fade-in-up">
               <div className="group">
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Job Title <span className="text-red-500">*</span></label>
-                <input type="text" autoFocus required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all" placeholder="e.g. Senior Frontend Developer" />
+                <input type="text" autoFocus required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#e49d04]/20 focus:border-[#e49d04] transition-all" placeholder="e.g. Senior Frontend Developer" />
               </div>
               <div className="group">
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Job Description <span className="text-red-500">*</span></label>
-                <textarea required rows={5} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all resize-none custom-scrollbar" placeholder="Detail the role, responsibilities, and expectations..."></textarea>
+                <textarea required rows={5} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#e49d04]/20 focus:border-[#e49d04] transition-all resize-none custom-scrollbar" placeholder="Detail the role, responsibilities, and expectations..."></textarea>
               </div>
                   <div className="group">
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 transition-colors">Industry <span className="text-red-500">*</span></label>
-                    <select required value={formData.industry} onChange={e => setFormData({...formData, industry: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all appearance-none cursor-pointer">
+                <select required value={formData.industry} onChange={e => setFormData({...formData, industry: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#e49d04]/20 focus:border-[#e49d04] transition-all appearance-none cursor-pointer">
                       <option value="" disabled>Select an Industry</option>
                       <option value="IT Services">IT Services</option>
                       <option value="Advertising">Advertising</option>
@@ -1495,7 +1495,7 @@ const PostJobModal = ({ user, onClose }: any) => {
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Location</label>
                   <div className="relative">
                     <FaMapMarkerAlt className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input type="text" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="w-full pl-12 pr-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all" placeholder="e.g. New York, NY" />
+                    <input type="text" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="w-full pl-12 pr-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#e49d04]/20 focus:border-[#e49d04] transition-all" placeholder="e.g. New York, NY" />
                   </div>
                 </div>
                 <div>
@@ -1523,11 +1523,11 @@ const PostJobModal = ({ user, onClose }: any) => {
               </div>
               <div className="group">
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Required Skills <span className="text-gray-400 normal-case font-medium text-[10px] ml-1">(Press Enter to add)</span> <span className="text-red-500">*</span></label>
-                <div className="min-h-[60px] p-2 bg-gray-50/50 border border-gray-200/80 rounded-2xl focus-within:bg-white focus-within:ring-4 focus-within:ring-[#FACC15]/20 focus-within:border-[#FACC15] transition-all flex flex-wrap gap-2 items-center">
+                <div className="min-h-[60px] p-2 bg-gray-50/50 border border-gray-200/80 rounded-2xl focus-within:bg-white focus-within:ring-4 focus-within:ring-[#e49d04]/20 focus-within:border-[#e49d04] transition-all flex flex-wrap gap-2 items-center">
                   {formData.skills.map(skill => (
                     <span key={skill} className="bg-[#121212] text-white px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 animate-fade-in-up">
                       {skill}
-                      <button type="button" onClick={() => removeSkill(skill)} className="text-gray-400 hover:text-[#FACC15] transition-colors"><FaTimes size={12}/></button>
+                      <button type="button" onClick={() => removeSkill(skill)} className="text-gray-400 hover:text-[#e49d04] transition-colors"><FaTimes size={12}/></button>
                     </span>
                   ))}
                   <input type="text" value={skillInput} onChange={e => setSkillInput(e.target.value)} onKeyDown={handleSkillAdd} className="flex-1 min-w-[120px] bg-transparent outline-none px-2 py-1 text-sm text-[#121212] placeholder-gray-400" placeholder={formData.skills.length === 0 ? "e.g. React, Node.js..." : "Add another skill..."} />
@@ -1535,7 +1535,7 @@ const PostJobModal = ({ user, onClose }: any) => {
               </div>
               <div className="group">
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Screening Question <span className="text-gray-400 normal-case font-medium text-[10px] ml-1">(Optional)</span></label>
-                <input type="text" value={formData.screeningQuestion} onChange={e => setFormData({...formData, screeningQuestion: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all" placeholder="e.g. Why do you want to work with us?" />
+                <input type="text" value={formData.screeningQuestion} onChange={e => setFormData({...formData, screeningQuestion: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#e49d04]/20 focus:border-[#e49d04] transition-all" placeholder="e.g. Why do you want to work with us?" />
               </div>
             </div>
           )}
@@ -1554,11 +1554,11 @@ const PostJobModal = ({ user, onClose }: any) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="group">
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Minimum Salary ($)</label>
-                  <input type="number" value={formData.salaryMin} onChange={e => setFormData({...formData, salaryMin: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all" placeholder="e.g. 80000" />
+                  <input type="number" value={formData.salaryMin} onChange={e => setFormData({...formData, salaryMin: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#e49d04]/20 focus:border-[#e49d04] transition-all" placeholder="e.g. 80000" />
                 </div>
                 <div className="group">
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Maximum Salary ($)</label>
-                  <input type="number" value={formData.salaryMax} onChange={e => setFormData({...formData, salaryMax: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FACC15]/20 focus:border-[#FACC15] transition-all" placeholder="e.g. 120000" />
+                  <input type="number" value={formData.salaryMax} onChange={e => setFormData({...formData, salaryMax: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#e49d04]/20 focus:border-[#e49d04] transition-all" placeholder="e.g. 120000" />
                 </div>
               </div>
               <div className="pt-4 border-t border-gray-100">
@@ -1570,7 +1570,7 @@ const PostJobModal = ({ user, onClose }: any) => {
                   <div className="relative flex-shrink-0 ml-4">
                     <input type="checkbox" className="sr-only" checked={formData.immediateJoiner} onChange={e => setFormData({...formData, immediateJoiner: e.target.checked})} />
                     <div className={`block w-14 h-8 rounded-full transition-colors duration-300 ${formData.immediateJoiner ? 'bg-[#121212]' : 'bg-gray-300'}`}></div>
-                    <div className={`absolute left-1 top-1 bg-[#FACC15] w-6 h-6 rounded-full transition-transform duration-300 ${formData.immediateJoiner ? 'translate-x-6' : ''}`}></div>
+                    <div className={`absolute left-1 top-1 bg-[#e49d04] w-6 h-6 rounded-full transition-transform duration-300 ${formData.immediateJoiner ? 'translate-x-6' : ''}`}></div>
                   </div>
                 </label>
               </div>
@@ -1585,11 +1585,11 @@ const PostJobModal = ({ user, onClose }: any) => {
           </button>
 
           {currentStep < 3 ? (
-            <button type="button" onClick={handleNext} className="px-8 py-3.5 bg-[#FACC15] text-[#121212] text-sm font-black rounded-xl hover:bg-[#EAB308] shadow-lg shadow-[#FACC15]/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
+                <button type="button" onClick={handleNext} className="px-8 py-3.5 bg-[#e49d04] text-[#121212] text-sm font-black rounded-xl hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
               Next Step <FaArrowRight size={12} />
             </button>
           ) : (
-            <button type="submit" onClick={handleSubmit} disabled={isLoading} className="px-8 py-3.5 bg-[#121212] text-[#FACC15] text-sm font-black rounded-xl hover:bg-black shadow-xl shadow-black/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-50 disabled:transform-none">
+                <button type="submit" onClick={handleSubmit} disabled={isLoading} className="px-8 py-3.5 bg-[#121212] text-[#e49d04] text-sm font-black rounded-xl hover:bg-black shadow-xl shadow-black/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-50 disabled:transform-none">
               {isLoading ? <FaSpinner className="animate-spin" /> : <FaCheck size={14} />} {isLoading ? 'Publishing...' : 'Publish Job'}
             </button>
           )}

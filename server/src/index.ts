@@ -14,6 +14,7 @@ import { Strategy as MicrosoftStrategy } from 'passport-microsoft';
 import jwt from 'jsonwebtoken';
 import AuthModel from './models/AuthModel';
 import { sendWelcomeEmail } from './utils/mailer';
+import https from 'https';
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
@@ -131,6 +132,63 @@ passport.use(new MicrosoftStrategy({
     }
   }
 ));
+
+// Google One Tap Login Endpoint
+app.post('/auth/google/onetap', (req: Request, res: Response): any => {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ message: 'No credential provided' });
+    }
+
+    https.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`, (googleRes) => {
+      let data = '';
+      googleRes.on('data', (chunk) => data += chunk);
+      googleRes.on('end', async () => {
+        try {
+          const profile = JSON.parse(data);
+          if (profile.error || !profile.email) {
+            return res.status(400).json({ message: 'Invalid Google token' });
+          }
+
+          const email = profile.email;
+          let user = await AuthModel.findOne({ email });
+          let isNewUser = false;
+          
+          if (!user) {
+            isNewUser = true;
+            console.log("👉 Creating new Google One Tap user...");
+            user = await AuthModel.create({
+              name: profile.name,
+              email: email,
+              role: 'seeker',
+              googleId: profile.sub,
+              isEmailVerified: true,
+              profilePicture: profile.picture
+            });
+          } else if (!user.googleId) {
+            console.log("👉 Linking Google account to existing user...");
+            await AuthModel.findByIdAndUpdate(user._id, { googleId: profile.sub });
+          }
+
+          if (isNewUser) {
+            try { await sendWelcomeEmail(user.email, user.name, user.role); } catch (err) { console.error('Failed to send welcome email:', err); }
+          }
+
+          const token = jwt.sign({ email: user.email, id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+          return res.status(200).json({ result: user, token });
+        } catch (parseError) {
+          return res.status(500).json({ message: 'Error parsing Google response' });
+        }
+      });
+    }).on('error', (err) => {
+      return res.status(500).json({ message: 'Failed to verify token with Google' });
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error during One Tap login' });
+  }
+});
 
 // Routes
 app.use('/auth', authRoutes);

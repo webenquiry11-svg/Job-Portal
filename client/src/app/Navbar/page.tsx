@@ -1,17 +1,82 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import LoginModal from '../Auth/login/login';
 import RegisterModal from '../Auth/register/register';
 import { FaBriefcase, FaBars, FaTimes } from 'react-icons/fa';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
+
+declare global {
+  interface Window {
+    google: any;
+  }
+}
 
 const Navbar = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const profile = localStorage.getItem('profile');
+    if (profile) return; // Don't show prompt if already logged in
+
+    const handleCredentialResponse = async (response: any) => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/auth/google/onetap`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ credential: response.credential })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('profile', JSON.stringify(data));
+          toast.success('Successfully logged in with Google!');
+          if (data.result.role === 'employer') {
+            router.push('/employer/dashboard');
+          } else {
+            router.push('/Condidate/Dashboard');
+          }
+        } else {
+          toast.error(data.message || 'Google login failed');
+        }
+      } catch (error) {
+        toast.error('An error occurred during Google login');
+      }
+    };
+
+    const loadGoogleScript = () => {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        if (window.google) {
+          window.google.accounts.id.initialize({
+            client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '', // Will be picked from your frontend .env
+            callback: handleCredentialResponse,
+            cancel_on_tap_outside: false,
+            use_fedcm_for_prompt: false, // Disables strict FedCM API to allow localhost testing
+          });
+          
+          // Catch the prompt notification to gracefully handle cooldowns and ad-blockers
+          window.google.accounts.id.prompt((notification: any) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+              const reason = notification.getNotDisplayedReason() || notification.getSkippedReason();
+              console.log('Google One Tap was skipped or blocked by browser settings:', reason);
+            }
+          });
+        }
+      };
+      document.body.appendChild(script);
+    };
+
+    loadGoogleScript();
+  }, [router]);
 
   if (pathname?.startsWith('/employer/dashboard') || pathname?.startsWith('/Condidate/Dashboard') || pathname?.startsWith('/dashboard') || pathname?.toLowerCase().startsWith('/admin') || pathname?.startsWith('/employer-profile')) {
     return null;
@@ -22,11 +87,11 @@ const Navbar = () => {
       <nav className="bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div className="container mx-auto px-6 md:px-12 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="bg-[#FACC15] p-2.5 rounded-xl shadow-lg shadow-[#FACC15]/20 group-hover:scale-105 transition-all duration-300">
+            <div className="bg-[#e49d04] p-2.5 rounded-xl shadow-lg shadow-[#e49d04]/20 group-hover:scale-105 transition-all duration-300">
                <FaBriefcase className="text-[#0B0C10] text-lg" />
             </div>
             <span className="text-2xl font-black text-[#121212] tracking-tight">
-              Click4<span className="text-[#FACC15]">Jobs</span>
+              Click4<span className="text-[#e49d04]">Jobs</span>
             </span>
           </Link>
           
@@ -52,7 +117,7 @@ const Navbar = () => {
             </button>
             <button
               onClick={() => setShowRegisterModal(true)}
-              className="px-6 py-2.5 text-sm font-bold text-[#0B0C10] bg-[#FACC15] rounded-full hover:bg-[#EAB308] shadow-lg shadow-[#FACC15]/20 transition-all transform hover:-translate-y-0.5"
+              className="px-6 py-2.5 text-sm font-bold text-[#0B0C10] bg-[#e49d04] rounded-full hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all transform hover:-translate-y-0.5"
             >
               Sign Up
             </button>
@@ -85,7 +150,7 @@ const Navbar = () => {
                 </button>
                 <button
                   onClick={() => { setShowRegisterModal(true); setIsMenuOpen(false); }}
-                  className="w-full px-6 py-3 text-sm font-bold text-[#0B0C10] bg-[#FACC15] rounded-full hover:bg-[#EAB308] shadow-lg shadow-[#FACC15]/20 transition-all"
+                  className="w-full px-6 py-3 text-sm font-bold text-[#0B0C10] bg-[#e49d04] rounded-full hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all"
                 >
                   Sign Up
                 </button>
