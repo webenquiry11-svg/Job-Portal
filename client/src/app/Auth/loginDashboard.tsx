@@ -159,10 +159,12 @@ const LoginDashboard = () => {
               Continue with Google
             </button>
             
-            <button onClick={handleMicrosoftLogin} className="w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5">
-              <FaMicrosoft className="mr-3 text-blue-600" size={24} />
-              Continue with Microsoft
-            </button>
+            {/* 
+              <button onClick={handleMicrosoftLogin} className="w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5">
+                <FaMicrosoft className="mr-3 text-blue-600" size={24} />
+                Continue with Microsoft
+              </button>
+            */}
 
             <button onClick={() => setIsLoginModalOpen(true)} className="w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5">
               <FaEnvelope className="mr-3 text-gray-500" size={24} />
