@@ -3,7 +3,7 @@ import AuthModel from '../models/AuthModel';
 import NotificationModel from '../models/NotificationModel';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { sendOtpEmail } from '../utils/mailer';
+import { sendOtpEmail, sendWelcomeEmail } from '../utils/mailer';
 
 export const register = async (req: Request, res: Response) => {
   const { email, password, name, role, headline, location, phone, experience, education, skills, companyName, companySize, industry, website, yourRole, description } = req.body;
@@ -18,6 +18,14 @@ export const register = async (req: Request, res: Response) => {
       headline, location, phone, experience, education, skills, 
       companyName, companySize, industry, website, yourRole, description 
     });
+    
+    // Trigger Welcome Email asynchronously
+    try {
+      await sendWelcomeEmail(result.email, result.name, result.role);
+    } catch (emailError) {
+      console.error("Failed to send welcome email:", emailError);
+    }
+
     const token = jwt.sign({ email: result.email, id: result._id, role: result.role }, 'test', { expiresIn: '7d' });
     res.status(201).json({ result: result.toObject ? result.toObject() : result, token });
   } catch (error) {
