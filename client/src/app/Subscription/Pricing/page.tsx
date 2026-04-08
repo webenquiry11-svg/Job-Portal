@@ -1,204 +1,68 @@
-'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { FaCheck, FaArrowLeft, FaTimes } from 'react-icons/fa';
+import { FaEnvelope, FaClock, FaShieldAlt, FaCoins } from 'react-icons/fa';
 
-const PricingPage = () => {
-  const [isAnnual, setIsAnnual] = useState(true);
-  const [userType, setUserType] = useState<'candidate' | 'employer'>('candidate');
-
-  const employerPlans = [
-    {
-      name: 'Basic',
-      description: 'Perfect for startups and small businesses hiring for a single role.',
-      price: isAnnual ? '0' : '0',
-      duration: 'forever',
-      features: [
-        { text: '1 Active Job Posting', included: true },
-        { text: 'Standard Job Visibility', included: true },
-        { text: 'Basic Applicant Tracking', included: true },
-        { text: 'Email Support', included: true },
-        { text: 'Featured Job Placement', included: false },
-        { text: 'Resume Database Access', included: false },
-      ],
-      buttonText: 'Get Started Free',
-      popular: false,
-      color: 'bg-white text-[#121212] border-gray-200'
-    },
-    {
-      name: 'Professional',
-      description: 'Ideal for growing companies with ongoing recruitment needs.',
-      price: isAnnual ? '49' : '59',
-      duration: 'per month',
-      features: [
-        { text: 'Up to 10 Active Job Postings', included: true },
-        { text: 'Featured Job Visibility', included: true },
-        { text: 'Advanced Applicant Tracking', included: true },
-        { text: 'Priority 24/7 Support', included: true },
-        { text: 'Resume Database Access (100/mo)', included: true },
-        { text: 'Dedicated Account Manager', included: false },
-      ],
-      buttonText: 'Choose Professional',
-      popular: true,
-      color: 'bg-[#0B0C10] text-white border-[#0B0C10]'
-    },
-    {
-      name: 'Enterprise',
-      description: 'For large organizations needing volume hiring and custom solutions.',
-      price: isAnnual ? '199' : '249',
-      duration: 'per month',
-      features: [
-        { text: 'Unlimited Job Postings', included: true },
-        { text: 'Maximum Job Visibility', included: true },
-        { text: 'Custom Applicant Tracking', included: true },
-        { text: 'Priority 24/7 Support', included: true },
-        { text: 'Unlimited Resume Database', included: true },
-        { text: 'Dedicated Account Manager', included: true },
-      ],
-      buttonText: 'Contact Sales',
-      popular: false,
-      color: 'bg-white text-[#121212] border-gray-200'
-    }
-  ];
-
-  const candidatePlans = [
-    {
-      name: 'Basic',
-      description: 'Essential tools to start your career journey and apply to jobs.',
-      price: isAnnual ? '0' : '0',
-      duration: 'forever',
-      features: [
-        { text: 'Standard Profile Visibility', included: true },
-        { text: 'Apply to Unlimited Jobs', included: true },
-        { text: 'Basic Application Tracking', included: true },
-        { text: 'Email Support', included: true },
-        { text: 'Highlighted "Pro" Badge', included: false },
-        { text: 'See Who Viewed Your Profile', included: false },
-      ],
-      buttonText: 'Get Started Free',
-      popular: false,
-      color: 'bg-white text-[#121212] border-gray-200'
-    },
-    {
-      name: 'Pro Seeker',
-      description: 'Boost your profile and stand out to top recruiters automatically.',
-      price: isAnnual ? '9' : '12',
-      duration: 'per month',
-      features: [
-        { text: 'Highlighted "Pro" Badge', included: true },
-        { text: 'Priority Application Placement', included: true },
-        { text: 'See Who Viewed Your Profile', included: true },
-        { text: 'Advanced Application Tracking', included: true },
-        { text: 'Resume AI Analysis', included: true },
-        { text: '1-on-1 Career Coaching', included: false },
-      ],
-      buttonText: 'Upgrade to Pro',
-      popular: true,
-      color: 'bg-[#0B0C10] text-white border-[#0B0C10]'
-    },
-    {
-      name: 'Career Plus',
-      description: 'Maximum visibility and dedicated career support for fast growth.',
-      price: isAnnual ? '29' : '39',
-      duration: 'per month',
-      features: [
-        { text: 'Top 3 Placement in Applicant Lists', included: true },
-        { text: 'Direct Messaging to Recruiters', included: true },
-        { text: 'Unlimited Resume AI Analysis', included: true },
-        { text: '1-on-1 Career Coaching (Monthly)', included: true },
-        { text: 'Interview Prep Sessions', included: true },
-        { text: 'Priority 24/7 Support', included: true },
-      ],
-      buttonText: 'Get Career Plus',
-      popular: false,
-      color: 'bg-white text-[#121212] border-gray-200'
-    }
-  ];
-
-  const currentPlans = userType === 'employer' ? employerPlans : candidatePlans;
-
+export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-sans selection:bg-[#FACC15] selection:text-[#0B0C10]">
-      {/* Header */}
-      <div className="pt-12 pb-24 px-6 relative overflow-hidden bg-[#0B0C10]">
-         <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/clean-gray-paper.png')] pointer-events-none"></div>
-         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-[#FACC15]/20 rounded-full blur-[100px] pointer-events-none"></div>
-         
-         <div className="container mx-auto relative z-10">
-           <Link href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-12 font-medium">
-             <FaArrowLeft /> Back to Home
-           </Link>
-           
-           <div className="text-center max-w-3xl mx-auto">
-             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
-               Simple, transparent <span className="text-[#FACC15]">pricing</span>
-             </h1>
-             <p className="text-lg md:text-xl text-gray-400 mb-10 leading-relaxed">
-               Choose the perfect plan for your {userType === 'employer' ? 'hiring' : 'career'} needs. No hidden fees, cancel anytime.
-             </p>
-             
-             {/* Toggles */}
-             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-               {/* User Type Toggle */}
-               <div className="inline-flex items-center bg-white/10 backdrop-blur-md p-1.5 rounded-full border border-white/10">
-                 <button onClick={() => setUserType('candidate')} className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${userType === 'candidate' ? 'bg-white text-[#0B0C10] shadow-md' : 'text-gray-300 hover:text-white'}`}>
-                   For Candidates
-                 </button>
-                 <button onClick={() => setUserType('employer')} className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${userType === 'employer' ? 'bg-white text-[#0B0C10] shadow-md' : 'text-gray-300 hover:text-white'}`}>
-                   For Employers
-                 </button>
-               </div>
-               
-               <div className="hidden sm:block w-px h-8 bg-gray-700"></div>
-               
-               {/* Billing Toggle */}
-               <div className="inline-flex items-center bg-white/10 backdrop-blur-md p-1.5 rounded-full border border-white/10">
-                 <button onClick={() => setIsAnnual(false)} className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${!isAnnual ? 'bg-white text-[#0B0C10] shadow-md' : 'text-gray-300 hover:text-white'}`}>
-                   Monthly
-                 </button>
-                 <button onClick={() => setIsAnnual(true)} className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${isAnnual ? 'bg-[#FACC15] text-[#0B0C10] shadow-md' : 'text-gray-300 hover:text-white'}`}>
-                   Annually <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] uppercase rounded-full tracking-wider">Save 20%</span>
-                 </button>
-               </div>
-             </div>
-           </div>
-         </div>
-      </div>
-
-      {/* Pricing Cards */}
-      <div className="container mx-auto px-6 pb-24 -mt-16 relative z-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-start">
-           {currentPlans.map((plan, idx) => (
-             <div key={idx} className={`rounded-3xl border ${plan.popular ? 'border-[#FACC15] shadow-2xl shadow-[#FACC15]/10 md:-mt-8' : 'border-gray-200 shadow-lg shadow-gray-200/50'} ${plan.color} overflow-hidden transition-transform duration-300 hover:-translate-y-2`}>
-               {plan.popular && <div className="bg-[#FACC15] text-[#0B0C10] text-center py-2 text-xs font-black uppercase tracking-widest">Most Popular Choice</div>}
-               <div className="p-8 md:p-10">
-                 <h3 className={`text-2xl font-black mb-3 ${plan.popular ? 'text-white' : 'text-[#0B0C10]'}`}>{plan.name}</h3>
-                 <p className={`text-sm h-12 mb-6 ${plan.popular ? 'text-gray-400' : 'text-gray-500'}`}>{plan.description}</p>
-                 <div className="mb-8"><span className="text-5xl font-black">${plan.price}</span><span className={`text-sm font-medium ${plan.popular ? 'text-gray-400' : 'text-gray-500'}`}>/{plan.duration}</span></div>
-                 <button className={`w-full py-4 rounded-xl font-bold text-sm transition-all transform hover:-translate-y-0.5 ${plan.popular ? 'bg-[#FACC15] text-[#0B0C10] hover:bg-[#EAB308] shadow-lg shadow-[#FACC15]/20' : 'bg-gray-100 text-[#0B0C10] hover:bg-gray-200 border border-gray-200'}`}>{plan.buttonText}</button>
-               </div>
-               <div className={`p-8 md:p-10 border-t ${plan.popular ? 'border-gray-800 bg-black/20' : 'border-gray-100 bg-gray-50'}`}>
-                 <ul className="space-y-4">
-                   {plan.features.map((feature, i) => (
-                     <li key={i} className="flex items-start gap-3">
-                       <div className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${feature.included ? (plan.popular ? 'bg-[#FACC15] text-[#0B0C10]' : 'bg-green-100 text-green-600') : (plan.popular ? 'bg-gray-800 text-gray-500' : 'bg-gray-200 text-gray-400')}`}>
-                         {feature.included ? <FaCheck size={10} /> : <FaTimes size={10} />}
-                       </div>
-                       <span className={`text-sm font-medium ${feature.included ? (plan.popular ? 'text-gray-200' : 'text-gray-700') : (plan.popular ? 'text-gray-600' : 'text-gray-400 line-through')}`}>{feature.text}</span>
-                     </li>
-                   ))}
-                 </ul>
-               </div>
-             </div>
-           ))}
+    <div className="bg-gray-50 min-h-screen py-20">
+      <div className="container mx-auto px-6 md:px-12 max-w-6xl space-y-12">
+        
+        {/* Pricing Header */}
+        <div className="bg-[#0B0C10] p-10 md:p-16 rounded-3xl shadow-xl text-center relative overflow-hidden animate-fade-in-up">
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#e49d04] to-[#cc8c03]"></div>
+            <h1 className="text-4xl md:text-5xl font-black text-white mb-6">Hire Verified Talent. Pay Only for Results.</h1>
+            <p className="text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed">
+              Stop wasting budget on flat-fee job boards and unqualified clicks. Click4Jobs operates on a transparent, credit-based system. Use credits only when you post your jobs across India, and when you are ready to unlock, assess, and hire elite talent.
+            </p>
         </div>
-        <div className="text-center mt-20">
-          <p className="text-gray-500 font-medium">Need a custom plan for your {userType === 'employer' ? 'enterprise' : 'career transition'}? <a href="#" className="text-[#0B0C10] font-bold border-b-2 border-[#FACC15] hover:text-[#FACC15] transition-colors pb-0.5">Contact our sales team</a></p>
+
+        {/* Why Choose Match Credits? */}
+        <div className="grid md:grid-cols-2 gap-8 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <h3 className="text-2xl font-bold text-[#121212] mb-4 flex items-center gap-3"><FaCoins className="text-[#e49d04]" /> Zero Wasted Spend</h3>
+              <p className="text-gray-600 leading-relaxed">Browsing AI-matched profiles is free. You only spend credits to reveal contact information or trigger technical audits.</p>
+            </div>
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <h3 className="text-2xl font-bold text-[#121212] mb-4 flex items-center gap-3"><FaClock className="text-[#e49d04]" /> Speed to Hire</h3>
+              <p className="text-gray-600 leading-relaxed">Burn credits to activate our Priority Match protocol, pushing your open role to the top of the queue for the best candidates in your target zones.</p>
+            </div>
+        </div>
+
+        {/* Contact / Grievance Redressal */}
+        <div className="bg-white p-10 md:p-16 rounded-3xl shadow-sm border border-gray-100 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <h2 className="text-3xl font-black text-[#121212] mb-2">Contact Us</h2>
+          <h3 className="text-xl font-bold text-[#e49d04] mb-8">Grievance Redressal & Support</h3>
+          
+          <div className="space-y-8 text-gray-600 leading-relaxed">
+            <p>Whether you are an employer needing assistance with Match Credits or a candidate facing a technical issue, our support team is ready to help.</p>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                <h4 className="font-bold text-[#121212] mb-2 flex items-center gap-2"><FaEnvelope className="text-[#e49d04]"/> Employer Support</h4>
+                <p className="text-sm mb-3">For billing inquiries, ATS integration, or enterprise plans.</p>
+                <a href="mailto:grievance@click4jobs.in" className="text-[#e49d04] font-bold hover:underline">grievance@click4jobs.in</a>
+              </div>
+              <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                <h4 className="font-bold text-[#121212] mb-2 flex items-center gap-2"><FaEnvelope className="text-[#e49d04]"/> Candidate Support</h4>
+                <p className="text-sm mb-3">For profile verification issues or platform assistance.</p>
+                <a href="mailto:grievance@click4jobs.in" className="text-[#e49d04] font-bold hover:underline">grievance@click4jobs.in</a>
+              </div>
+            </div>
+            <div className="bg-red-50 p-6 rounded-2xl border border-red-100">
+              <h4 className="font-bold text-red-800 mb-2 flex items-center gap-2"><FaShieldAlt /> Report a Listing</h4>
+              <p className="text-sm text-red-900 mb-3">If you spot a fraudulent job post or suspicious activity, report it instantly.</p>
+              <a href="mailto:grievance@click4jobs.in" className="text-red-700 font-bold hover:underline">grievance@click4jobs.in</a>
+            </div>
+            <div className="flex items-center gap-3 text-sm font-medium text-gray-500 bg-gray-50 p-4 rounded-xl border border-gray-100">
+              <FaClock className="text-[#e49d04] text-lg" />
+              Support Hours: Monday - Friday (9:00 AM to 6:00 PM IST)
+            </div>
+          </div>
+          <div className="mt-12 pt-8 border-t border-gray-100 text-center">
+            <Link href="/" className="text-[#e49d04] font-bold hover:underline">&larr; Back to Home</Link>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
-export default PricingPage;

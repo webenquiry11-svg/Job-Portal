@@ -2,13 +2,13 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
-import { FcGoogle } from 'react-icons/fc';
-import { FaMicrosoft, FaEnvelope, FaSearch, FaFileAlt, FaBell, FaBuilding, FaQuoteLeft, FaBriefcase, FaUsers, FaHeadset, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaArrowRight, FaTimes, FaFilter, FaSpinner } from 'react-icons/fa';
+import { FaEnvelope, FaSearch, FaFileAlt, FaBell, FaBuilding, FaQuoteLeft, FaBriefcase, FaUsers, FaUser, FaHeadset, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaArrowRight, FaTimes, FaFilter, FaSpinner, FaQuestionCircle, FaShieldAlt, FaLock, FaFileContract, FaCoins, FaUnlock } from 'react-icons/fa';
 import LoginModal from './login/login';
 import Link from 'next/link';
 import { useGetAllJobsQuery } from '@/features/jobapi';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { FcGoogle } from 'react-icons/fc';
 
 const LoginDashboard = () => {
   const imageContainerRef = useRef<HTMLDivElement>(null);
@@ -49,7 +49,7 @@ const LoginDashboard = () => {
   const isSearching = appliedSearchTitle || appliedSearchLocation || filterIndustry || filterWorkMode || filterExperience;
 
   useEffect(() => {
-    const text = "Fits Your Life";
+    const text = "Matches Your Skills";
     let isDeleting = false;
     let currentText = '';
     let timer: NodeJS.Timeout;
@@ -140,7 +140,7 @@ const LoginDashboard = () => {
               </span>
             </h1>
             <p className="text-lg text-slate-200 leading-relaxed max-w-lg mx-auto lg:mx-0">
-              We bring you the best job opportunities from top companies. Get started by creating an account or signing in.
+              Connecting you with verified employers across India using advanced AI matching. Stop scrolling through irrelevant posts. Build your profile and let top companies scout you.
             </p>
           </div>
 
@@ -179,7 +179,7 @@ const LoginDashboard = () => {
           </div>
 
           <p className="text-xs text-slate-400 text-center lg:text-left pt-4">
-            By continuing, you agree to our <a href="#" className="underline hover:text-[#EAB308]">Terms of Service</a> and <a href="#" className="underline hover:text-[#EAB308]">Privacy Policy</a>.
+            By continuing, you agree to our <Link href="/privacy-policy" target="_blank" className="underline hover:text-[#e49d04]">Terms of Service</Link> and <Link href="/privacy-policy" target="_blank" className="underline hover:text-[#e49d04]">Privacy Policy</Link>.
           </p>
         </div>
 
@@ -276,31 +276,45 @@ const LoginDashboard = () => {
         </div>
       </div>
 
+      {/* About Us Section */}
+      <div id="about" className="bg-white py-24 scroll-mt-16">
+        <div className="container mx-auto px-6 md:px-12">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-6">Empowering India’s Workforce Through Intelligent Matching</h2>
+            <div className="space-y-6 text-lg text-gray-600 leading-relaxed text-left">
+                <p>Welcome to Click4Jobs, India’s most efficient and transparent hiring ecosystem. We recognize that the traditional job search process—for both candidates and employers—is often time-consuming and fragmented. Our mission is to bridge the gap between incredible talent and top-tier companies across the entire country, from bustling metropolitan hubs to rapidly growing Tier-2 and Tier-3 cities.</p>
+                <p>We operate on a simple philosophy: <span className="font-bold text-[#121212]">Skills matter most.</span> By leveraging advanced AI-driven matching technology, Click4Jobs moves beyond keyword-stuffed resumes to connect employers with candidates who possess the exact verified skills they need. Whether you are a fresh graduate entering the workforce, a skilled tradesperson, or an executive seeking a national leadership role, our platform is built to accelerate your success.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Features Section (Enhanced) */}
-      <div className="bg-gray-50 py-24">
+      <div id="how-it-works" className="bg-gray-50 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 md:px-12">
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-4">How It Works</h2>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto">Finding your dream job is easier than ever with our streamlined process.</p>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">Click4Jobs operates on a dual-sided, transparent model designed to maximize efficiency for both job seekers and hiring managers.</p>
             </div>
             
-            <div className="grid md:grid-cols-3 gap-8">
+            <h3 className="text-2xl font-bold text-[#121212] mb-8 text-center"><span className="text-[#e49d04]">For Candidates:</span> Seamless Discovery</h3>
+            <div className="grid md:grid-cols-3 gap-8 mb-16">
                 <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
                 <div className="w-14 h-14 bg-[#0B0C10] text-[#e49d04] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <FaSearch size={24} />
+                        <FaUser size={24} />
                     </div>
-                    <h3 className="text-xl font-bold text-[#121212] mb-3">1. Search Jobs</h3>
-                    <p className="text-gray-600 leading-relaxed">Browse through thousands of job listings from top companies to find the perfect match for your skills.</p>
+                    <h3 className="text-xl font-bold text-[#121212] mb-3">1. Create Your Profile</h3>
+                    <p className="text-gray-600 leading-relaxed">Register for free and build a comprehensive profile detailing your skills, experience, and location preferences anywhere in India.</p>
                 </div>
 
                 <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#e49d04] to-[#cc8c03] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
                     <div className="w-14 h-14 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <FaFileAlt size={24} />
+                        <FaSearch size={24} />
                     </div>
-                    <h3 className="text-xl font-bold text-[#121212] mb-3">2. Apply Easily</h3>
-                    <p className="text-gray-600 leading-relaxed">Create your profile, upload your resume, and apply to multiple jobs with just a single click.</p>
+                    <h3 className="text-xl font-bold text-[#121212] mb-3">2. AI-Powered Matching</h3>
+                    <p className="text-gray-600 leading-relaxed">Our intelligent algorithm analyzes your data and automatically aligns your profile with open roles that fit your exact qualifications.</p>
                 </div>
 
                 <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
@@ -308,8 +322,36 @@ const LoginDashboard = () => {
                 <div className="w-14 h-14 bg-[#0B0C10] text-[#e49d04] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                         <FaBell size={24} />
                     </div>
-                    <h3 className="text-xl font-bold text-[#121212] mb-3">3. Get Notified</h3>
-                    <p className="text-gray-600 leading-relaxed">Stay updated with real-time notifications on your application status and new job alerts.</p>
+                    <h3 className="text-xl font-bold text-[#121212] mb-3">3. Get Scouted</h3>
+                    <p className="text-gray-600 leading-relaxed">Instead of sending countless applications into a void, Click4Jobs puts your verified profile directly in front of active employers. When there is a match, you are notified instantly.</p>
+                </div>
+            </div>
+
+            <h3 className="text-2xl font-bold text-[#121212] mb-8 text-center"><span className="text-[#e49d04]">For Employers:</span> Credit-Based Precision</h3>
+            <div className="grid md:grid-cols-3 gap-8">
+                <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div className="w-14 h-14 bg-[#0B0C10] text-[#e49d04] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <FaBuilding size={24} />
+                    </div>
+                    <h3 className="text-xl font-bold text-[#121212] mb-3">1. Post Opportunities</h3>
+                    <p className="text-gray-600 leading-relaxed">List your open roles on our Pan-India network quickly and easily at no base cost.</p>
+                </div>
+                <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#e49d04] to-[#cc8c03] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                    <div className="w-14 h-14 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <FaCoins size={24} />
+                    </div>
+                    <h3 className="text-xl font-bold text-[#121212] mb-3">2. Purchase Match Credits</h3>
+                    <p className="text-gray-600 leading-relaxed">Transition away from expensive, flat-fee job postings. Employers purchase secure "Match Credits" via their Click4Jobs dashboard.</p>
+                </div>
+                <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div className="w-14 h-14 bg-[#0B0C10] text-[#e49d04] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <FaUnlock size={24} />
+                    </div>
+                    <h3 className="text-xl font-bold text-[#121212] mb-3">3. Unlock Verified Talent</h3>
+                    <p className="text-gray-600 leading-relaxed">Use your credits strategically to unlock the contact information of highly-matched candidates, trigger technical assessments, or boost your job listing’s visibility. You only spend credits when you are ready to engage with top-tier talent.</p>
                 </div>
             </div>
         </div>
@@ -474,6 +516,61 @@ const LoginDashboard = () => {
                 </div>
             </div>
         </div>
+      </div>
+
+      {/* Legal & Info Sections */}
+      <div className="bg-white py-24 border-t border-gray-100">
+         <div className="container mx-auto px-6 md:px-12 max-w-5xl space-y-24">
+            
+            {/* FAQ */}
+            <div id="faq" className="scroll-mt-24">
+              <h2 className="text-3xl font-bold text-[#121212] mb-8 flex items-center gap-3"><FaQuestionCircle className="text-[#e49d04]" /> Frequently Asked Questions (FAQs)</h2>
+              <div className="grid md:grid-cols-2 gap-12">
+                 <div className="space-y-6">
+                   <h3 className="text-xl font-bold text-[#121212] border-b border-gray-100 pb-2">For Candidates</h3>
+                   <div>
+                     <h4 className="font-bold text-[#121212] mb-2">Q: Do I have to pay to use Click4Jobs?</h4>
+                     <p className="text-sm text-gray-600 leading-relaxed">A: No. Core access for job seekers is 100% free. You can create a profile, upload your resume, and be matched with employers across India at no cost.</p>
+                   </div>
+                   <div>
+                     <h4 className="font-bold text-[#121212] mb-2">Q: Is this platform only for specific industries?</h4>
+                     <p className="text-sm text-gray-600 leading-relaxed">A: Not at all. Click4Jobs caters to a wide spectrum of industries and job roles, from entry-level positions to specialized technical and management roles across all states in India.</p>
+                   </div>
+                   <div>
+                     <h4 className="font-bold text-[#121212] mb-2">Q: How can I increase my chances of getting hired?</h4>
+                     <p className="text-sm text-gray-600 leading-relaxed">A: Ensure your profile is 100% complete. Be specific about your skills, verify your past experiences, and keep your location preferences updated. The more accurate your data, the better our AI can match you.</p>
+                   </div>
+                 </div>
+                 <div className="space-y-6">
+                   <h3 className="text-xl font-bold text-[#121212] border-b border-gray-100 pb-2">For Employers</h3>
+                   <div>
+                     <h4 className="font-bold text-[#121212] mb-2">Q: How does the credit system work?</h4>
+                     <p className="text-sm text-gray-600 leading-relaxed">A: You purchase a package of Match Credits. Browsing anonymized candidate profiles and seeing their "Match Score" is free. You only spend a credit when you choose to unlock a candidate's full identity and contact details.</p>
+                   </div>
+                   <div>
+                     <h4 className="font-bold text-[#121212] mb-2">Q: Can I hire for multiple cities at once?</h4>
+                     <p className="text-sm text-gray-600 leading-relaxed">A: Yes. Click4Jobs is a Pan-India platform. You can post roles specific to a single city, or cast a wider net to find talent willing to relocate from anywhere in the country.</p>
+                   </div>
+                   <div>
+                     <h4 className="font-bold text-[#121212] mb-2">Q: What payment methods do you accept?</h4>
+                     <p className="text-sm text-gray-600 leading-relaxed">A: We use secure, RBI-regulated payment gateways and accept all major Credit/Debit cards, Net Banking, and UPI for seamless credit top-ups.</p>
+                   </div>
+                 </div>
+              </div>
+            </div>
+
+            {/* Trust & Safety */}
+            <div id="trust-safety" className="scroll-mt-24 bg-gray-50 p-8 md:p-12 rounded-3xl border border-gray-100">
+              <h2 className="text-3xl font-bold text-[#121212] mb-6 flex items-center gap-3"><FaShieldAlt className="text-[#e49d04]" /> Trust & Safety (Anti-Fraud Policy)</h2>
+              <p className="text-gray-600 mb-6"><strong className="text-[#121212]">Your Safety is Our Priority:</strong> Click4Jobs is committed to maintaining a secure and transparent hiring environment. However, the internet requires vigilance. Please adhere to the following safety guidelines:</p>
+              <ul className="space-y-4 text-gray-600 text-sm md:text-base leading-relaxed">
+                <li><strong className="text-[#121212]">Never Pay for a Job:</strong> Click4Jobs will never ask candidates for money to register, schedule an interview, or secure a job. If an employer asks you for a "security deposit," "laptop fee," or "training fee," it is a scam. Report them immediately.</li>
+                <li><strong className="text-[#121212]">Verify the Employer:</strong> While we vet companies on our platform, always do your own research before attending an interview or sharing sensitive documents like your Aadhar or PAN card.</li>
+                <li><strong className="text-[#121212]">Secure Communication:</strong> Keep your initial communications on the platform or via official company email addresses. Be wary of employers who insist on conducting all business via personal WhatsApp numbers before an official interview.</li>
+              </ul>
+            </div>
+
+         </div>
       </div>
 
       {/* CTA Section (New) */}

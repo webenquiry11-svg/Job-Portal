@@ -78,7 +78,7 @@ const Navbar = () => {
     loadGoogleScript();
   }, [router]);
 
-  if (pathname?.startsWith('/employer/dashboard') || pathname?.startsWith('/Condidate/Dashboard') || pathname?.startsWith('/dashboard') || pathname?.toLowerCase().startsWith('/admin') || pathname?.startsWith('/employer-profile')) {
+  if (pathname?.startsWith('/employer/dashboard') || pathname?.startsWith('/Condidate/Dashboard') || pathname?.startsWith('/dashboard') || pathname?.toLowerCase().startsWith('/admin') || pathname?.startsWith('/employer-profile') || pathname?.toLowerCase().includes('privacy')) {
     return null;
   }
     
