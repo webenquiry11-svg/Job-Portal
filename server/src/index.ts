@@ -8,10 +8,19 @@ import authRoutes from './routes/AuthRoute';
 import jobRoutes from './routes/jobRoute';
 import companyRoutes from './routes/CompanyRoute';
 import chatRoute from './routes/ChatRoute';
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { Strategy as MicrosoftStrategy } from 'passport-microsoft';
+import jwt from 'jsonwebtoken';
+import AuthModel from './models/AuthModel';
+import { sendWelcomeEmail } from './utils/mailer';
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const app = express();
+
+// Trust proxy is required for Passport OAuth to work correctly behind cloud providers (Render, Heroku, etc.)
+app.set('trust proxy', 1);
 
 // Middleware
 app.use(helmet());
@@ -36,6 +45,93 @@ const corsOptions: cors.CorsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
+// Passport Configuration
+app.use(passport.initialize());
+
+const JWT_SECRET = process.env.JWT_SECRET || 'test';
+
+const BASE_URL = process.env.API_URL ? process.env.API_URL.replace(/\/$/, '') : 'http://localhost:5000';
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID || 'dummy_client_id',
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'dummy_client_secret',
+    callbackURL: `${BASE_URL}/auth/google/callback`,
+    proxy: true
+  },
+  async (accessToken, refreshToken, profile, done) => {
+    try {
+      const email = profile.emails?.[0].value;
+      let user = await AuthModel.findOne({ email });
+      let isNewUser = false;
+      if (!user) {
+        isNewUser = true;
+        console.log("👉 Creating new Google OAuth user...");
+        user = await AuthModel.create({
+          name: profile.displayName,
+          email: email,
+          role: 'seeker',
+          googleId: profile.id,
+          isEmailVerified: true,
+          profilePicture: profile.photos?.[0]?.value
+        });
+      } else if (!user.googleId) {
+        console.log("👉 Linking Google account to existing user...");
+        await AuthModel.findByIdAndUpdate(user._id, { googleId: profile.id });
+      }
+      if (!user) {
+        return done(new Error("User authentication failed."), false);
+      }
+      if (isNewUser) {
+        try { await sendWelcomeEmail(user.email, user.name, user.role); } catch (err) { console.error('Failed to send welcome email:', err); }
+      }
+      const token = jwt.sign({ email: user.email, id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+      return done(null, { user: user.toObject ? user.toObject() : user, token });
+    } catch (error) {
+      return done(error, false);
+    }
+  }
+));
+
+passport.use(new MicrosoftStrategy({
+    clientID: process.env.MICROSOFT_CLIENT_ID || 'dummy_client_id',
+    clientSecret: process.env.MICROSOFT_CLIENT_SECRET || 'dummy_client_secret',
+    callbackURL: `${BASE_URL}/auth/microsoft/callback`,
+    scope: ['user.read', 'email'],
+    proxy: true
+  },
+  async (accessToken: string, refreshToken: string, profile: any, done: any) => {
+    try {
+      const email = profile.emails?.[0]?.value || profile._json?.userPrincipalName;
+      let user = await AuthModel.findOne({ email });
+      let isNewUser = false;
+      if (!user) {
+        isNewUser = true;
+        console.log("👉 Creating new Microsoft OAuth user...");
+        user = await AuthModel.create({
+          name: profile.displayName,
+          email: email,
+          role: 'seeker',
+          microsoftId: profile.id,
+          isEmailVerified: true
+        });
+      } else if (!user.microsoftId) {
+        console.log("👉 Linking Microsoft account to existing user...");
+        await AuthModel.findByIdAndUpdate(user._id, { microsoftId: profile.id });
+      }
+      if (!user) {
+        return done(new Error("User authentication failed."), false);
+      }
+      if (isNewUser) {
+        try { await sendWelcomeEmail(user.email, user.name, user.role); } catch (err) { console.error('Failed to send welcome email:', err); }
+      }
+      const token = jwt.sign({ email: user.email, id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+      return done(null, { user: user.toObject ? user.toObject() : user, token });
+    } catch (error) {
+      return done(error, false);
+    }
+  }
+));
+
 // Routes
 app.use('/auth', authRoutes);
 app.use('/jobs', jobRoutes);
@@ -45,7 +141,7 @@ app.use('/chat', chatRoute);
 // Basic Route
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({
-    message: "🚀 Job Portal API is Live",
+    message: "🚀 Click4Jobs API is Live",
     status: "Premium",
     version: "1.0.0"
   });
@@ -64,6 +160,18 @@ if (!process.env.EMAIL_APP_PASSWORD) {
   console.log("❌ WARNING: EMAIL_APP_PASSWORD is MISSING in your server/.env file! Email OTPs will fail.");
 } else {
   console.log("✅ Email credentials found.");
+}
+
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+  console.log("❌ WARNING: GOOGLE_CLIENT_ID or SECRET is MISSING! Google Login will fail.");
+} else {
+  console.log("✅ Google OAuth credentials found.");
+}
+
+if (!process.env.MICROSOFT_CLIENT_ID || !process.env.MICROSOFT_CLIENT_SECRET) {
+  console.log("❌ WARNING: MICROSOFT_CLIENT_ID or SECRET is MISSING! Microsoft Login will fail.");
+} else {
+  console.log("✅ Microsoft OAuth credentials found.");
 }
 
 mongoose.connect(CONNECTION_URL)

@@ -26,7 +26,7 @@ const Footer = () => {
                 <FaBriefcase className="text-[#0B0C10] text-xl" />
               </div>
               <span className="text-2xl font-black text-[#121212] tracking-tight">
-                Job<span className="text-[#FACC15]">Portal</span>
+                Click4<span className="text-[#FACC15]">Jobs</span>
               </span>
             </Link>
             <p className="text-gray-500 text-sm leading-relaxed max-w-sm">
@@ -72,7 +72,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                   <FaEnvelope className="text-[#FACC15] flex-shrink-0 text-base" />
-                  <span>support@jobportal.com</span>
+                  <span>support@click4jobs.com</span>
               </li>
             </ul>
             
@@ -91,7 +91,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 gap-4 z-10 relative">
-          <p>&copy; {new Date().getFullYear()} JobPortal. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Click4Jobs. All rights reserved.</p>
           <div className="flex space-x-6 font-medium">
             <Link href="/privacy" className="hover:text-[#0B0C10] transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-[#0B0C10] transition-colors">Terms of Service</Link>

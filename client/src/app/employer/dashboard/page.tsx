@@ -157,7 +157,7 @@ const EmployerDashboard = () => {
           <span
             className={`text-xl font-bold text-[#121212] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? "md:max-w-0 md:opacity-0" : "max-w-xs opacity-100"}`}
           >
-            Job<span className="text-[#FACC15]">Portal</span>
+            Click4<span className="text-[#FACC15]">Jobs</span>
           </span>
         </div>
 

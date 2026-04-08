@@ -3,7 +3,7 @@ import mongoose, { Document } from 'mongoose';
 export interface IAuth extends Document {
   name: string;
   email: string;
-  password: string;
+  password?: string;
   role: 'seeker' | 'employer';
   phone?: string;
   location?: string;
@@ -34,12 +34,14 @@ export interface IAuth extends Document {
   emailOtp?: string;
   phoneOtp?: string;
   gstNumber?: string;
+  googleId?: string;
+  microsoftId?: string;
 }
 
 const authSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String }, // Optional at DB level to cleanly allow OAuth logins
   role: { type: String, enum: ['seeker', 'employer'], required: true },
   
   // Common fields
@@ -79,6 +81,10 @@ const authSchema = new mongoose.Schema({
   showContact: { type: Boolean, default: true },
   emailOtp: { type: String },
   phoneOtp: { type: String },
+
+  // Social Login fields
+  googleId: { type: String },
+  microsoftId: { type: String },
 }, { timestamps: true });
 
 export default mongoose.model<IAuth>('Auth', authSchema);

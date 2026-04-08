@@ -88,7 +88,7 @@ export const getConversations = async (req: Request, res: Response) => {
         if (otherUser) {
           conversationsMap.set(otherUserIdStr, otherUser);
         } else {
-          conversationsMap.set(otherUserIdStr, { _id: otherUserIdStr, name: 'User', headline: 'Job Portal User' });
+          conversationsMap.set(otherUserIdStr, { _id: otherUserIdStr, name: 'User', headline: 'Click4Jobs User' });
         }
       }
     }

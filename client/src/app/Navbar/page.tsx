@@ -26,7 +26,7 @@ const Navbar = () => {
                <FaBriefcase className="text-[#0B0C10] text-lg" />
             </div>
             <span className="text-2xl font-black text-[#121212] tracking-tight">
-              Job<span className="text-[#FACC15]">Portal</span>
+              Click4<span className="text-[#FACC15]">Jobs</span>
             </span>
           </Link>
           

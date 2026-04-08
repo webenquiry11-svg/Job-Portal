@@ -7,12 +7,15 @@ import { FaMicrosoft, FaEnvelope, FaSearch, FaFileAlt, FaBell, FaBuilding, FaQuo
 import LoginModal from './login/login';
 import Link from 'next/link';
 import { useGetAllJobsQuery } from '@/features/jobapi';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 const LoginDashboard = () => {
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const [displayText, setDisplayText] = useState('');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
+  const router = useRouter();
 
   const [searchTitle, setSearchTitle] = useState('');
   const [searchLocation, setSearchLocation] = useState('');
@@ -82,6 +85,43 @@ const LoginDashboard = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Intercept the token coming back from Passport.js Redirect
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+      const userStr = urlParams.get('user');
+      
+      if (token && userStr) {
+        try {
+          const user = JSON.parse(decodeURIComponent(userStr));
+          localStorage.setItem('profile', JSON.stringify({ result: user, token }));
+          toast.success('Successfully logged in with social account!');
+          
+          // Clean the URL so the token doesn't stay visible
+          window.history.replaceState({}, document.title, window.location.pathname);
+          
+          if (user.role === 'employer') {
+            router.push('/employer/dashboard');
+          } else {
+            router.push('/Condidate/Dashboard');
+          }
+        } catch (error) {
+          console.error('Failed to parse social login data', error);
+          toast.error('Social login failed.');
+        }
+      }
+    }
+  }, [router]);
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/auth/google`;
+  };
+
+  const handleMicrosoftLogin = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/auth/microsoft`;
+  };
+
   return (
     <div className="grow flex flex-col">
       {/* Hero Section */}
@@ -110,21 +150,21 @@ const LoginDashboard = () => {
                 <div className="w-full border-t border-gray-100"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-black/20 backdrop-blur-sm text-slate-300 rounded-md">Sign in with</span>
+                <span className="px-2 bg-black/20 backdrop-blur-sm text-slate-300 rounded-md">Continue with</span>
               </div>
             </div>
 
-            <button className="w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5">
+            <button onClick={handleGoogleLogin} className="w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5">
               <FcGoogle className="mr-3" size={24} />
               Continue with Google
             </button>
             
-            <button className="w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5">
+            <button onClick={handleMicrosoftLogin} className="w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5">
               <FaMicrosoft className="mr-3 text-blue-600" size={24} />
               Continue with Microsoft
             </button>
 
-            <button className="w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5">
+            <button onClick={() => setIsLoginModalOpen(true)} className="w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5">
               <FaEnvelope className="mr-3 text-gray-500" size={24} />
               Continue with Email
             </button>
@@ -439,7 +479,7 @@ const LoginDashboard = () => {
           <div className="absolute inset-0 bg-[#0B0C10] z-0"></div>
           <div className="container mx-auto px-6 md:px-12 text-center relative z-10">
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Ready to Start Your Career Journey?</h2>
-              <p className="text-slate-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">Join thousands of professionals who have advanced their careers with JobPortal. Create your account today.</p>
+                  <p className="text-slate-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">Join thousands of professionals who have advanced their careers with Click4Jobs. Create your account today.</p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <button onClick={() => setIsLoginModalOpen(true)} className="bg-[#FACC15] text-[#0B0C10] font-bold py-4 px-10 rounded-full shadow-xl hover:bg-[#EAB308] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
                       Get Started Now

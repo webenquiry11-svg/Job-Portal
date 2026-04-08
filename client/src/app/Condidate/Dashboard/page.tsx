@@ -196,7 +196,7 @@ const CandidateDashboard = () => {
            <div className="bg-[#FACC15] p-2.5 rounded-xl shadow-lg shadow-[#FACC15]/20 flex-shrink-0">
              <FaBriefcase className="text-[#0B0C10] text-lg" />
            </div>
-           <span className={`text-xl font-bold text-[#0B0C10] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? 'md:max-w-0 md:opacity-0' : 'max-w-xs opacity-100'}`}>Job<span className="text-[#FACC15]">Portal</span></span>
+           <span className={`text-xl font-bold text-[#0B0C10] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? 'md:max-w-0 md:opacity-0' : 'max-w-xs opacity-100'}`}>Click4<span className="text-[#FACC15]">Jobs</span></span>
         </div>
         
         <nav className="flex-1 px-4 space-y-2 overflow-y-auto py-4 custom-scrollbar">

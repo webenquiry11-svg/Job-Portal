@@ -20,6 +20,7 @@ import {
   getAllUsersForAdmin
 } from '../controllers/AuthController';
 import upload from '../middleware/uploadMiddleware';
+import passport from 'passport';
 
 const router = express.Router();
 
@@ -70,5 +71,20 @@ router.patch('/notifications/:userId/read', markNotificationsAsRead);
 router.get('/company/:id', getCompanyById);
 router.put('/profile/view/:id', incrementProfileView);
 router.get('/admin/all-users', getAllUsersForAdmin);
+
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000';
+
+// Real Social OAuth Routes
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
+router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: `${CLIENT_URL}/?error=login_failed` }), (req, res) => {
+  const { user, token } = req.user as any;
+  res.redirect(`${CLIENT_URL}/?token=${token}&user=${encodeURIComponent(JSON.stringify(user))}`);
+});
+
+router.get('/microsoft', passport.authenticate('microsoft', { prompt: 'select_account', session: false }));
+router.get('/microsoft/callback', passport.authenticate('microsoft', { session: false, failureRedirect: `${CLIENT_URL}/?error=login_failed` }), (req, res) => {
+  const { user, token } = req.user as any;
+  res.redirect(`${CLIENT_URL}/?token=${token}&user=${encodeURIComponent(JSON.stringify(user))}`);
+});
 
 export default router;

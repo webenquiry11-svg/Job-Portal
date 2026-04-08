@@ -16,10 +16,10 @@ export const sendOtpEmail = async (to: string, otp: string) => {
   });
 
   const mailOptions = {
-    from: `"JobPortal" <${process.env.EMAIL_USER}>`,
+    from: `"Click4Jobs" <${process.env.EMAIL_USER}>`,
     to: to,
-    subject: 'Your JobPortal Verification Code',
-    html: `<div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;"><h2 style="color: #0B0C10;">Verify Your Email Address</h2><p>Welcome to JobPortal! To complete your registration, please use the following One-Time Password (OTP):</p><p style="background: #f2f2f2; border-radius: 8px; padding: 10px 20px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 3px; color: #0B0C10;">${otp}</p><p>This code is valid for 10 minutes.</p><p>If you did not request this, you can safely ignore this email.</p><hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" /><p style="font-size: 0.9em; color: #888;">Best regards,<br>The JobPortal Team</p></div>`,
+    subject: 'Your Click4Jobs Verification Code',
+    html: `<div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;"><h2 style="color: #0B0C10;">Verify Your Email Address</h2><p>Welcome to Click4Jobs! To complete your registration, please use the following One-Time Password (OTP):</p><p style="background: #f2f2f2; border-radius: 8px; padding: 10px 20px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 3px; color: #0B0C10;">${otp}</p><p>This code is valid for 10 minutes.</p><p>If you did not request this, you can safely ignore this email.</p><hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" /><p style="font-size: 0.9em; color: #888;">Best regards,<br>The Click4Jobs Team</p></div>`,
   };
 
   try {
@@ -54,15 +54,15 @@ export const sendWelcomeEmail = async (to: string, name: string, role: string) =
     : 'Get ready to explore exciting opportunities, showcase your skills, and take the next big step in your career journey.';
 
   const mailOptions = {
-    from: `"JobPortal" <${process.env.EMAIL_USER}>`,
+    from: `"Click4Jobs" <${process.env.EMAIL_USER}>`,
     to: to,
-    subject: `Welcome to JobPortal, ${name}! 🚀`,
+    subject: `Welcome to Click4Jobs, ${name}! 🚀`,
     html: `
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="utf-8">
-      <title>Welcome to JobPortal</title>
+      <title>Welcome to Click4Jobs</title>
     </head>
     <body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
       <table width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color: #f4f4f5; padding: 40px 0;">
@@ -73,7 +73,7 @@ export const sendWelcomeEmail = async (to: string, name: string, role: string) =
               <tr>
                 <td align="center" bgcolor="#0B0C10" style="padding: 40px 20px; border-bottom: 4px solid #FACC15;">
                   <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 900; letter-spacing: -0.5px;">
-                    Job<span style="color: #FACC15;">Portal</span>
+                Click4<span style="color: #FACC15;">Jobs</span>
                   </h1>
                   <p style="color: #a1a1aa; margin: 10px 0 0 0; font-size: 16px; font-weight: 500;">Welcome to the future of hiring.</p>
                 </td>
@@ -83,7 +83,7 @@ export const sendWelcomeEmail = async (to: string, name: string, role: string) =
                 <td style="padding: 40px 40px 20px 40px;">
                   <h2 style="color: #18181b; margin: 0 0 20px 0; font-size: 24px; font-weight: 800;">Hello ${name},</h2>
                   <p style="color: #52525b; margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
-                    Thank you for joining JobPortal! We are absolutely thrilled to welcome you to our community as <strong>${isEmployer ? 'an Employer' : 'a Candidate'}</strong>.
+                Thank you for joining Click4Jobs! We are absolutely thrilled to welcome you to our community as <strong>${isEmployer ? 'an Employer' : 'a Candidate'}</strong>.
                   </p>
                   <p style="color: #52525b; margin: 0 0 35px 0; font-size: 16px; line-height: 1.6;">
                     ${roleMessage}
@@ -111,7 +111,7 @@ export const sendWelcomeEmail = async (to: string, name: string, role: string) =
                     If you have any questions or need assistance getting set up, simply reply to this email. We're always here to help!
                     <br><br>
                     Best regards,<br>
-                    <strong style="color: #18181b;">The JobPortal Team</strong>
+                <strong style="color: #18181b;">The Click4Jobs Team</strong>
                   </p>
                 </td>
               </tr>
@@ -119,7 +119,7 @@ export const sendWelcomeEmail = async (to: string, name: string, role: string) =
               <tr>
                 <td bgcolor="#f4f4f5" style="padding: 24px; text-align: center;">
                   <p style="color: #a1a1aa; margin: 0; font-size: 13px; font-weight: 500;">
-                    &copy; ${new Date().getFullYear()} JobPortal. All rights reserved.
+                &copy; ${new Date().getFullYear()} Click4Jobs. All rights reserved.
                   </p>
                 </td>
               </tr>

@@ -8,6 +8,9 @@ import { sendOtpEmail, sendWelcomeEmail } from '../utils/mailer';
 export const register = async (req: Request, res: Response) => {
   const { email, password, name, role, headline, location, phone, experience, education, skills, companyName, companySize, industry, website, yourRole, description } = req.body;
   try {
+    if (!password) {
+      return res.status(400).json({ message: 'Password is required for manual registration.' });
+    }
     const existingUser = await AuthModel.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
@@ -43,6 +46,9 @@ export const login = async (req: Request, res: Response) => {
     // New check for deleted account
     if ((existingUser as any).isDeleted) {
       return res.status(403).json({ message: "This account has been deleted. Please register again to use our services." });
+    }
+    if (!existingUser.password) {
+      return res.status(400).json({ message: 'Invalid credentials. Please login using your social account.' });
     }
     const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
     if (!isPasswordCorrect) {

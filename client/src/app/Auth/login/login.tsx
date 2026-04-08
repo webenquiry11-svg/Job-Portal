@@ -41,6 +41,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/auth/google`;
+  };
+
+  const handleMicrosoftLogin = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/auth/microsoft`;
+  };
+
   // Common Styles matching register.tsx
   const inputClass = "mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F172A] focus:border-transparent transition-all duration-200 text-sm";
   const labelClass = "block text-sm font-semibold text-gray-700 mb-1.5";
@@ -60,13 +68,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
         </div>
 
         <div className="space-y-4">
-          <button className={socialBtn}>
+          <button type="button" onClick={handleGoogleLogin} className={socialBtn}>
             <FcGoogle className="mr-3" size={22} />
-            Sign in with Google
+            Continue with Google
           </button>
-          <button className={socialBtn}>
+          <button type="button" onClick={handleMicrosoftLogin} className={socialBtn}>
             <FaMicrosoft className="mr-3 text-blue-600" size={22} />
-            Sign in with Microsoft
+            Continue with Microsoft
           </button>
         </div>
 
