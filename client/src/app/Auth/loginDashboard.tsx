@@ -172,12 +172,6 @@ const LoginDashboard = () => {
             </button>
           </div>
 
-          <div className="pt-2 max-w-md mx-auto lg:mx-0">
-            <Link href="/Subscription/Pricing" className="w-full flex items-center justify-center py-3.5 px-4 border border-white/20 rounded-xl shadow-sm text-base font-bold text-white bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 transform hover:-translate-y-0.5">
-              View Pricing Plans
-            </Link>
-          </div>
-
           <p className="text-xs text-slate-400 text-center lg:text-left pt-4">
             By continuing, you agree to our <Link href="/privacy-policy" target="_blank" className="underline hover:text-[#e49d04]">Terms of Service</Link> and <Link href="/privacy-policy" target="_blank" className="underline hover:text-[#e49d04]">Privacy Policy</Link>.
           </p>
@@ -481,9 +475,9 @@ const LoginDashboard = () => {
                     </div>
                     <p className="text-gray-600 italic mb-6 flex-grow leading-relaxed">"I found my dream job within a week of signing up. The process was incredibly smooth and the company recommendations were spot on."</p>
                     <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
-                        <div className="w-10 h-10 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#e49d04] font-bold shadow-md text-sm">SJ</div>
+                        <div className="w-10 h-10 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#e49d04] font-bold shadow-md text-sm">PS</div>
                         <div>
-                            <h4 className="font-bold text-[#121212] text-sm">Sarah Johnson</h4>
+                            <h4 className="font-bold text-[#121212] text-sm">Priya Sharma</h4>
                             <p className="text-xs text-[#0B0C10] font-medium">Software Engineer</p>
                         </div>
                     </div>
@@ -494,9 +488,9 @@ const LoginDashboard = () => {
                     <div className="mb-6"><FaQuoteLeft className="text-yellow-200 text-4xl" /></div>
                     <p className="text-gray-600 italic mb-6 flex-grow leading-relaxed">"As a recruiter, this platform has been a game-changer. We've found some of our best talent here. Highly recommended!"</p>
                     <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
-                        <div className="w-10 h-10 bg-[#e49d04] rounded-full flex items-center justify-center text-[#0B0C10] font-bold shadow-md text-sm">MC</div>
+                        <div className="w-10 h-10 bg-[#e49d04] rounded-full flex items-center justify-center text-[#0B0C10] font-bold shadow-md text-sm">RV</div>
                         <div>
-                            <h4 className="font-bold text-[#121212] text-sm">Michael Chen</h4>
+                            <h4 className="font-bold text-[#121212] text-sm">Rahul Verma</h4>
                             <p className="text-xs text-[#e49d04] font-medium">HR Manager</p>
                         </div>
                     </div>
@@ -507,9 +501,9 @@ const LoginDashboard = () => {
                     <div className="mb-6"><FaQuoteLeft className="text-slate-200 text-4xl" /></div>
                     <p className="text-gray-600 italic mb-6 flex-grow leading-relaxed">"The interface is so user-friendly and the job alerts kept me in the loop. I didn't miss a single opportunity."</p>
                     <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
-                        <div className="w-10 h-10 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#e49d04] font-bold shadow-md text-sm">ED</div>
+                        <div className="w-10 h-10 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#e49d04] font-bold shadow-md text-sm">AD</div>
                         <div>
-                            <h4 className="font-bold text-[#121212] text-sm">Emily Davis</h4>
+                            <h4 className="font-bold text-[#121212] text-sm">Ananya Desai</h4>
                             <p className="text-xs text-[#0B0C10] font-medium">Product Designer</p>
                         </div>
                     </div>
