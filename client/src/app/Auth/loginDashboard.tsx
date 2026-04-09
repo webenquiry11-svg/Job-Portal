@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
-import { FaEnvelope, FaSearch, FaFileAlt, FaBell, FaBuilding, FaQuoteLeft, FaBriefcase, FaUsers, FaUser, FaHeadset, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaArrowRight, FaTimes, FaFilter, FaSpinner, FaQuestionCircle, FaShieldAlt, FaLock, FaFileContract, FaCoins, FaUnlock } from 'react-icons/fa';
+import { FaEnvelope, FaSearch, FaFileAlt, FaBell, FaBuilding, FaQuoteLeft, FaBriefcase, FaUsers, FaUser, FaHeadset, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaArrowRight, FaTimes, FaFilter, FaSpinner, FaQuestionCircle, FaShieldAlt, FaLock, FaFileContract, FaCoins, FaUnlock, FaChevronDown } from 'react-icons/fa';
 import LoginModal from './login/login';
 import Link from 'next/link';
 import { useGetAllJobsQuery } from '@/features/jobapi';
@@ -11,8 +11,6 @@ import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
 
 const LoginDashboard = () => {
-  const imageContainerRef = useRef<HTMLDivElement>(null);
-  const [displayText, setDisplayText] = useState('');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const router = useRouter();
@@ -47,43 +45,6 @@ const LoginDashboard = () => {
   }).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 6);
 
   const isSearching = appliedSearchTitle || appliedSearchLocation || filterIndustry || filterWorkMode || filterExperience;
-
-  useEffect(() => {
-    const text = "Matches Your Skills";
-    let isDeleting = false;
-    let currentText = '';
-    let timer: NodeJS.Timeout;
-
-    const type = () => {
-      if (isDeleting) {
-        currentText = text.substring(0, currentText.length - 1);
-      } else {
-        currentText = text.substring(0, currentText.length + 1);
-      }
-
-      setDisplayText(currentText);
-
-      let typeSpeed = 100;
-
-      if (isDeleting) {
-        typeSpeed = 50;
-      }
-
-      if (!isDeleting && currentText === text) {
-        typeSpeed = 2000;
-        isDeleting = true;
-      } else if (isDeleting && currentText === '') {
-        isDeleting = false;
-        typeSpeed = 500;
-      }
-
-      timer = setTimeout(type, typeSpeed);
-    };
-
-    timer = setTimeout(type, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   // Intercept the token coming back from Passport.js Redirect
   useEffect(() => {
@@ -124,151 +85,138 @@ const LoginDashboard = () => {
 
   return (
     <div className="grow flex flex-col">
-      {/* Hero Section */}
-      <div className="min-h-[calc(100vh-80px)] flex items-center relative z-20 text-white bg-cover bg-center" style={{ backgroundImage: "url(/herobg.png)" }}>
-        <div className="absolute inset-0 bg-black/60 z-0"></div>
-
-        <div className="container mx-auto px-6 md:px-12 py-12 lg:py-20 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center relative z-10">
-        {/* Left Side */}
-        <div className="text-center lg:text-left space-y-8 max-w-2xl mx-auto lg:mx-0">
-          <div className="space-y-4">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
-              Find The Job That <br/>
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-[#e49d04] to-[#cc8c03]">
-                {displayText}
-                <span className="text-[#e49d04] animate-pulse">|</span>
-              </span>
-            </h1>
-            <p className="text-lg text-slate-200 leading-relaxed max-w-lg mx-auto lg:mx-0">
-              Connecting you with verified employers across India using advanced AI matching. Stop scrolling through irrelevant posts. Build your profile and let top companies scout you.
-            </p>
-          </div>
-
-          <div className="space-y-4 max-w-md mx-auto lg:mx-0">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-100"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-black/20 backdrop-blur-sm text-slate-300 rounded-md">Continue with</span>
-              </div>
-            </div>
-
-            <button onClick={handleGoogleLogin} className="w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5">
-              <FcGoogle className="mr-3" size={24} />
-              Continue with Google
-            </button>
+      {/* NEW HERO SECTION - EXACT IMAGE MATCH */}
+      <section className="relative bg-[#f8f9fc] overflow-hidden pt-6 lg:pt-10 pb-12">
+        <div className="container mx-auto px-6 md:px-12 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center">
             
-            {/* 
-              <button onClick={handleMicrosoftLogin} className="w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5">
-                <FaMicrosoft className="mr-3 text-blue-600" size={24} />
-                Continue with Microsoft
-              </button>
-            */}
+            {/* Left Content */}
+            <div className="w-full lg:w-3/5 text-left">
+              <span className="inline-flex items-center justify-center py-1.5 px-4 rounded-full bg-yellow-50 text-[#e49d04] text-xs font-black tracking-widest uppercase mb-6 border border-yellow-100 shadow-sm">
+                INDIA&apos;S #1 JOB PLATFORM
+              </span>
+              <h1 className="text-4xl md:text-6xl font-black text-[#121212] mb-6 leading-tight">
+                Your job search <br /> <span className="text-[#e49d04] relative">ends here</span>
+              </h1>
+              <p className="text-xl text-gray-600 font-medium mb-10">
+                Discover 50 lakh+ career opportunities
+              </p>
 
-            <button onClick={() => setIsLoginModalOpen(true)} className="w-full flex items-center justify-center py-3.5 px-4 border border-gray-200 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5">
-              <FaEnvelope className="mr-3 text-gray-500" size={24} />
-              Continue with Email
-            </button>
+              {/* Modern Search Bar */}
+              <form onSubmit={handleSearch} className="flex flex-col md:flex-row items-center bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 p-2.5 max-w-4xl mb-12">
+                <div className="flex items-center flex-1 px-4 py-2 w-full">
+                  <FaSearch className="text-[#e49d04] mr-3 text-lg" />
+                  <input 
+                    type="text" 
+                    placeholder="Search jobs by &apos;title&apos;" 
+                    className="w-full outline-none text-gray-700 text-base font-medium placeholder-gray-400"
+                    value={searchTitle}
+                    onChange={(e) => setSearchTitle(e.target.value)}
+                  />
+                </div>
+                <div className="hidden md:block w-px h-10 bg-gray-100"></div>
+                <div className="flex items-center flex-1 px-4 py-2 w-full relative">
+                  <FaBriefcase className="text-[#e49d04] mr-3 text-lg" />
+                  <select 
+                    className="w-full outline-none text-gray-700 text-base font-medium bg-transparent appearance-none cursor-pointer"
+                    value={filterExperience}
+                    onChange={(e) => setFilterExperience(e.target.value)}
+                  >
+                    <option value="">Your Experience</option>
+                    <option value="Entry Level (0-2 Yrs)">Fresher</option>
+                    <option value="Mid Level (3-5 Yrs)">1-3 Years</option>
+                    <option value="Senior Level (5+ Yrs)">3-5 Years</option>
+                    <option value="Executive">5+ Years</option>
+                  </select>
+                  <FaChevronDown className="absolute right-4 text-gray-400 text-xs pointer-events-none" />
+                </div>
+                <div className="hidden md:block w-px h-10 bg-gray-100"></div>
+                <div className="flex items-center flex-1 px-4 py-2 w-full">
+                  <FaMapMarkerAlt className="text-[#e49d04] mr-3 text-lg" />
+                  <input 
+                    type="text" 
+                    placeholder="Search for an area or city" 
+                    className="w-full outline-none text-gray-700 text-base font-medium placeholder-gray-400"
+                    value={searchLocation}
+                    onChange={(e) => setSearchLocation(e.target.value)}
+                  />
+                </div>
+                <button type="submit" className="w-full md:w-auto bg-[#e49d04] hover:bg-[#cc8c03] text-[#0B0C10] shadow-lg shadow-[#e49d04]/20 font-bold py-3.5 px-8 rounded-xl transition-all ml-0 md:ml-2 mt-2 md:mt-0 transform hover:-translate-y-0.5">
+                  Search jobs
+                </button>
+              </form>
+
+              {/* Proud to Support Section */}
+              <div className="mb-10">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Proud to Support</p>
+                <div className="flex items-center gap-8 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Gov" className="h-10" />
+                  <img src="https://www.startupindia.gov.in/content/dam/invest-india/new_startup_india_logo.png" alt="DPIIT" className="h-8" />
+                </div>
+              </div>
+
+              {/* Trusted By Section */}
+              <div className="w-full relative max-w-full overflow-hidden">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Trusted by 1000+ enterprises and 7 lakh+ MSMEs for hiring</p>
+                
+                <style>{`
+                  @keyframes marquee {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                  }
+                  .animate-marquee {
+                    animation: marquee 30s linear infinite;
+                    width: max-content;
+                  }
+                  .carousel-container:hover .animate-marquee {
+                    animation-play-state: paused;
+                  }
+                `}</style>
+                
+                <div className="carousel-container overflow-hidden w-full relative" style={{ maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)' }}>
+                  <div className="animate-marquee flex grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                    {[...Array(2)].map((_, i) => (
+                      <div key={i} className="flex items-center justify-center gap-12 md:gap-16 pr-12 md:pr-16 shrink-0">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Infosys_logo.svg" alt="Infosys" className="h-6 md:h-7 w-auto object-contain" />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Tata_Consultancy_Services_Logo.svg" alt="TCS" className="h-6 md:h-7 w-auto object-contain" />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Wipro_Logo.svg" alt="Wipro" className="h-8 md:h-9 w-auto object-contain" />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/HCLTechnologies_logo.svg" alt="HCL" className="h-4 md:h-5 w-auto object-contain" />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/43/Tech_Mahindra_New_Logo.svg" alt="Tech Mahindra" className="h-4 md:h-5 w-auto object-contain" />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Flipkart_logo.svg" alt="Flipkart" className="h-6 md:h-7 w-auto object-contain" />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" className="h-7 md:h-8 w-auto object-contain mt-2" />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg" alt="Microsoft" className="h-6 md:h-7 w-auto object-contain" />
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" className="h-6 md:h-7 w-auto object-contain" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Graphic Section */}
+            <div className="w-full lg:w-2/5 mt-12 lg:mt-0 relative flex justify-center">
+               <div className="relative">
+                  {/* Circle background effect */}
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-100 rounded-full blur-3xl opacity-50"></div>
+                  {/* Lottie Animation */}
+                  <iframe 
+                    src="https://lottie.host/embed/89df71c0-03df-4148-912f-68285ff945b9/gqf91rZzZk.json" 
+                    className="relative z-10 w-full max-w-md aspect-square pointer-events-none"
+                    style={{ border: "none", background: "transparent" }}
+                    title="Hero Animation"
+                  ></iframe>
+                  {/* Floating Phone App Detail */}
+                  <div className="absolute top-1/2 -left-4 z-20 bg-white p-2 rounded-2xl shadow-2xl border border-gray-100 transform -rotate-6">
+                    <div className="bg-[#0B0C10] text-[#e49d04] p-3 rounded-xl flex items-center gap-3 shadow-inner">
+                        <div className="w-8 h-8 bg-[#e49d04] rounded-lg flex items-center justify-center text-sm font-black text-[#0B0C10] shadow-sm">C</div>
+                        <span className="text-sm font-bold tracking-wide pr-2">Click4Jobs</span>
+                    </div>
+                  </div>
+               </div>
+            </div>
           </div>
-
-          <p className="text-xs text-slate-400 text-center lg:text-left pt-4">
-            By continuing, you agree to our <Link href="/privacy-policy" target="_blank" className="underline hover:text-[#e49d04]">Terms of Service</Link> and <Link href="/privacy-policy" target="_blank" className="underline hover:text-[#e49d04]">Privacy Policy</Link>.
-          </p>
-        </div> 
-
-        {/* Right Side - Search Form */}
-        <div className="flex items-center justify-center mt-10 lg:mt-0 w-full">
-            <div className="bg-white/10 backdrop-blur-lg p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/10">
-                <h3 className="text-2xl font-bold text-white mb-6 text-center">Find Your Next Opportunity</h3>
-                <form className="space-y-4" onSubmit={handleSearch}>
-                    <div className="relative group">
-                        <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#0B0C10]" />
-                    <input type="text" value={searchTitle} onChange={e => setSearchTitle(e.target.value)} placeholder="Job title, keyword, or company" className="w-full pl-11 pr-4 py-4 bg-white/80 text-[#121212] placeholder-gray-500 border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-[#e49d04] focus:bg-white transition-all"/>
-                    </div>
-                    <div className="relative group">
-                        <FaMapMarkerAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#0B0C10]" />
-                    <input type="text" value={searchLocation} onChange={e => setSearchLocation(e.target.value)} placeholder="City, state, or zip code" className="w-full pl-11 pr-4 py-4 bg-white/80 text-[#121212] placeholder-gray-500 border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-[#e49d04] focus:bg-white transition-all"/>
-                    </div>
-                    <div className="flex gap-3 pt-2 relative">
-                    <button type="submit" className="flex-1 py-4 bg-[#e49d04] text-[#0B0C10] font-bold rounded-xl shadow-lg shadow-[#e49d04]/20 hover:bg-[#cc8c03] transition-all transform hover:-translate-y-0.5">
-                            Search Jobs
-                        </button>
-                        <button type="button" onClick={() => setIsFilterOpen(!isFilterOpen)} className={`p-4 ${isFilterOpen ? 'bg-white/40' : 'bg-white/20'} text-white rounded-xl hover:bg-white/30 transition-all`}>
-                            <FaFilter />
-                        </button>
-
-                        {/* Filter Dropdown */}
-                        {isFilterOpen && (
-                          <>
-                            <div className="fixed inset-0 z-40 cursor-default" onClick={() => setIsFilterOpen(false)}></div>
-                            <div className="absolute top-full mt-4 right-0 w-full sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-50 animate-fade-in-up text-left">
-                              <div className="flex items-center justify-between mb-4">
-                                <h3 className="font-bold text-[#121212]">Filter Jobs</h3>
-                                <button type="button" onClick={() => setIsFilterOpen(false)} className="text-gray-400 hover:text-gray-800 transition-colors p-1"><FaTimes /></button>
-                              </div>
-                              <div className="space-y-4">
-                                <div>
-                                  <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Industry</label>
-                              <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#e49d04] transition-all" value={filterIndustry} onChange={(e) => setFilterIndustry(e.target.value)}>
-                                    <option value="">All Industries</option>
-                                    <option value="IT Services">IT Services</option>
-                                    <option value="Advertising">Advertising</option>
-                                    <option value="General">General</option>
-                                    <option value="Finance">Finance</option>
-                                    <option value="Healthcare">Healthcare</option>
-                                    <option value="Education">Education</option>
-                                    <option value="Retail">Retail</option>
-                                    <option value="Manufacturing">Manufacturing</option>
-                                  </select>
-                                </div>
-                                <div>
-                                  <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Work Mode</label>
-                              <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#e49d04] transition-all" value={filterWorkMode} onChange={(e) => setFilterWorkMode(e.target.value)}>
-                                    <option value="">All Modes</option>
-                                    <option value="Remote">Remote</option>
-                                    <option value="On-site">On-site</option>
-                                    <option value="Hybrid">Hybrid</option>
-                                  </select>
-                                </div>
-                                <div>
-                                  <label className="block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Experience Level</label>
-                              <select className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#e49d04] transition-all" value={filterExperience} onChange={(e) => setFilterExperience(e.target.value)}>
-                                    <option value="">Any Experience</option>
-                                    <option value="Entry Level (0-2 Yrs)">Entry Level (0-2 Yrs)</option>
-                                    <option value="Mid Level (3-5 Yrs)">Mid Level (3-5 Yrs)</option>
-                                    <option value="Senior Level (5+ Yrs)">Senior Level (5+ Yrs)</option>
-                                    <option value="Executive">Executive</option>
-                                  </select>
-                                </div>
-                                <div className="pt-2 flex gap-3">
-                                  <button type="button" onClick={() => { setFilterIndustry(''); setFilterWorkMode(''); setFilterExperience(''); setIsFilterOpen(false); document.getElementById('jobs-section')?.scrollIntoView({ behavior: 'smooth' }); }} className="flex-1 py-2.5 bg-gray-100 text-gray-600 font-bold text-sm rounded-xl hover:bg-gray-200 transition-colors">Clear</button>
-                              <button type="button" onClick={() => { setIsFilterOpen(false); document.getElementById('jobs-section')?.scrollIntoView({ behavior: 'smooth' }); }} className="flex-1 py-2.5 bg-[#e49d04] text-[#0B0C10] font-bold text-sm rounded-xl hover:bg-[#cc8c03] transition-colors shadow-md shadow-[#e49d04]/10">Apply</button>
-                                </div>
-                              </div>
-                            </div>
-                          </>
-                        )}
-                    </div>
-                </form>
-            </div>
         </div>
-      </div>
-      </div>
-
-      {/* Trusted Companies Section (New) */}
-      <div className="bg-white py-12 border-b border-gray-100">
-        <div className="container mx-auto px-6 md:px-12">
-            <p className="text-center text-gray-500 text-sm font-semibold uppercase tracking-wider mb-8">Trusted by leading companies</p>
-            <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 md:gap-x-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-                <div className="text-xl font-bold flex items-center gap-2 text-gray-500"><FaBuilding /> Acme Corp</div>
-                <div className="text-xl font-bold flex items-center gap-2 text-gray-500"><FaBuilding /> Global Tech</div>
-                <div className="text-xl font-bold flex items-center gap-2 text-gray-500"><FaBuilding /> Future Inc</div>
-                <div className="text-xl font-bold flex items-center gap-2 text-gray-500"><FaBuilding /> Innovation Labs</div>
-                <div className="text-xl font-bold flex items-center gap-2 text-gray-500"><FaBuilding /> Stark Ind</div>
-            </div>
-        </div>
-      </div>
+      </section>
 
       {/* About Us Section */}
       <div id="about" className="bg-white py-24 scroll-mt-16">
