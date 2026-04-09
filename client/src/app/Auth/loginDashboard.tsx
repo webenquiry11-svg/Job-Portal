@@ -205,21 +205,21 @@ const LoginDashboard = () => {
                     style={{ border: "none", background: "transparent" }}
                     title="Hero Animation"
                   ></iframe>
+               </div>
                   {/* Floating Phone App Detail */}
                   <div className="absolute top-1/2 -left-4 z-20 bg-white p-2 rounded-2xl shadow-2xl border border-gray-100 transform -rotate-6">
                     <div className="bg-[#0B0C10] text-[#e49d04] p-3 rounded-xl flex items-center gap-3 shadow-inner">
                         <div className="w-8 h-8 bg-[#e49d04] rounded-lg flex items-center justify-center text-sm font-black text-[#0B0C10] shadow-sm">C</div>
                         <span className="text-sm font-bold tracking-wide pr-2">Click4Jobs</span>
                     </div>
-                  </div>
-               </div>
+                </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* About Us Section */}
-      <div id="about" className="bg-white py-24 scroll-mt-16">
+      <section id="about" className="bg-white py-24 scroll-mt-16">
         <div className="container mx-auto px-6 md:px-12">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-6">Empowering India’s Workforce Through Intelligent Matching</h2>
@@ -229,10 +229,10 @@ const LoginDashboard = () => {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Features Section (Enhanced) */}
-      <div id="how-it-works" className="bg-gray-50 py-24 scroll-mt-16">
+      <section id="how-it-works" className="bg-gray-50 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 md:px-12">
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-4">How It Works</h2>
@@ -272,7 +272,7 @@ const LoginDashboard = () => {
             <h3 className="text-2xl font-bold text-[#121212] mb-8 text-center"><span className="text-[#e49d04]">For Employers:</span> Credit-Based Precision</h3>
             <div className="grid md:grid-cols-3 gap-8">
                 <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
                 <div className="w-14 h-14 bg-[#0B0C10] text-[#e49d04] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                         <FaBuilding size={24} />
                     </div>
@@ -297,40 +297,101 @@ const LoginDashboard = () => {
                 </div>
             </div>
         </div>
-      </div>
+      </section>
       
-      {/* Popular Categories Section */}
-      <div id="categories-section" className="bg-white py-24 scroll-mt-16">
-          <div className="container mx-auto px-6 md:px-12">
-              <div className="text-center mb-16">
+      {/* Popular Categories Section - EXACT IMAGE MATCH */}
+      <section id="categories-section" className="bg-white py-16 md:py-24 scroll-mt-16 overflow-hidden">
+          <div className="container mx-auto px-6 md:px-12 mb-12">
+              <div className="text-center">
                   <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-4">Popular Categories</h2>
                   <p className="text-lg text-gray-600 max-w-2xl mx-auto">Explore thousands of jobs in the most in-demand industries.</p>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                  {[
-                      { name: 'Development', count: '1.2k+ Jobs', icon: <FaBriefcase />, color: 'bg-[#0B0C10] text-[#e49d04]' },
-                      { name: 'Design', count: '800+ Jobs', icon: <FaFileAlt />, color: 'bg-yellow-100 text-yellow-600' },
-                      { name: 'Marketing', count: '600+ Jobs', icon: <FaSearch />, color: 'bg-[#0B0C10] text-[#e49d04]' },
-                      { name: 'Management', count: '400+ Jobs', icon: <FaUsers />, color: 'bg-yellow-100 text-yellow-600' },
-                      { name: 'Finance', count: '300+ Jobs', icon: <FaBuilding />, color: 'bg-[#0B0C10] text-[#e49d04]' },
-                      { name: 'Customer Service', count: '900+ Jobs', icon: <FaHeadset />, color: 'bg-yellow-100 text-yellow-600' },
-                      { name: 'Health Care', count: '500+ Jobs', icon: <FaBriefcase />, color: 'bg-[#0B0C10] text-[#e49d04]' },
-                      { name: 'Sales', count: '700+ Jobs', icon: <FaBell />, color: 'bg-yellow-100 text-yellow-600' },
-                  ].map((cat, idx) => (
-                      <div key={idx} className="group p-6 bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 hover:-translate-y-1">
-                          <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4 transition-transform duration-300 group-hover:scale-110 ${cat.color}`}>
-                              {cat.icon}
-                          </div>
-                          <h3 className="font-bold text-[#121212] text-lg mb-1 group-hover:text-[#cc8c03] transition-colors">{cat.name}</h3>
-                          <p className="text-sm text-gray-500">{cat.count}</p>
-                      </div>
-                  ))}
-              </div>
           </div>
-      </div>
+
+          <style>{`
+            @keyframes scroll-left {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+            @keyframes scroll-right {
+              0% { transform: translateX(-50%); }
+              100% { transform: translateX(0); }
+            }
+            .animate-scroll-left {
+              animation: scroll-left 40s linear infinite;
+              width: max-content;
+            }
+            .animate-scroll-right {
+              animation: scroll-right 40s linear infinite;
+              width: max-content;
+            }
+            .category-carousel-container:hover .animate-scroll-left,
+            .category-carousel-container:hover .animate-scroll-right {
+              animation-play-state: paused;
+            }
+          `}</style>
+
+          <div className="category-carousel-container flex flex-col gap-5 relative w-full" style={{ maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)' }}>
+            {/* Top Row: Left to Right */}
+            <div className="animate-scroll-right flex gap-5">
+              {[...Array(4)].map((_, arrayIndex) => (
+                <div key={arrayIndex} className="flex gap-5 shrink-0">
+                  {[
+                    { name: 'Housekeeping', count: '360 openings', icon: <FaBuilding /> },
+                    { name: 'Computer / Data Entry', count: '309 openings', icon: <FaFileAlt /> },
+                    { name: 'Hospitality/ Hotel/ Event', count: '301 openings', icon: <FaUsers /> },
+                    { name: 'Graphic Designer', count: '275 openings', icon: <FaFileAlt /> },
+                    { name: 'Office Help / Peon', count: '247 openings', icon: <FaBriefcase /> },
+                  ].map((cat, idx) => (
+                    <div key={idx} onClick={() => setIsLoginModalOpen(true)} className="flex items-center p-4 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-80 shrink-0">
+                        <div className="w-12 h-12 shrink-0 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100 group-hover:bg-[#e49d04]/10 group-hover:text-[#e49d04] transition-colors">
+                            <div className="text-lg">{cat.icon}</div>
+                        </div>
+                        <div className="ml-4 flex-grow min-w-0 text-left">
+                            <h3 className="font-bold text-[#1a1a1a] text-[15px] leading-tight truncate">{cat.name}</h3>
+                            <p className="text-sm text-gray-400 mt-1 font-medium">{cat.count}</p>
+                        </div>
+                        <div className="ml-2 text-gray-300 group-hover:text-[#e49d04] group-hover:translate-x-1 transition-all">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom Row: Right to Left */}
+            <div className="animate-scroll-left flex gap-5">
+              {[...Array(4)].map((_, arrayIndex) => (
+                <div key={arrayIndex} className="flex gap-5 shrink-0">
+                  {[
+                    { name: 'Painter', count: '16 openings', icon: <FaUser /> },
+                    { name: 'Mobile Technician', count: '16 openings', icon: <FaHeadset /> },
+                    { name: 'Electronic Engineer', count: '14 openings', icon: <FaBuilding /> },
+                    { name: 'Tool and Die Maker', count: '13 openings', icon: <FaBriefcase /> },
+                    { name: 'Plumber', count: '13 openings', icon: <FaUser /> },
+                  ].map((cat, idx) => (
+                    <div key={idx} onClick={() => setIsLoginModalOpen(true)} className="flex items-center p-4 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-80 shrink-0">
+                        <div className="w-12 h-12 shrink-0 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100 group-hover:bg-[#e49d04]/10 group-hover:text-[#e49d04] transition-colors">
+                            <div className="text-lg">{cat.icon}</div>
+                        </div>
+                        <div className="ml-4 flex-grow min-w-0 text-left">
+                            <h3 className="font-bold text-[#1a1a1a] text-[15px] leading-tight truncate">{cat.name}</h3>
+                            <p className="text-sm text-gray-400 mt-1 font-medium">{cat.count}</p>
+                        </div>
+                        <div className="ml-2 text-gray-300 group-hover:text-[#e49d04] group-hover:translate-x-1 transition-all">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+      </section>
 
       {/* Featured Jobs / Search Results Section */}
-      <div id="jobs-section" className="bg-gray-50 py-24 scroll-mt-16">
+      <section id="jobs-section" className="bg-gray-50 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 md:px-12">
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-4">
@@ -406,10 +467,10 @@ const LoginDashboard = () => {
                 </button>
             </div>
           </div>
-      </div>
+      </section>
 
       {/* Testimonials Section (New) */}
-      <div className="bg-white py-24 relative">
+      <section className="bg-white py-24 relative">
         <div className="container mx-auto px-6 md:px-12">
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-4">What Our Users Say</h2>
@@ -458,10 +519,10 @@ const LoginDashboard = () => {
                 </div>
             </div>
         </div>
-      </div>
+      </section>
 
       {/* Legal & Info Sections */}
-      <div className="bg-white py-24 border-t border-gray-100">
+      <section className="bg-white py-24 border-t border-gray-100">
          <div className="container mx-auto px-6 md:px-12 max-w-5xl space-y-24">
             
             {/* FAQ */}
@@ -513,10 +574,10 @@ const LoginDashboard = () => {
             </div>
 
          </div>
-      </div>
+      </section>
 
       {/* CTA Section (New) */}
-      <div className="py-24 relative overflow-hidden">
+      <section className="py-24 relative overflow-hidden">
           <div className="absolute inset-0 bg-[#0B0C10] z-0"></div>
           <div className="container mx-auto px-6 md:px-12 text-center relative z-10">
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Ready to Start Your Career Journey?</h2>
@@ -530,7 +591,7 @@ const LoginDashboard = () => {
                   </Link>
               </div>
           </div>
-      </div>
+      </section>
 
       {/* Login Modal */}
       {isLoginModalOpen && (
