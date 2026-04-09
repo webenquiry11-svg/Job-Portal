@@ -177,15 +177,15 @@ const LoginDashboard = () => {
                   <div className="animate-marquee flex grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
                     {[...Array(2)].map((_, i) => (
                       <div key={i} className="flex items-center justify-center gap-12 md:gap-16 pr-12 md:pr-16 shrink-0">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Infosys_logo.svg" alt="Infosys" className="h-6 md:h-7 w-auto object-contain" />
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Tata_Consultancy_Services_Logo.svg" alt="TCS" className="h-6 md:h-7 w-auto object-contain" />
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Wipro_Logo.svg" alt="Wipro" className="h-8 md:h-9 w-auto object-contain" />
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/HCLTechnologies_logo.svg" alt="HCL" className="h-4 md:h-5 w-auto object-contain" />
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/43/Tech_Mahindra_New_Logo.svg" alt="Tech Mahindra" className="h-4 md:h-5 w-auto object-contain" />
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Flipkart_logo.svg" alt="Flipkart" className="h-6 md:h-7 w-auto object-contain" />
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" className="h-7 md:h-8 w-auto object-contain mt-2" />
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg" alt="Microsoft" className="h-6 md:h-7 w-auto object-contain" />
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" className="h-6 md:h-7 w-auto object-contain" />
+                        <img src="https://cdn.worldvectorlogo.com/logos/google-1-1.svg" alt="Google" className="h-6 md:h-8 w-auto object-contain" />
+                        <img src="https://cdn.worldvectorlogo.com/logos/amazon-2.svg" alt="Amazon" className="h-6 md:h-8 w-auto object-contain" />
+                        <img src="https://cdn.worldvectorlogo.com/logos/microsoft-5.svg" alt="Microsoft" className="h-6 md:h-8 w-auto object-contain" />
+                        <img src="https://cdn.worldvectorlogo.com/logos/infosys.svg" alt="Infosys" className="h-6 md:h-8 w-auto object-contain" />
+                        <img src="https://cdn.worldvectorlogo.com/logos/tata-consultancy-services.svg" alt="TCS" className="h-6 md:h-8 w-auto object-contain" />
+                        <img src="https://cdn.worldvectorlogo.com/logos/wipro-logo-new-1.svg" alt="Wipro" className="h-6 md:h-8 w-auto object-contain" />
+                        <img src="https://cdn.worldvectorlogo.com/logos/tech-mahindra-1.svg" alt="Tech Mahindra" className="h-4 md:h-6 w-auto object-contain" />
+                        <img src="https://cdn.worldvectorlogo.com/logos/flipkart.svg" alt="Flipkart" className="h-6 md:h-8 w-auto object-contain" />
+                        <img src="https://cdn.worldvectorlogo.com/logos/ibm.svg" alt="IBM" className="h-6 md:h-8 w-auto object-contain" />
                       </div>
                     ))}
                   </div>
@@ -200,7 +200,7 @@ const LoginDashboard = () => {
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-100 rounded-full blur-3xl opacity-50"></div>
                   {/* Lottie Animation */}
                   <iframe 
-                    src="https://lottie.host/embed/89df71c0-03df-4148-912f-68285ff945b9/gqf91rZzZk.json" 
+                    src="https://embed.lottiefiles.com/animation/74393" 
                     className="relative z-10 w-full max-w-md aspect-square pointer-events-none"
                     style={{ border: "none", background: "transparent" }}
                     title="Hero Animation"
