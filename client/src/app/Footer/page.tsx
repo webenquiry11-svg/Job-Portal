@@ -21,13 +21,10 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
           {/* Brand Section */}
           <div className="lg:col-span-4 space-y-6 z-10">
-            <Link href="/" className="flex items-center gap-2 group mb-6 inline-flex">
-              <div className="bg-[#e49d04] p-2.5 rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300">
-                <FaBriefcase className="text-[#0B0C10] text-xl" />
+            <Link href="/" className="flex items-center gap-2 group mb-6 inline-flex h-16">
+              <div className="relative w-48 h-full group-hover:scale-105 transition-transform duration-300 origin-left z-50">
+                <img src="/Click4Jobs Logo.png" alt="Click4Jobs" className="absolute top-1/2 left-0 -translate-y-1/2 h-[280px] w-auto max-w-none object-contain" />
               </div>
-              <span className="text-2xl font-black text-[#121212] tracking-tight">
-                Click4<span className="text-[#e49d04]">Jobs</span>
-              </span>
             </Link>
             <p className="text-gray-500 text-sm leading-relaxed max-w-sm">
               Bridging the gap between talent and opportunity across India.

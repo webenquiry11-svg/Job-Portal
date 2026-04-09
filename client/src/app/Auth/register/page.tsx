@@ -88,11 +88,13 @@ const CandidateDashboard = () => {
           <FaChevronLeft className={`text-[10px] transition-transform duration-300 ${isSidebarCollapsed ? 'rotate-180' : ''}`} />
         </button>
 
-        <div className={`p-8 flex items-center gap-3 transition-all duration-300 ${isSidebarCollapsed ? 'md:justify-center md:px-4' : ''}`}>
-           <div className="bg-[#0F172A] p-2.5 rounded-xl shadow-lg shadow-slate-900/20 flex-shrink-0">
-             <FaBriefcase className="text-white text-lg" />
-           </div>
-           <span className={`text-xl font-bold text-[#121212] tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? 'md:max-w-0 md:opacity-0' : 'max-w-xs opacity-100'}`}>Job<span className="text-[#0F172A]">Portal</span></span>
+        <div className={`p-6 h-20 flex items-center transition-all duration-300 ${isSidebarCollapsed ? "md:justify-center md:px-4" : ""}`}>
+          <div className={`relative w-40 h-full z-50 transition-all duration-300 ${isSidebarCollapsed ? "md:hidden" : "block"}`}>
+            <img src="/Click4Jobs Logo.png" alt="Click4Jobs" className="absolute top-1/2 left-0 -translate-y-1/2 h-[220px] w-auto max-w-none object-contain" />
+          </div>
+          <div className={`bg-[#e49d04] p-2.5 rounded-xl shadow-lg shadow-[#e49d04]/20 flex-shrink-0 hidden transition-all duration-300 ${isSidebarCollapsed ? "md:flex" : ""}`}>
+            <FaBriefcase className="text-[#0B0C10] text-lg" />
+          </div>
         </div>
         
         <nav className="flex-1 px-4 space-y-2 overflow-y-auto py-4 custom-scrollbar">

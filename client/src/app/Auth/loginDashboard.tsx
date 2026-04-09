@@ -181,7 +181,7 @@ const LoginDashboard = () => {
           <p className="text-xs text-slate-400 text-center lg:text-left pt-4">
             By continuing, you agree to our <Link href="/privacy-policy" target="_blank" className="underline hover:text-[#e49d04]">Terms of Service</Link> and <Link href="/privacy-policy" target="_blank" className="underline hover:text-[#e49d04]">Privacy Policy</Link>.
           </p>
-        </div>
+        </div> 
 
         {/* Right Side - Search Form */}
         <div className="flex items-center justify-center mt-10 lg:mt-0 w-full">

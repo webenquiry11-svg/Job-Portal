@@ -72,9 +72,7 @@ export const sendWelcomeEmail = async (to: string, name: string, role: string) =
               <!-- Header -->
               <tr>
                 <td align="center" bgcolor="#0B0C10" style="padding: 40px 20px; border-bottom: 4px solid #e49d04;">
-                  <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 900; letter-spacing: -0.5px;">
-                Click4<span style="color: #e49d04;">Jobs</span>
-                  </h1>
+                  <img src="${clientUrl}/Click4Jobs%20Logo.png" alt="Click4Jobs" style="height: 240px; display: block; margin: 0 auto;" />
                   <p style="color: #a1a1aa; margin: 10px 0 0 0; font-size: 16px; font-weight: 500;">Welcome to the future of hiring.</p>
                 </td>
               </tr>

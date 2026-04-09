@@ -86,13 +86,10 @@ const Navbar = () => {
     <div className="sticky top-0 z-50 transition-all duration-300">
       <nav className="bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div className="container mx-auto px-6 md:px-12 py-4 flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="bg-[#e49d04] p-2.5 rounded-xl shadow-lg shadow-[#e49d04]/20 group-hover:scale-105 transition-all duration-300">
-               <FaBriefcase className="text-[#0B0C10] text-lg" />
+          <Link href="/" className="flex items-center gap-2 group h-14">
+            <div className="relative w-40 h-full group-hover:scale-105 transition-transform duration-300 origin-left z-50">
+              <img src="/Click4Jobs Logo.png" alt="Click4Jobs" className="absolute top-1/2 left-0 -translate-y-1/2 h-[200px] w-auto max-w-none object-contain" />
             </div>
-            <span className="text-2xl font-black text-[#121212] tracking-tight">
-              Click4<span className="text-[#e49d04]">Jobs</span>
-            </span>
           </Link>
           
           {/* Premium Pill-shaped Navigation */}
