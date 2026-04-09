@@ -207,6 +207,7 @@ const CandidateDashboard = () => {
           <SidebarItem icon={<FaSearch />} label="Explore Jobs" active={activeTab === 'explore'} onClick={() => { setActiveTab('explore'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
           <SidebarItem icon={<FaBookmark />} label="Saved Jobs" active={activeTab === 'saved'} onClick={() => { setActiveTab('saved'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
           <SidebarItem icon={<FaBriefcase />} label="My Applications" active={activeTab === 'applications'} onClick={() => { setActiveTab('applications'); setIsSidebarOpen(false); }} badge={appliedJobs.length > 0 ? appliedJobs.length.toString() : undefined} collapsed={isSidebarCollapsed} />
+          <SidebarItem icon={<FaBell />} label="Job Alerts" active={activeTab === 'alerts'} onClick={() => { setActiveTab('alerts'); setIsSidebarOpen(false); }} collapsed={isSidebarCollapsed} />
           <SidebarItem icon={<MdMessage />} label="Messages" active={activeTab === 'messages'} onClick={() => { setActiveTab('messages'); setIsSidebarOpen(false); }} badge={unreadMessageCount > 0 ? unreadMessageCount.toString() : undefined} collapsed={isSidebarCollapsed} />
           
           <p className={`px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-8 transition-all duration-300 ${isSidebarCollapsed ? 'md:hidden' : ''}`}>Account</p>
@@ -537,7 +538,8 @@ const CandidateDashboard = () => {
             </div>
           )}
           {activeTab === 'settings' && <SettingsSection user={user} />}
-          {activeTab !== 'dashboard' && activeTab !== 'explore' && activeTab !== 'profile' && activeTab !== 'saved' && activeTab !== 'messages' && activeTab !== 'applications' && activeTab !== 'settings' && (
+          {activeTab === 'alerts' && <JobAlertsSection user={user} />}
+          {activeTab !== 'dashboard' && activeTab !== 'explore' && activeTab !== 'profile' && activeTab !== 'saved' && activeTab !== 'messages' && activeTab !== 'applications' && activeTab !== 'settings' && activeTab !== 'alerts' && (
              <div className="flex flex-col items-center justify-center h-64 bg-white rounded-3xl border border-gray-100 shadow-sm animate-fade-in-up">
                <FaBriefcase className="text-6xl text-slate-200 mb-4" />
                <h2 className="text-xl font-bold text-[#121212] capitalize">{activeTab.replace('-', ' ')}</h2>
@@ -1203,6 +1205,88 @@ const CandidateMessagesSection = ({ user, allJobs, initialSelectedUser }: any) =
             </p>
           </div>
         )}
+      </div>
+    </div>
+  );
+};
+
+const JobAlertsSection = ({ user }: { user: any }) => {
+  const [alerts, setAlerts] = useState<any[]>([]);
+  const [keyword, setKeyword] = useState('');
+  const [location, setLocation] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+  const fetchAlerts = async () => {
+    try {
+      const res = await fetch(`${apiUrl}/alerts/${user._id}`);
+      if (res.ok) setAlerts(await res.json());
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchAlerts(); }, [user._id]);
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!keyword && !location) return toast.error('Please provide a keyword or location');
+    setIsCreating(true);
+    try {
+      const res = await fetch(`${apiUrl}/alerts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user._id, keyword, location })
+      });
+      if (res.ok) {
+        toast.success('Job alert created successfully!');
+        setKeyword(''); setLocation(''); fetchAlerts();
+      } else { toast.error('Failed to create alert'); }
+    } catch (err) { toast.error('Error creating alert'); } 
+    finally { setIsCreating(false); }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const res = await fetch(`${apiUrl}/alerts/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        toast.success('Alert removed');
+        setAlerts(alerts.filter(a => a._id !== id));
+      }
+    } catch (err) { toast.error('Error removing alert'); }
+  };
+
+  return (
+    <div className="space-y-6 animate-fade-in-up">
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-bold text-[#121212]">Job Alerts</h2>
+      </div>
+      <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm">
+        <h3 className="text-xl font-bold text-[#121212] mb-6">Create New Alert</h3>
+        <form onSubmit={handleCreate} className="flex flex-col md:flex-row gap-4 items-end">
+          <div className="w-full md:flex-1"><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Keyword / Job Title</label><input type="text" placeholder="e.g. Frontend Developer" value={keyword} onChange={(e) => setKeyword(e.target.value)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#e49d04] text-sm" /></div>
+          <div className="w-full md:flex-1"><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Location</label><input type="text" placeholder="e.g. New York, Remote" value={location} onChange={(e) => setLocation(e.target.value)} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#e49d04] text-sm" /></div>
+          <button type="submit" disabled={isCreating} className="w-full md:w-auto px-8 py-3 bg-[#e49d04] text-[#0B0C10] font-bold rounded-xl hover:bg-[#cc8c03] transition-colors shadow-md disabled:opacity-50 h-[46px]">{isCreating ? 'Saving...' : 'Create Alert'}</button>
+        </form>
+      </div>
+      <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm">
+        <h3 className="text-xl font-bold text-[#121212] mb-6">Your Active Alerts</h3>
+        {isLoading ? (
+          <div className="text-center py-8"><FaSpinner className="animate-spin text-2xl text-gray-300 mx-auto" /></div>
+        ) : alerts.length > 0 ? (
+          <div className="space-y-4">
+            {alerts.map((alert) => (
+              <div key={alert._id} className="flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-xl">
+                <div><h4 className="font-bold text-[#121212]">{alert.keyword || 'Any Role'}</h4><p className="text-sm text-gray-500 flex items-center gap-1 mt-1"><FaMapMarkerAlt className="text-[#e49d04]"/> {alert.location || 'Any Location'}</p></div>
+                <div className="flex items-center gap-4"><span className="hidden sm:inline-block px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-lg">Active (Daily)</span><button onClick={() => handleDelete(alert._id)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><FaTimes /></button></div>
+              </div>
+            ))}
+          </div>
+        ) : (<div className="text-center py-12 border-2 border-dashed border-gray-100 rounded-2xl"><FaBell className="text-4xl text-gray-300 mx-auto mb-3" /><p className="text-gray-500 font-medium">You don't have any job alerts set up yet.</p></div>)}
       </div>
     </div>
   );

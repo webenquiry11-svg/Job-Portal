@@ -8,6 +8,8 @@ import authRoutes from './routes/AuthRoute';
 import jobRoutes from './routes/jobRoute';
 import companyRoutes from './routes/CompanyRoute';
 import chatRoute from './routes/ChatRoute';
+import jobAlertRoutes from './routes/JobAlertRoute';
+import { startCronJobs } from './utils/cronJobs';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as MicrosoftStrategy } from 'passport-microsoft';
@@ -195,6 +197,7 @@ app.use('/auth', authRoutes);
 app.use('/jobs', jobRoutes);
 app.use('/company', companyRoutes);
 app.use('/chat', chatRoute);
+app.use('/alerts', jobAlertRoutes);
 
 // Basic Route
 app.get('/', (req: Request, res: Response) => {
@@ -233,7 +236,9 @@ if (!process.env.MICROSOFT_CLIENT_ID || !process.env.MICROSOFT_CLIENT_SECRET) {
 }
 
 mongoose.connect(CONNECTION_URL)
-  .then(() => app.listen(PORT, () => {
+  .then(() => {
+    startCronJobs(); // Initialize the Daily Job Alert worker
+    app.listen(PORT, () => {
     console.log(`
     ===========================================
     ✅ Server running on: http://localhost:${PORT}
@@ -241,7 +246,8 @@ mongoose.connect(CONNECTION_URL)
     🛠️  Mode: Development
     ===========================================
     `);
-  }))
+    });
+  })
   .catch((error) => {
     console.log(`${error} did not connect`);
     if (error instanceof Error && error.message.includes('Atlas')) {

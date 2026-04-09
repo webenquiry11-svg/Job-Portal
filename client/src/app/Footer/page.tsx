@@ -1,12 +1,14 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram, FaPaperPlane, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBriefcase, FaClock } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 const Footer = () => {
   const pathname = usePathname();
+  const [email, setEmail] = useState('');
 
   if (pathname?.toLowerCase().startsWith('/admin') || pathname?.toLowerCase().includes('privacy')) {
     return null;
@@ -41,10 +43,10 @@ const Footer = () => {
           <div className="lg:col-span-2 z-10">
             <h4 className="text-sm font-bold text-[#121212] uppercase tracking-wider mb-6">Candidates</h4>
             <ul className="space-y-4 text-sm text-gray-500 font-medium">
-              <li><Link href="/jobs" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Browse Jobs</Link></li>
-              <li><Link href="/companies" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Browse Companies</Link></li>
+              <li><Link href="/#jobs-section" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Browse Jobs</Link></li>
+              <li><Link href="/#categories-section" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Browse Categories</Link></li>
               <li><Link href="/Condidate/Dashboard" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Candidate Dashboard</Link></li>
-              <li><Link href="/saved-jobs" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Saved Jobs</Link></li>
+              <li><Link href="/Condidate/Dashboard" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Saved Jobs</Link></li>
             </ul>
           </div>
 
@@ -52,10 +54,10 @@ const Footer = () => {
           <div className="lg:col-span-2 z-10">
             <h4 className="text-sm font-bold text-[#121212] uppercase tracking-wider mb-6">Employers</h4>
             <ul className="space-y-4 text-sm text-gray-500 font-medium">
-              <li><Link href="/post-job" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Post a Job</Link></li>
+              <li><Link href="/employer/dashboard" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Post a Job</Link></li>
               <li><Link href="/employer/dashboard" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Employer Dashboard</Link></li>
-              <li><Link href="/pricing" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Pricing Plans</Link></li>
-              <li><Link href="/resources" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Recruiting Resources</Link></li>
+              <li><Link href="/Subscription/Pricing" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Pricing Plans</Link></li>
+              <li><Link href="/#faq" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">FAQs</Link></li>
             </ul>
           </div>
 
@@ -81,9 +83,18 @@ const Footer = () => {
                 <input 
                   type="email" 
                   placeholder="Subscribe to newsletter" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-transparent text-gray-700 px-4 py-2 focus:outline-none text-sm placeholder-gray-400 font-medium"
                 />
-                <button type="button" className="bg-[#0B0C10] text-[#e49d04] px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-[#1E293B] transition-colors flex items-center gap-2 shrink-0">
+                <button 
+                  type="button" 
+                  onClick={() => { 
+                    if(email){ toast.success('Successfully subscribed to newsletter!'); setEmail(''); } 
+                    else { toast.error('Please enter an email address'); } 
+                  }} 
+                  className="bg-[#0B0C10] text-[#e49d04] px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-[#1E293B] transition-colors flex items-center gap-2 shrink-0"
+                >
                   Subscribe
                 </button>
             </div>

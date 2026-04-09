@@ -137,3 +137,38 @@ export const sendWelcomeEmail = async (to: string, name: string, role: string) =
     console.error(`❌ Error sending welcome email to ${to}:`, error);
   }
 };
+
+export const sendJobAlertEmail = async (to: string, name: string, jobs: any[], keyword: string) => {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_APP_PASSWORD) return;
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_APP_PASSWORD },
+  });
+
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+  const jobsListHtml = jobs.map((job) => `
+    <div style="background-color: #f4f4f5; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+      <h3 style="margin: 0 0 5px 0; color: #121212;">${job.title}</h3>
+      <p style="margin: 0 0 10px 0; color: #52525b; font-size: 14px;">${job.employerId?.companyName || 'Company'} • ${job.location}</p>
+      <a href="${clientUrl}/Condidate/Dashboard" style="display: inline-block; background-color: #0B0C10; color: #e49d04; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 14px;">View Job</a>
+    </div>
+  `).join('');
+
+  const mailOptions = {
+    from: `"Click4Jobs Alerts" <${process.env.EMAIL_USER}>`,
+    to: to,
+    subject: `New jobs matching "${keyword}" on Click4Jobs!`,
+    html: `
+    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h2 style="color: #0B0C10;">Daily Job Alert</h2>
+      <p>Hi ${name},</p>
+      <p>We found some new jobs matching your alert for <strong>"${keyword}"</strong> posted in the last 24 hours:</p>
+      ${jobsListHtml}
+      <p style="margin-top: 30px; font-size: 0.9em; color: #888;">Manage your alerts in your <a href="${clientUrl}/Condidate/Dashboard" style="color: #e49d04;">Candidate Dashboard</a>.</p>
+    </div>
+    `,
+  };
+
+  try { await transporter.sendMail(mailOptions); } catch (error) { console.error('Failed to send Job Alert email', error); }
+};
