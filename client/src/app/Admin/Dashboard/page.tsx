@@ -29,13 +29,13 @@ const AdminDashboard = () => {
     );
   }
 
-  const employers = users.filter(u => u.role === 'employer');
-  const candidates = users.filter(u => u.role === 'seeker');
+  const employers = users.filter((u: any) => u.role === 'employer');
+  const candidates = users.filter((u: any) => u.role === 'seeker');
   
   // Cross-reference jobs to track candidate applications
   const allApplications = jobs.flatMap((job: any) =>
     (job.applicantDetails || []).map((detail: any) => {
-      const candidate = candidates.find(c => c._id === detail.candidateId);
+      const candidate = candidates.find((c: any) => c._id === detail.candidateId);
       return {
         id: `${job._id}-${detail.candidateId}`,
         jobTitle: job.title,
@@ -63,9 +63,9 @@ const AdminDashboard = () => {
   };
 
   // Data Export Handlers
-  const getEmployersData = () => employers.map(u => ({ Name: u.companyName || u.name, Email: u.email, Verification: u.gstVerificationStatus || 'Unverified', Status: u.isDeleted ? 'Deleted' : 'Active' }));
-  const getCandidatesData = () => candidates.map(u => ({ Name: u.name, Email: u.email, Verification: u.isEmailVerified ? 'Verified' : 'Unverified', Status: u.isDeleted ? 'Deleted' : 'Active' }));
-  const getApplicationsData = () => allApplications.map(app => ({ 'Candidate Name': app.candidateName, 'Candidate Email': app.candidateEmail, 'Job Title': app.jobTitle, 'Employer': app.employerName, 'Status': app.status }));
+  const getEmployersData = () => employers.map((u: any) => ({ Name: u.companyName || u.name, Email: u.email, Verification: u.gstVerificationStatus || 'Unverified', Status: u.isDeleted ? 'Deleted' : 'Active' }));
+  const getCandidatesData = () => candidates.map((u: any) => ({ Name: u.name, Email: u.email, Verification: u.isEmailVerified ? 'Verified' : 'Unverified', Status: u.isDeleted ? 'Deleted' : 'Active' }));
+  const getApplicationsData = () => allApplications.map((app: any) => ({ 'Candidate Name': app.candidateName, 'Candidate Email': app.candidateEmail, 'Job Title': app.jobTitle, 'Employer': app.employerName, 'Status': app.status }));
   const getGstData = () => pendingGsts.map((e: any) => ({ 'Company Name': e.companyName || e.name, 'GST Number': e.gstNumber, 'Email': e.email, 'Status': 'Pending' }));
 
   // Advanced HTML to Excel Exporter for Beautiful Sheets
@@ -303,7 +303,7 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {(activeTab === 'employers' ? employers : candidates).map(u => (
+                    {(activeTab === 'employers' ? employers : candidates).map((u: any) => (
                       <tr key={u._id} className="hover:bg-gray-50/50 transition-colors">
                         <td className="p-5 font-bold text-[#121212]">{u.companyName || u.name}</td>
                         <td className="p-5 text-gray-600 font-medium">{u.email}</td>
