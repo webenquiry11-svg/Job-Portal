@@ -1,30 +1,40 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+// Use environment variable for API URL
+// Localhost: http://localhost:5000
+// Server: https://click4jobs.in/api
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export const apiSlice = createApi({
   reducerPath: 'api',
-  // Use environment variable for API URL, fallback to local for development
-  baseQuery: fetchBaseQuery({ baseUrl: `${API_URL}/auth` }), 
+  // baseUrl is now generic, allowing access to all route groups
+  baseQuery: fetchBaseQuery({ baseUrl: API_URL }), 
   tagTypes: ['Job', 'Employer'],
   endpoints: (builder) => ({
     requestGstVerification: builder.mutation<any, { employerId: string; gstNumber: string }>(
       {
-        query: (body) => ({ url: '/employer/request-gst-verification', method: 'POST', body }),
+        // Full path starting with /auth because it's no longer in the baseUrl
+        query: (body) => ({ url: '/auth/employer/request-gst-verification', method: 'POST', body }),
         invalidatesTags: ['Employer'],
       },
     ),
     getPendingGstVerifications: builder.query<any, void>({
-      query: () => '/admin/gst-verifications/pending',
+      // Full path starting with /auth
+      query: () => '/auth/admin/gst-verifications/pending',
       providesTags: ['Employer'],
     }),
     updateGstVerificationStatus: builder.mutation<any, { employerId: string; status: 'approved' | 'rejected'; adminId: string }>(
       {
-        query: (body) => ({ url: '/admin/gst-verifications/update-status', method: 'PATCH', body }),
+        // Full path starting with /auth
+        query: (body) => ({ url: '/auth/admin/gst-verifications/update-status', method: 'PATCH', body }),
         invalidatesTags: ['Employer'],
       },
     ),
   }),
 });
 
-export const { useRequestGstVerificationMutation, useGetPendingGstVerificationsQuery, useUpdateGstVerificationStatusMutation } = apiSlice;
+export const { 
+  useRequestGstVerificationMutation, 
+  useGetPendingGstVerificationsQuery, 
+  useUpdateGstVerificationStatusMutation 
+} = apiSlice;

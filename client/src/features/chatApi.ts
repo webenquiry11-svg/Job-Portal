@@ -1,11 +1,15 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+// Consistent with your other files
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
 export const chatApi = createApi({
   reducerPath: 'chatApi',
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000' }),
+  baseQuery: fetchBaseQuery({ baseUrl: API_URL }),
   tagTypes: ['Chat'],
   endpoints: (builder) => ({
     getMessages: builder.query<any, { user1: string; user2: string }>({
+      // Matches backend: app.use('/chat', chatRoute)
       query: ({ user1, user2 }) => `/chat/${user1}/${user2}`,
       providesTags: ['Chat'],
     }),
@@ -36,4 +40,10 @@ export const chatApi = createApi({
   }),
 });
 
-export const { useGetMessagesQuery, useSendMessageMutation, useMarkAsSeenMutation, useGetConversationsQuery, useGetUnreadMessageCountQuery } = chatApi;
+export const { 
+  useGetMessagesQuery, 
+  useSendMessageMutation, 
+  useMarkAsSeenMutation, 
+  useGetConversationsQuery, 
+  useGetUnreadMessageCountQuery 
+} = chatApi;

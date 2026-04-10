@@ -1,37 +1,42 @@
 import { apiSlice } from './apiSlice';
 
 export const authApi = apiSlice.injectEndpoints({
+  overrideExisting: true, // Good practice for injected endpoints
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (body) => ({
-        url: '/register',
+        url: '/auth/register', // Added /auth prefix
         method: 'POST',
         body,
       }),
     }),
     login: builder.mutation({
       query: (body) => ({
-        url: '/login',
+        url: '/auth/login', // Added /auth prefix
         method: 'POST',
         body,
       })
     }),
     updateProfile: builder.mutation({
       query: (body) => ({
-        url: '/update',
+        url: '/auth/update', // Added /auth prefix
         method: 'PATCH',
         body,
       }),
     }),
     toggleFollowCompany: builder.mutation({
       query: ({ companyId, candidateId }) => ({
-        url: `/follow/${companyId}`,
+        url: `/auth/follow/${companyId}`, // Added /auth prefix
         method: 'PATCH',
-        // This is not ideal, but necessary without auth middleware
         body: { userId: candidateId },
       }),
     }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation, useUpdateProfileMutation, useToggleFollowCompanyMutation } = authApi;
+export const { 
+  useRegisterMutation, 
+  useLoginMutation, 
+  useUpdateProfileMutation, 
+  useToggleFollowCompanyMutation 
+} = authApi;

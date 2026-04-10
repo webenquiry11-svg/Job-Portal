@@ -1,13 +1,14 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+// Consistent URL handling for Local and Production
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
 export const jobApi = createApi({
   reducerPath: 'jobApi',
-  baseQuery: fetchBaseQuery({ 
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000' 
-  }),
+  baseQuery: fetchBaseQuery({ baseUrl: API_URL }),
   tagTypes: ['Job', 'Notification', 'Company', 'Application'],
   endpoints: (builder) => ({
-    // Job endpoints
+    // Job endpoints - Matches app.use('/jobs', jobRoutes)
     postJob: builder.mutation<any, any>({
       query: (jobData) => ({
         url: '/jobs/create',
@@ -58,7 +59,7 @@ export const jobApi = createApi({
       invalidatesTags: ['Job'],
     }),
 
-    // Notification endpoints
+    // Notification endpoints - Matches app.use('/auth', authRoutes)
     getNotifications: builder.query<any, string>({
       query: (userId) => `/auth/notifications/${userId}`,
       providesTags: ['Notification'],
@@ -88,7 +89,7 @@ export const jobApi = createApi({
     // Admin
     getAllUsersForAdmin: builder.query<any[], void>({
       query: () => '/auth/admin/all-users',
-      providesTags: ['Company'], // Or a new 'User' tag
+      providesTags: ['Company'],
     }),
     getPendingGstVerifications: builder.query<any[], void>({
       query: () => '/auth/admin/gst-verifications/pending',
@@ -103,7 +104,7 @@ export const jobApi = createApi({
       invalidatesTags: ['Company'],
     }),
 
-    // Account Deletion Mutations (Consider moving to authApi.ts)
+    // Account Deletion
     requestDeleteOtp: builder.mutation<any, { _id: string }>({
       query: (body) => ({
         url: '/auth/request-delete-otp',
@@ -127,7 +128,7 @@ export const {
   useGetAllJobsQuery, 
   useGetCompanyByIdQuery, 
   useDeleteJobMutation, 
-  useApplyForJobMutation, // Ab yeh dashboard mein mil jayega
+  useApplyForJobMutation,
   useUpdateApplicantStatusMutation,
   useScheduleInterviewMutation,
   useGetNotificationsQuery, 
