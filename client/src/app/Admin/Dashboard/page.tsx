@@ -144,9 +144,7 @@ const AdminDashboard = () => {
       {/* Premium Sidebar */}
       <aside className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 w-72 bg-[#0B0C10] text-white flex flex-col shadow-2xl z-40 transition-transform duration-300 ease-in-out`}>
         <div className="p-8 flex items-center gap-3 border-b border-gray-800">
-          <div className="bg-[#FACC15] p-2.5 rounded-xl shadow-lg shadow-[#FACC15]/20">
-            <FaUserShield className="text-[#0B0C10] text-xl" />
-          </div>
+          <img src="/Fav Icon.png" alt="Admin Icon" className="w-14 h-14 object-contain drop-shadow-md" />
           <span className="text-2xl font-black tracking-tight">Admin<span className="text-[#FACC15]">Portal</span></span>
         </div>
         <nav className="flex-1 px-4 space-y-2 py-6 overflow-y-auto custom-scrollbar">
@@ -175,7 +173,9 @@ const AdminDashboard = () => {
             <h1 className="text-xl md:text-2xl font-black text-[#121212] capitalize truncate">{activeTab.replace('-', ' ')}</h1>
           </div>
           <div className="flex items-center gap-3 md:gap-4 shrink-0">
-             <div className="w-8 h-8 md:w-10 md:h-10 bg-[#0B0C10] rounded-full flex justify-center items-center text-[#FACC15] font-bold shadow-md ring-4 ring-yellow-500/10">A</div>
+             <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex justify-center items-center shadow-md ring-4 ring-yellow-500/10 overflow-hidden bg-white">
+                <img src="/Fav Icon.png" alt="Admin" className="w-full h-full object-contain p-1" />
+             </div>
              <span className="font-bold text-[#121212] hidden sm:block">Super Admin</span>
           </div>
         </header>

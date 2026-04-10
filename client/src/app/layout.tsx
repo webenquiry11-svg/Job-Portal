@@ -6,8 +6,11 @@ import { Toaster } from 'react-hot-toast';
 
 
 export const metadata = {
-  title: 'Job Portal',
-  description: 'Find your dream job.',
+  title: 'Click4Jobs - India\'s #1 Job Platform',
+  description: 'Discover 50 lakh+ career opportunities on India\'s most efficient and transparent hiring ecosystem. Find your dream job with Click4Jobs.',
+  icons: {
+    icon: '/Fav%20Icon.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -196,8 +196,8 @@ const CandidateDashboard = () => {
           <div className={`relative w-40 h-full z-50 transition-all duration-300 ${isSidebarCollapsed ? "md:hidden" : "block"}`}>
             <img src="/Click4Jobs Logo.png" alt="Click4Jobs" className="absolute top-1/2 left-0 -translate-y-1/2 h-[220px] w-auto max-w-none object-contain" />
           </div>
-          <div className={`bg-[#e49d04] p-2.5 rounded-xl shadow-lg shadow-[#e49d04]/20 flex-shrink-0 hidden transition-all duration-300 ${isSidebarCollapsed ? "md:flex" : ""}`}>
-            <FaBriefcase className="text-[#0B0C10] text-lg" />
+          <div className={`flex-shrink-0 hidden transition-all duration-300 ${isSidebarCollapsed ? "md:flex" : ""}`}>
+            <img src="/Fav Icon.png" alt="Click4Jobs Icon" className="w-14 h-14 object-contain drop-shadow-md" />
           </div>
         </div>
         

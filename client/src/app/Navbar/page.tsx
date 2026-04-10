@@ -90,8 +90,11 @@ const Navbar = () => {
       <nav className="bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div className="container mx-auto px-6 md:px-12 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center gap-2 group h-14">
-            <div className="relative w-40 h-full group-hover:scale-105 transition-transform duration-300 origin-left z-50">
+            <div className="relative w-40 h-full group-hover:scale-105 transition-transform duration-300 origin-left z-50 hidden sm:block">
               <img src="/Click4Jobs Logo.png" alt="Click4Jobs" className="absolute top-1/2 left-0 -translate-y-1/2 h-[200px] w-auto max-w-none object-contain" />
+            </div>
+            <div className="relative h-full group-hover:scale-105 transition-transform duration-300 z-50 sm:hidden">
+              <img src="/Fav Icon.png" alt="Click4Jobs" className="h-14 w-auto object-contain" />
             </div>
           </Link>
           

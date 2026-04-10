@@ -22,10 +22,13 @@ const Footer = () => {
       <div className="container mx-auto px-6 md:px-12 pt-16 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
           {/* Brand Section */}
-          <div className="lg:col-span-4 space-y-6 z-10">
-            <Link href="/" className="flex items-center gap-2 group mb-6 inline-flex h-16">
-              <div className="relative w-48 h-full group-hover:scale-105 transition-transform duration-300 origin-left z-50">
+          <div className="lg:col-span-4 space-y-6 z-10 flex flex-col items-center text-center md:items-start md:text-left">
+            <Link href="/" className="flex items-center gap-2 group mb-6 inline-flex h-20">
+              <div className="relative w-48 h-full group-hover:scale-105 transition-transform duration-300 origin-left z-50 hidden sm:block">
                 <img src="/Click4Jobs Logo.png" alt="Click4Jobs" className="absolute top-1/2 left-0 -translate-y-1/2 h-[280px] w-auto max-w-none object-contain" />
+              </div>
+              <div className="relative h-full group-hover:scale-105 transition-transform duration-300 z-50 sm:hidden">
+                <img src="/Fav Icon.png" alt="Click4Jobs" className="h-20 w-auto object-contain" />
               </div>
             </Link>
             <p className="text-gray-500 text-sm leading-relaxed max-w-sm">
