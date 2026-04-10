@@ -1222,11 +1222,6 @@ const JobAlertsSection = ({ user }: { user: any }) => {
     apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : (process.env.NEXT_PUBLIC_API_URL || `${window.location.protocol}//${window.location.hostname}:5000`);
     if (window.location.protocol === 'https:' && apiUrl.startsWith('http://')) apiUrl = apiUrl.replace('http://', 'https://');
   }
-  let apiUrl = 'http://localhost:5000';
-  if (typeof window !== 'undefined') {
-    apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : (process.env.NEXT_PUBLIC_API_URL || `${window.location.protocol}//${window.location.hostname}:5000`);
-    if (window.location.protocol === 'https:' && apiUrl.startsWith('http://')) apiUrl = apiUrl.replace('http://', 'https://');
-  }
 
   const fetchAlerts = async () => {
     try {
