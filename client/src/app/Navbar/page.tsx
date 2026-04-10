@@ -27,8 +27,16 @@ const Navbar = () => {
 
     const handleCredentialResponse = async (response: any) => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? `${window.location.protocol}//${window.location.hostname}:5000` : 'http://localhost:5000');
-        const res = await fetch(`${apiUrl}/auth/google/onetap`, {
+        const getApiUrl = () => {
+          if (typeof window !== 'undefined') {
+            if (window.location.hostname === 'localhost') return 'http://localhost:5000';
+            let url = process.env.NEXT_PUBLIC_API_URL || `${window.location.protocol}//${window.location.hostname}:5000`;
+            if (window.location.protocol === 'https:' && url.startsWith('http://')) url = url.replace('http://', 'https://');
+            return url;
+          }
+          return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+        };
+        const res = await fetch(`${getApiUrl()}/auth/google/onetap`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ credential: response.credential })
@@ -64,13 +72,7 @@ const Navbar = () => {
             use_fedcm_for_prompt: true, // Opt-in to FedCM to fix the GSI_LOGGER warning
           });
           
-          // Catch the prompt notification to gracefully handle cooldowns and ad-blockers
-          window.google.accounts.id.prompt((notification: any) => {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-              const reason = notification.getNotDisplayedReason() || notification.getSkippedReason();
-              console.log('Google One Tap was skipped or blocked by browser settings:', reason);
-            }
-          });
+          window.google.accounts.id.prompt();
         }
       };
       document.body.appendChild(script);

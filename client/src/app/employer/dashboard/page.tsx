@@ -1107,7 +1107,11 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
   const applicants = selectedJobData?.applicants || [];
   const isLoadingApplicants = false; // Data is already part of the jobs query
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? `${window.location.protocol}//${window.location.hostname}:5000` : 'http://localhost:5000');
+  let apiUrl = 'http://localhost:5000';
+  if (typeof window !== 'undefined') {
+    apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : (process.env.NEXT_PUBLIC_API_URL || `${window.location.protocol}//${window.location.hostname}:5000`);
+    if (window.location.protocol === 'https:' && apiUrl.startsWith('http://')) apiUrl = apiUrl.replace('http://', 'https://');
+  }
 
   const [updateApplicantStatus] = useUpdateApplicantStatusMutation();
   const [scheduleInterview, { isLoading: isScheduling }] = useScheduleInterviewMutation();
