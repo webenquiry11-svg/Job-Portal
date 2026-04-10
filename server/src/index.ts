@@ -28,10 +28,11 @@ app.set('trust proxy', 1);
 // Middleware
 app.use(helmet());
 
-// Define allowed origins for CORS
 const allowedOrigins = [
-  'http://localhost:3000',                 // Local frontend
-  'https://job-portal-ta5n.onrender.com'  // Deployed frontend
+  'http://localhost:3000',
+  'https://job-portal-ta5n.onrender.com',
+  'https://click4jobs.in',     // Add your new domain
+  'https://www.click4jobs.in'  // Add the www version too
 ];
 
 const corsOptions: cors.CorsOptions = {
