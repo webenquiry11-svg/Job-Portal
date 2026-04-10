@@ -2,8 +2,15 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 // Use environment variable for API URL
 // Localhost: http://localhost:5000
-// Server: https://click4jobs.in/api
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+// Server: https://api.click4jobs.in
+const getApiUrl = () => {
+  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    return `${window.location.protocol}//${window.location.hostname}:5000`;
+  }
+  return 'http://localhost:5000';
+};
+const API_URL = getApiUrl();
 
 export const apiSlice = createApi({
   reducerPath: 'api',

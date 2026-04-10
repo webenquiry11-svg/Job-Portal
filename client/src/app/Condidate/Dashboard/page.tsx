@@ -1217,7 +1217,7 @@ const JobAlertsSection = ({ user }: { user: any }) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? `${window.location.protocol}//${window.location.hostname}:5000` : 'http://localhost:5000');
 
   const fetchAlerts = async () => {
     try {

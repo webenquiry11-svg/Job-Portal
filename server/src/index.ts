@@ -32,7 +32,9 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://job-portal-ta5n.onrender.com',
   'https://click4jobs.in',     // Add your new domain
-  'https://www.click4jobs.in'  // Add the www version too
+  'https://www.click4jobs.in', // Add the www version too
+  'http://click4jobs.in',
+  'http://www.click4jobs.in'
 ];
 
 const corsOptions: cors.CorsOptions = {

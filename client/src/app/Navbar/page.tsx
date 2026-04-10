@@ -27,7 +27,8 @@ const Navbar = () => {
 
     const handleCredentialResponse = async (response: any) => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/auth/google/onetap`, {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? `${window.location.protocol}//${window.location.hostname}:5000` : 'http://localhost:5000');
+        const res = await fetch(`${apiUrl}/auth/google/onetap`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ credential: response.credential })
@@ -60,7 +61,7 @@ const Navbar = () => {
             client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '', // Will be picked from your frontend .env
             callback: handleCredentialResponse,
             cancel_on_tap_outside: false,
-            use_fedcm_for_prompt: false, // Disables strict FedCM API to allow localhost testing
+            use_fedcm_for_prompt: true, // Opt-in to FedCM to fix the GSI_LOGGER warning
           });
           
           // Catch the prompt notification to gracefully handle cooldowns and ad-blockers

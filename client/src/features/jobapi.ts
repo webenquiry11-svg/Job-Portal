@@ -1,7 +1,14 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 // Consistent URL handling for Local and Production
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const getApiUrl = () => {
+  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    return `${window.location.protocol}//${window.location.hostname}:5000`;
+  }
+  return 'http://localhost:5000';
+};
+const API_URL = getApiUrl();
 
 export const jobApi = createApi({
   reducerPath: 'jobApi',
