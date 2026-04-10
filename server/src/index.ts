@@ -195,7 +195,17 @@ app.post('/auth/google/onetap', (req: Request, res: Response): any => {
   }
 });
 
-// Routes
+const apiRouter = express.Router();
+apiRouter.use('/auth', authRoutes);
+apiRouter.use('/jobs', jobRoutes);
+apiRouter.use('/company', companyRoutes);
+apiRouter.use('/chat', chatRoute);
+apiRouter.use('/alerts', jobAlertRoutes);
+
+// Support production routes with /api prefix
+app.use('/api', apiRouter);
+
+// Support local development routes without prefix
 app.use('/auth', authRoutes);
 app.use('/jobs', jobRoutes);
 app.use('/company', companyRoutes);
@@ -203,7 +213,7 @@ app.use('/chat', chatRoute);
 app.use('/alerts', jobAlertRoutes);
 
 // Basic Route
-app.get('/', (req: Request, res: Response) => {
+app.get(['/', '/api'], (req: Request, res: Response) => {
   res.status(200).json({
     message: "🚀 Click4Jobs API is Live",
     status: "Premium",
