@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGetAllUsersForAdminQuery, useGetAllJobsQuery, useGetPendingGstVerificationsQuery, useUpdateGstVerificationStatusMutation } from '@/features/jobapi';
-import { FaSpinner, FaUserShield, FaBuilding, FaUser, FaCheckCircle, FaTimesCircle, FaBriefcase, FaSignOutAlt, FaChartPie, FaFileInvoiceDollar } from 'react-icons/fa';
+import { FaSpinner, FaUserShield, FaBuilding, FaUser, FaCheckCircle, FaTimesCircle, FaBriefcase, FaSignOutAlt, FaChartPie, FaFileInvoiceDollar, FaDownload } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 const AdminDashboard = () => {
@@ -62,6 +62,79 @@ const AdminDashboard = () => {
     }
   };
 
+  // Data Export Handlers
+  const getEmployersData = () => employers.map(u => ({ Name: u.companyName || u.name, Email: u.email, Verification: u.gstVerificationStatus || 'Unverified', Status: u.isDeleted ? 'Deleted' : 'Active' }));
+  const getCandidatesData = () => candidates.map(u => ({ Name: u.name, Email: u.email, Verification: u.isEmailVerified ? 'Verified' : 'Unverified', Status: u.isDeleted ? 'Deleted' : 'Active' }));
+  const getApplicationsData = () => allApplications.map(app => ({ 'Candidate Name': app.candidateName, 'Candidate Email': app.candidateEmail, 'Job Title': app.jobTitle, 'Employer': app.employerName, 'Status': app.status }));
+  const getGstData = () => pendingGsts.map((e: any) => ({ 'Company Name': e.companyName || e.name, 'GST Number': e.gstNumber, 'Email': e.email, 'Status': 'Pending' }));
+
+  // Advanced HTML to Excel Exporter for Beautiful Sheets
+  const downloadExcel = (data: any[], title: string, filename: string) => {
+    if (!data || !data.length) {
+      toast.error(`No data available for ${title}`);
+      return;
+    }
+    const headers = Object.keys(data[0]);
+    const tableHtml = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+      <head><meta charset="UTF-8"></head>
+      <body>
+        <table border="1" cellpadding="5" cellspacing="0">
+          <thead>
+            <tr><th colspan="${headers.length}" style="font-size: 20px; font-weight: bold; background-color: #FACC15; color: #0B0C10; height: 50px; vertical-align: middle;">${title}</th></tr>
+            <tr>${headers.map(h => `<th style="background-color: #0B0C10; color: #ffffff; font-weight: bold; height: 35px; vertical-align: middle;">${h}</th>`).join('')}</tr>
+          </thead>
+          <tbody>
+            ${data.map(row => `<tr>${Object.values(row).map(val => `<td style="vertical-align: middle;">${String(val || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</td>`).join('')}</tr>`).join('')}
+          </tbody>
+        </table>
+      </body>
+      </html>
+    `;
+    const blob = new Blob([tableHtml], { type: 'application/vnd.ms-excel' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Universal Downloader (Combines all data into one beautiful multi-table sheet)
+  const downloadCombinedExcel = () => {
+    toast.success('Preparing beautiful full data report...');
+    let tableHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"></head><body>`;
+
+    const addTable = (data: any[], title: string) => {
+       if(!data || !data.length) return '';
+       const headers = Object.keys(data[0]);
+       return `
+        <table border="1" cellpadding="5" cellspacing="0" style="margin-bottom: 40px;">
+          <thead>
+            <tr><th colspan="${headers.length}" style="font-size: 20px; font-weight: bold; background-color: #FACC15; color: #0B0C10; height: 45px; vertical-align: middle;">${title}</th></tr>
+            <tr>${headers.map(h => `<th style="background-color: #0B0C10; color: #ffffff; height: 35px; vertical-align: middle;">${h}</th>`).join('')}</tr>
+          </thead>
+          <tbody>
+            ${data.map(row => `<tr>${Object.values(row).map(val => `<td style="vertical-align: middle;">${String(val || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</td>`).join('')}</tr>`).join('')}
+          </tbody>
+        </table><br><br>`;
+    };
+
+    tableHtml += addTable(getEmployersData(), "Platform Employers");
+    tableHtml += addTable(getCandidatesData(), "Platform Candidates");
+    tableHtml += addTable(getApplicationsData(), "Job Applications");
+    tableHtml += addTable(getGstData(), "Pending GST Approvals");
+    tableHtml += `</body></html>`;
+
+    const blob = new Blob([tableHtml], { type: 'application/vnd.ms-excel' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'Complete_Platform_Report.xls';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
       
@@ -94,21 +167,21 @@ const AdminDashboard = () => {
       <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#F8FAFC]">
         
         {/* Top Header */}
-        <header className="bg-white px-8 py-5 border-b border-gray-200 flex justify-between items-center shadow-sm z-10">
-          <div className="flex items-center gap-4">
+        <header className="bg-white px-4 md:px-8 py-4 md:py-5 border-b border-gray-200 flex justify-between items-center shadow-sm z-10">
+          <div className="flex items-center gap-3 md:gap-4 min-w-0">
             <button onClick={() => setIsSidebarOpen(true)} className="md:hidden text-gray-500 hover:text-[#121212] p-2 -ml-2 rounded-full hover:bg-gray-100">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
-            <h1 className="text-2xl font-black text-[#121212] capitalize">{activeTab.replace('-', ' ')}</h1>
+            <h1 className="text-xl md:text-2xl font-black text-[#121212] capitalize truncate">{activeTab.replace('-', ' ')}</h1>
           </div>
-          <div className="flex items-center gap-4">
-             <div className="w-10 h-10 bg-[#0B0C10] rounded-full flex justify-center items-center text-[#FACC15] font-bold shadow-md ring-4 ring-yellow-500/10">A</div>
+          <div className="flex items-center gap-3 md:gap-4 shrink-0">
+             <div className="w-8 h-8 md:w-10 md:h-10 bg-[#0B0C10] rounded-full flex justify-center items-center text-[#FACC15] font-bold shadow-md ring-4 ring-yellow-500/10">A</div>
              <span className="font-bold text-[#121212] hidden sm:block">Super Admin</span>
           </div>
         </header>
 
         {/* Dynamic View Content */}
-        <div className="p-8 flex-1 overflow-y-auto custom-scrollbar">
+        <div className="p-4 md:p-8 flex-1 overflow-y-auto custom-scrollbar">
           
           {/* Overview Section */}
           {activeTab === 'overview' && (
@@ -119,19 +192,29 @@ const AdminDashboard = () => {
                 <StatCard icon={<FaBriefcase />} label="Active Jobs" value={jobs.length} color="text-[#0B0C10] bg-[#FACC15]" />
                 <StatCard icon={<FaFileInvoiceDollar />} label="Pending Verifications" value={pendingGsts.length} color="text-red-600 bg-red-100" />
               </div>
-              <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-                <h2 className="text-xl font-bold text-[#121212] mb-2 flex items-center gap-2">👋 Welcome to your Dashboard</h2>
-                <p className="text-gray-500 text-sm">Select an option from the sidebar to manage your platform's users, review active job applications, and manually approve GST certificates to grant premium verified tags to employers.</p>
+              <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 border-b border-gray-50 pb-4">
+                   <h2 className="text-xl font-bold text-[#121212] flex items-center gap-2">👋 Welcome to Admin Dashboard</h2>
+                   <button onClick={downloadCombinedExcel} className="flex items-center gap-2 px-5 py-2.5 bg-[#0B0C10] text-[#FACC15] rounded-xl font-bold hover:bg-gray-800 transition-colors shadow-lg text-sm whitespace-nowrap w-full sm:w-auto justify-center">
+                     <FaDownload /> Download Entire Data
+                   </button>
+                </div>
+                <p className="text-gray-500 text-sm leading-relaxed">Select an option from the sidebar to manage your platform's users, review active job applications, and manually approve GST certificates to grant premium verified tags to employers. You can also download beautiful excel sheets for each respective category.</p>
               </div>
             </div>
           )}
 
           {/* GST Approvals Section */}
           {activeTab === 'gst' && (
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 animate-fade-in-up">
-              <h2 className="text-xl font-bold text-[#121212] mb-6 flex items-center gap-3"><FaFileInvoiceDollar className="text-[#FACC15]" /> Review GST Requests</h2>
-              <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left whitespace-nowrap lg:whitespace-normal">
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-4 md:p-8 animate-fade-in-up">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h2 className="text-xl font-bold text-[#121212] flex items-center gap-3"><FaFileInvoiceDollar className="text-[#FACC15]" /> Review GST Requests</h2>
+                <button onClick={() => downloadExcel(getGstData(), 'Pending GST Approvals', 'gst_approvals.xls')} className="flex items-center gap-2 px-5 py-2.5 bg-[#FACC15] text-[#0B0C10] rounded-xl font-bold hover:bg-yellow-500 transition-colors shadow-md text-sm whitespace-nowrap w-full sm:w-auto justify-center">
+                  <FaDownload /> Download GST Data
+                </button>
+              </div>
+              <div className="overflow-x-auto pb-4">
+                <table className="w-full text-sm text-left whitespace-nowrap lg:whitespace-normal">
                   <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
                     <tr>
                       <th className="p-5 rounded-tl-xl">Company Name</th>
@@ -161,10 +244,15 @@ const AdminDashboard = () => {
 
           {/* Applications Data Section */}
           {activeTab === 'applications' && (
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 animate-fade-in-up">
-              <h2 className="text-xl font-bold text-[#121212] mb-6 flex items-center gap-3"><FaBriefcase className="text-[#FACC15]" /> Candidate Applications Tracking</h2>
-              <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left whitespace-nowrap lg:whitespace-normal">
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-4 md:p-8 animate-fade-in-up">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h2 className="text-xl font-bold text-[#121212] flex items-center gap-3"><FaBriefcase className="text-[#FACC15]" /> Candidate Applications Tracking</h2>
+                <button onClick={() => downloadExcel(getApplicationsData(), 'Candidate Applications', 'applications.xls')} className="flex items-center gap-2 px-5 py-2.5 bg-[#FACC15] text-[#0B0C10] rounded-xl font-bold hover:bg-yellow-500 transition-colors shadow-md text-sm whitespace-nowrap w-full sm:w-auto justify-center">
+                  <FaDownload /> Download Applications
+                </button>
+              </div>
+              <div className="overflow-x-auto pb-4">
+                <table className="w-full text-sm text-left whitespace-nowrap lg:whitespace-normal">
                   <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
                     <tr>
                       <th className="p-5 rounded-tl-xl">Candidate</th>
@@ -195,12 +283,17 @@ const AdminDashboard = () => {
 
           {/* Render Basic User Tables for other views to keep it tidy */}
           {(activeTab === 'employers' || activeTab === 'candidates') && (
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 animate-fade-in-up">
-              <h2 className="text-xl font-bold text-[#121212] mb-6 flex items-center gap-3">
-                {activeTab === 'employers' ? <><FaBuilding className="text-[#FACC15]"/> Platform Employers</> : <><FaUser className="text-[#FACC15]"/> Platform Candidates</>}
-              </h2>
-              <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left whitespace-nowrap lg:whitespace-normal">
+            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-4 md:p-8 animate-fade-in-up">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h2 className="text-xl font-bold text-[#121212] flex items-center gap-3">
+                  {activeTab === 'employers' ? <><FaBuilding className="text-[#FACC15]"/> Platform Employers</> : <><FaUser className="text-[#FACC15]"/> Platform Candidates</>}
+                </h2>
+                <button onClick={() => downloadExcel(activeTab === 'employers' ? getEmployersData() : getCandidatesData(), activeTab === 'employers' ? 'Platform Employers' : 'Platform Candidates', `${activeTab}.xls`)} className="flex items-center gap-2 px-5 py-2.5 bg-[#FACC15] text-[#0B0C10] rounded-xl font-bold hover:bg-yellow-500 transition-colors shadow-md text-sm whitespace-nowrap w-full sm:w-auto justify-center">
+                  <FaDownload /> Download {activeTab === 'employers' ? 'Employers' : 'Candidates'}
+                </button>
+              </div>
+              <div className="overflow-x-auto pb-4">
+                <table className="w-full text-sm text-left whitespace-nowrap lg:whitespace-normal">
                   <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
                     <tr>
                       <th className="p-5 rounded-tl-xl">Name</th>
