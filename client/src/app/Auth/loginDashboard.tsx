@@ -208,21 +208,13 @@ const LoginDashboard = () => {
                <div className="relative">
                   {/* Circle background effect */}
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-100 rounded-full blur-3xl opacity-50"></div>
-                  {/* Lottie Animation */}
-                  <iframe 
-                    src="https://embed.lottiefiles.com/animation/74393" 
-                    className="relative z-10 w-full max-w-md aspect-square pointer-events-none"
-                    style={{ border: "none", background: "transparent" }}
-                    title="Hero Animation"
-                  ></iframe>
+                  {/* Hero Image */}
+                  <img 
+                    src="/HeroSection.png" 
+                    alt="Click4Jobs Hero" 
+                    className="relative z-10 w-full max-w-lg object-contain drop-shadow-2xl"
+                  />
                </div>
-                  {/* Floating Phone App Detail */}
-                  <div className="absolute top-1/2 -left-4 z-20 bg-white p-2 rounded-2xl shadow-2xl border border-gray-100 transform -rotate-6">
-                    <div className="bg-[#0B0C10] text-[#e49d04] p-3 rounded-xl flex items-center gap-3 shadow-inner">
-                        <div className="w-8 h-8 bg-[#e49d04] rounded-lg flex items-center justify-center text-sm font-black text-[#0B0C10] shadow-sm">C</div>
-                        <span className="text-sm font-bold tracking-wide pr-2">Click4Jobs</span>
-                    </div>
-                </div>
             </div>
           </div>
         </div>
