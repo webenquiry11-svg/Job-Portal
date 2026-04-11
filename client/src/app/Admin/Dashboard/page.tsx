@@ -141,9 +141,9 @@ const AdminDashboard = () => {
       {isSidebarOpen && (
         <div className="fixed inset-0 bg-black/50 z-30 md:hidden backdrop-blur-sm transition-opacity" onClick={() => setIsSidebarOpen(false)}></div>
       )}
-      {/* Premium Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 w-72 bg-[#0B0C10] text-white flex flex-col shadow-2xl z-40 transition-transform duration-300 ease-in-out`}>
-        <div className="p-8 flex items-center gap-3 border-b border-gray-800">
+      {/* Light Theme Sidebar */}
+      <aside className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 w-72 bg-white text-[#121212] flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)] border-r border-gray-100 z-40 transition-transform duration-300 ease-in-out`}>
+        <div className="p-8 flex items-center gap-3 border-b border-gray-100">
           <img src="/Fav Icon.png" alt="Admin Icon" className="w-14 h-14 object-contain drop-shadow-md" />
           <span className="text-2xl font-black tracking-tight">Admin<span className="text-[#FACC15]">Portal</span></span>
         </div>
@@ -154,8 +154,8 @@ const AdminDashboard = () => {
           <SidebarItem icon={<FaBriefcase />} label="Applications" active={activeTab === 'applications'} onClick={() => { setActiveTab('applications'); setIsSidebarOpen(false); }} />
           <SidebarItem icon={<FaFileInvoiceDollar />} label="GST Approvals" badge={pendingGsts.length} active={activeTab === 'gst'} onClick={() => { setActiveTab('gst'); setIsSidebarOpen(false); }} />
         </nav>
-        <div className="p-6 border-t border-gray-800 bg-[#060709]">
-          <button onClick={handleLogout} className="flex items-center justify-center gap-3 w-full px-4 py-3 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-xl transition-all font-bold">
+        <div className="p-6 border-t border-gray-100 bg-gray-50/50">
+          <button onClick={handleLogout} className="flex items-center justify-center gap-3 w-full px-4 py-3 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl transition-all font-bold">
             <FaSignOutAlt className="text-lg" /> Logout Session
           </button>
         </div>
@@ -332,9 +332,9 @@ const AdminDashboard = () => {
 };
 
 const SidebarItem = ({ icon, label, active, onClick, badge }: any) => (
-  <button onClick={onClick} className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-all font-bold ${active ? 'bg-[#FACC15] text-[#0B0C10] shadow-lg shadow-[#FACC15]/20' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
-    <div className="flex items-center gap-3 text-[15px]"><span className={active ? 'text-[#0B0C10]' : 'opacity-70'}>{icon}</span> {label}</div>
-    {badge > 0 && <span className={`text-[10px] px-2 py-0.5 rounded-full ${active ? 'bg-[#0B0C10] text-[#FACC15]' : 'bg-white/10 text-white'}`}>{badge}</span>}
+  <button onClick={onClick} className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-all font-bold ${active ? 'bg-[#FACC15] text-[#0B0C10] shadow-lg shadow-[#FACC15]/20' : 'text-gray-500 hover:text-[#0B0C10] hover:bg-gray-100'}`}>
+    <div className="flex items-center gap-3 text-[15px]"><span className={active ? 'text-[#0B0C10]' : 'text-gray-400'}>{icon}</span> {label}</div>
+    {badge > 0 && <span className={`text-[10px] px-2 py-0.5 rounded-full ${active ? 'bg-[#0B0C10] text-[#FACC15]' : 'bg-gray-200 text-gray-600'}`}>{badge}</span>}
   </button>
 );
 

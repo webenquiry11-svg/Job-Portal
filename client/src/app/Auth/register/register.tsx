@@ -85,7 +85,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
         if (role === 'employer') {
           router.push('/employer/dashboard');
         } else {
-          router.push('/Condidate/Dashboard');
+          router.push('/Candidate/Dashboard');
         }
       }, 2000);
     } catch (error: any) {

@@ -48,7 +48,7 @@ const Navbar = () => {
           if (data.result.role === 'employer') {
             router.push('/employer/dashboard');
           } else {
-            router.push('/Condidate/Dashboard');
+            router.push('/Candidate/Dashboard');
           }
         } else {
           toast.error(data.message || 'Google login failed');
@@ -81,7 +81,7 @@ const Navbar = () => {
     loadGoogleScript();
   }, [router]);
 
-  if (pathname?.startsWith('/employer/dashboard') || pathname?.startsWith('/Condidate/Dashboard') || pathname?.startsWith('/dashboard') || pathname?.toLowerCase().startsWith('/admin') || pathname?.startsWith('/employer-profile') || pathname?.toLowerCase().includes('privacy')) {
+  if (pathname?.startsWith('/employer/dashboard') || pathname?.startsWith('/Candidate/Dashboard') || pathname?.startsWith('/dashboard') || pathname?.toLowerCase().startsWith('/admin') || pathname?.startsWith('/employer-profile') || pathname?.toLowerCase().includes('privacy')) {
     return null;
   }
     

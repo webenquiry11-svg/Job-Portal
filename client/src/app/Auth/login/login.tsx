@@ -32,7 +32,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
         if (result?.result?.role === 'employer' && result?.result?._id) {
           router.push('/employer/dashboard');
         } else {
-          router.push('/Condidate/Dashboard');
+          router.push('/Candidate/Dashboard');
         } 
       }, 1500);
     } catch (error: any) {

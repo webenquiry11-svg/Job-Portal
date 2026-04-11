@@ -76,7 +76,10 @@ const authSchema = new mongoose.Schema({
   isEmailVerified: { type: Boolean, default: false },
   gstVerificationStatus: { type: String, enum: ['none', 'pending', 'approved', 'rejected'], default: 'none' },
   gstVerifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Auth' }, // Reference to Admin user
-  gstNumber: { type: String },
+  gstNumber: { 
+    type: String,
+    match: [/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/, 'Please enter a valid 15-character GST number (e.g. 22AAAAA0000A1Z5)']
+  },
   isPhoneVerified: { type: Boolean, default: false },
   showContact: { type: Boolean, default: true },
   emailOtp: { type: String },

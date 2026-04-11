@@ -47,7 +47,7 @@ export const sendWelcomeEmail = async (to: string, name: string, role: string) =
 
   const isEmployer = role === 'employer';
   const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
-  const dashboardLink = isEmployer ? `${clientUrl}/employer/dashboard` : `${clientUrl}/Condidate/Dashboard`;
+  const dashboardLink = isEmployer ? `${clientUrl}/employer/dashboard` : `${clientUrl}/Candidate/Dashboard`;
   
   const roleMessage = isEmployer 
     ? 'Get ready to post your open roles, track applications seamlessly, and hire the best talent to build your dream team.'
@@ -151,7 +151,7 @@ export const sendJobAlertEmail = async (to: string, name: string, jobs: any[], k
     <div style="background-color: #f4f4f5; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
       <h3 style="margin: 0 0 5px 0; color: #121212;">${job.title}</h3>
       <p style="margin: 0 0 10px 0; color: #52525b; font-size: 14px;">${job.employerId?.companyName || 'Company'} • ${job.location}</p>
-      <a href="${clientUrl}/Condidate/Dashboard" style="display: inline-block; background-color: #0B0C10; color: #e49d04; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 14px;">View Job</a>
+      <a href="${clientUrl}/Candidate/Dashboard" style="display: inline-block; background-color: #0B0C10; color: #e49d04; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 14px;">View Job</a>
     </div>
   `).join('');
 
@@ -165,7 +165,7 @@ export const sendJobAlertEmail = async (to: string, name: string, jobs: any[], k
       <p>Hi ${name},</p>
       <p>We found some new jobs matching your alert for <strong>"${keyword}"</strong> posted in the last 24 hours:</p>
       ${jobsListHtml}
-      <p style="margin-top: 30px; font-size: 0.9em; color: #888;">Manage your alerts in your <a href="${clientUrl}/Condidate/Dashboard" style="color: #e49d04;">Candidate Dashboard</a>.</p>
+      <p style="margin-top: 30px; font-size: 0.9em; color: #888;">Manage your alerts in your <a href="${clientUrl}/Candidate/Dashboard" style="color: #e49d04;">Candidate Dashboard</a>.</p>
     </div>
     `,
   };

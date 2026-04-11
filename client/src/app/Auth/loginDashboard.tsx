@@ -65,7 +65,7 @@ const LoginDashboard = () => {
           if (user.role === 'employer') {
             router.push('/employer/dashboard');
           } else {
-            router.push('/Condidate/Dashboard');
+            router.push('/Candidate/Dashboard');
           }
         } catch (error) {
           console.error('Failed to parse social login data', error);

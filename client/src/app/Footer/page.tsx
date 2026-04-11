@@ -48,8 +48,8 @@ const Footer = () => {
             <ul className="space-y-4 text-sm text-gray-500 font-medium">
               <li><Link href="/#jobs-section" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Browse Jobs</Link></li>
               <li><Link href="/#categories-section" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Browse Categories</Link></li>
-              <li><Link href="/Condidate/Dashboard" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Candidate Dashboard</Link></li>
-              <li><Link href="/Condidate/Dashboard" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Saved Jobs</Link></li>
+              <li><Link href="/Candidate/Dashboard" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Candidate Dashboard</Link></li>
+              <li><Link href="/Candidate/Dashboard" className="hover:text-[#0B0C10] hover:translate-x-1 inline-block transition-all">Saved Jobs</Link></li>
             </ul>
           </div>
 
