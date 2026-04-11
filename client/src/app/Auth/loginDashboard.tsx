@@ -33,7 +33,9 @@ const LoginDashboard = () => {
     document.getElementById('jobs-section')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const displayJobs = allJobs.filter((job: any) => {
+  const isSearching = appliedSearchTitle || appliedSearchLocation || filterIndustry || filterWorkMode || filterExperience;
+
+  const filteredRealJobs = allJobs.filter((job: any) => {
     const query = appliedSearchTitle.toLowerCase();
     const locQuery = appliedSearchLocation.toLowerCase();
     const matchesTitle = !query || job.title?.toLowerCase().includes(query) || job.employerId?.companyName?.toLowerCase().includes(query) || job.employerId?.name?.toLowerCase().includes(query) || job.skills?.some((s: string) => s.toLowerCase().includes(query));
@@ -42,9 +44,25 @@ const LoginDashboard = () => {
     const matchesWorkMode = !filterWorkMode || job.workMode === filterWorkMode;
     const matchesExperience = !filterExperience || job.experience === filterExperience;
     return matchesTitle && matchesLocation && matchesIndustry && matchesWorkMode && matchesExperience;
-  }).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 6);
+  }).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
-  const isSearching = appliedSearchTitle || appliedSearchLocation || filterIndustry || filterWorkMode || filterExperience;
+  const realJobsToShow = filteredRealJobs.slice(0, 6);
+
+  const dummyJobs = [
+    { _id: 'dummy1', title: 'Senior UI/UX Designer', employerId: { companyName: 'Creative Solutions', name: 'Creative Solutions' }, workMode: 'Remote', location: 'Anywhere, India', salaryMin: 90000, salaryMax: 140000, createdAt: new Date(Date.now() - 86400000).toISOString(), skills: ['Figma', 'UI/UX', 'Prototyping'], },
+    { _id: 'dummy2', title: 'Lead Backend Engineer (Node.js)', employerId: { companyName: 'Innovatech', name: 'Innovatech' }, workMode: 'Hybrid', location: 'Bangalore, IN', salaryMin: 120000, salaryMax: 180000, createdAt: new Date(Date.now() - 2 * 86400000).toISOString(), skills: ['Node.js', 'AWS', 'PostgreSQL'], },
+    { _id: 'dummy3', title: 'Digital Marketing Manager', employerId: { companyName: 'MarketPro', name: 'MarketPro' }, workMode: 'On-site', location: 'Mumbai, IN', salaryMin: 70000, salaryMax: 110000, createdAt: new Date(Date.now() - 3 * 86400000).toISOString(), skills: ['SEO', 'SEM', 'Social Media'], },
+    { _id: 'dummy4', title: 'Data Scientist', employerId: { companyName: 'Data Insights Co.', name: 'Data Insights Co.' }, workMode: 'Remote', location: 'Anywhere, India', salaryMin: 110000, salaryMax: 160000, createdAt: new Date(Date.now() - 4 * 86400000).toISOString(), skills: ['Python', 'ML', 'TensorFlow'], },
+  ];
+
+  let displayJobs = [...realJobsToShow];
+  const MIN_JOBS_TO_SHOW = 4;
+
+  // Only add dummy jobs if no search is active and we have less than the minimum required jobs
+  if (!isSearching && displayJobs.length < MIN_JOBS_TO_SHOW) {
+      const dummyJobsNeeded = MIN_JOBS_TO_SHOW - displayJobs.length;
+      displayJobs.push(...dummyJobs.slice(0, dummyJobsNeeded));
+  }
 
   // Intercept the token coming back from Passport.js Redirect
   useEffect(() => {
