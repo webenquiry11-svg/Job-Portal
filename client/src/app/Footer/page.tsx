@@ -68,10 +68,6 @@ const Footer = () => {
           <div className="lg:col-span-4 z-10">
             <h4 className="text-sm font-bold text-[#121212] uppercase tracking-wider mb-6">Stay Connected</h4>
             <ul className="space-y-4 text-sm text-gray-500 font-medium mb-8">
-              <li className="flex items-start gap-3">
-                  <FaMapMarkerAlt className="text-[#e49d04] mt-0.5 flex-shrink-0 text-base" />
-                  <span>123 Innovation Drive, Tech City, CA 94043</span>
-              </li>
               <li className="flex items-center gap-3">
                   <FaEnvelope className="text-[#e49d04] flex-shrink-0 text-base" />
                   <span>helpdesk@click4jobs.in</span>

@@ -180,11 +180,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
           <input id="headline" name="headline" type="text" placeholder="e.g., Senior Software Engineer" required className={inputClass} value={formData.headline} onChange={handleChange} />
         </div>
         <div>
-          <label htmlFor="gst-number" className={labelClass}>GST Number <span className="text-gray-400 normal-case font-medium text-[10px] ml-1">(Optional)</span></label>
-          <input id="gst-number" name="gstNumber" type="text" placeholder="22AAAAA0000A1Z5" className={`${inputClass} uppercase`} value={formData.gstNumber} onChange={handleChange} maxLength={15} pattern="^[0-9]{2}[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ][0-9a-zA-Z]{1}$" title="Please enter a valid 15-character Indian GST Number" />
-          <p className="text-[10px] text-gray-500 mt-1.5 flex items-center gap-1"><FaCheckCircle className="text-[#e49d04]" /> Get a verification badge by submitting your GST No.</p>
-        </div>
-        <div>
           <label htmlFor="location" className={labelClass}>Location</label>
           <input id="location" name="location" type="text" placeholder="e.g., San Francisco, CA" required className={inputClass} value={formData.location} onChange={handleChange} />
         </div>
@@ -310,6 +305,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
             <label htmlFor="website" className={labelClass}>Website</label>
             <input id="website" name="website" type="url" placeholder="https://example.com" className={inputClass} value={formData.website} onChange={handleChange} />
           </div>
+        </div>
+        <div>
+          <label htmlFor="gst-number" className={labelClass}>GST Number <span className="text-gray-400 normal-case font-medium text-[10px] ml-1">(Optional)</span></label>
+          <input id="gst-number" name="gstNumber" type="text" placeholder="22AAAAA0000A1Z5" className={`${inputClass} uppercase`} value={formData.gstNumber} onChange={handleChange} maxLength={15} pattern="^[0-9]{2}[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ][0-9a-zA-Z]{1}$" title="Please enter a valid 15-character Indian GST Number" />
+          <p className="text-[10px] text-gray-500 mt-1.5 flex items-center gap-1"><FaCheckCircle className="text-[#e49d04]" /> Get a verification badge by submitting your GST No.</p>
         </div>
         <div>
           <label htmlFor="your-role" className={labelClass}>Your Role</label>
