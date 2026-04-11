@@ -40,18 +40,18 @@ export default function PricingPage() {
               <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
                 <h4 className="font-bold text-[#121212] mb-2 flex items-center gap-2"><FaEnvelope className="text-[#e49d04]"/> Employer Support</h4>
                 <p className="text-sm mb-3">For billing inquiries, ATS integration, or enterprise plans.</p>
-                <a href="mailto:grievance@click4jobs.in" className="text-[#e49d04] font-bold hover:underline">grievance@click4jobs.in</a>
+                <a href="mailto:enterprise@click4jobs.in" className="text-[#e49d04] font-bold hover:underline">enterprise@click4jobs.in</a>
               </div>
               <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
                 <h4 className="font-bold text-[#121212] mb-2 flex items-center gap-2"><FaEnvelope className="text-[#e49d04]"/> Candidate Support</h4>
                 <p className="text-sm mb-3">For profile verification issues or platform assistance.</p>
-                <a href="mailto:grievance@click4jobs.in" className="text-[#e49d04] font-bold hover:underline">grievance@click4jobs.in</a>
+                <a href="mailto:support@click4jobs.in" className="text-[#e49d04] font-bold hover:underline">support@click4jobs.in</a>
               </div>
             </div>
             <div className="bg-red-50 p-6 rounded-2xl border border-red-100">
               <h4 className="font-bold text-red-800 mb-2 flex items-center gap-2"><FaShieldAlt /> Report a Listing</h4>
               <p className="text-sm text-red-900 mb-3">If you spot a fraudulent job post or suspicious activity, report it instantly.</p>
-              <a href="mailto:grievance@click4jobs.in" className="text-red-700 font-bold hover:underline">grievance@click4jobs.in</a>
+              <a href="mailto:helpdesk@click4jobs.in" className="text-red-700 font-bold hover:underline">helpdesk@click4jobs.in</a>
             </div>
             <div className="flex items-center gap-3 text-sm font-medium text-gray-500 bg-gray-50 p-4 rounded-xl border border-gray-100">
               <FaClock className="text-[#e49d04] text-lg" />

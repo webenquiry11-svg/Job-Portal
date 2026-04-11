@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FaTimes, FaUser, FaBuilding, FaArrowLeft, FaCloudUploadAlt, FaCheck } from 'react-icons/fa';
+import { FaTimes, FaUser, FaBuilding, FaArrowLeft, FaCloudUploadAlt, FaCheck, FaCheckCircle } from 'react-icons/fa';
 import { useRegisterMutation, useUpdateProfileMutation } from '@/features/authApi';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -35,11 +35,12 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
     industry: '',
     website: '',
     yourRole: '',
-    description: ''
+    description: '',
+    gstNumber: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.name === 'gstNumber' ? e.target.value.toUpperCase() : e.target.value });
   };
 
   const handleSubmit = async () => {
@@ -141,7 +142,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
       </form>
       <p className="mt-6 text-center text-xs text-gray-500">
         Already have an account?{' '}
-        <button className="font-bold text-[#0F172A] hover:text-[#1E293B] transition-colors">
+        <button type="button" onClick={() => { onClose(); setTimeout(() => document.getElementById('nav-signin-btn')?.click(), 100); }} className="font-bold text-[#0F172A] hover:text-[#1E293B] transition-colors">
           Sign in
         </button>
       </p>
@@ -177,6 +178,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
         <div>
           <label htmlFor="headline" className={labelClass}>Professional Headline</label>
           <input id="headline" name="headline" type="text" placeholder="e.g., Senior Software Engineer" required className={inputClass} value={formData.headline} onChange={handleChange} />
+        </div>
+        <div>
+          <label htmlFor="gst-number" className={labelClass}>GST Number <span className="text-gray-400 normal-case font-medium text-[10px] ml-1">(Optional)</span></label>
+          <input id="gst-number" name="gstNumber" type="text" placeholder="22AAAAA0000A1Z5" className={`${inputClass} uppercase`} value={formData.gstNumber} onChange={handleChange} maxLength={15} pattern="^[0-9]{2}[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ][0-9a-zA-Z]{1}$" title="Please enter a valid 15-character Indian GST Number" />
+          <p className="text-[10px] text-gray-500 mt-1.5 flex items-center gap-1"><FaCheckCircle className="text-[#e49d04]" /> Get a verification badge by submitting your GST No.</p>
         </div>
         <div>
           <label htmlFor="location" className={labelClass}>Location</label>

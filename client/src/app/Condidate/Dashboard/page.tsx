@@ -31,7 +31,7 @@ import {
   FaCheckDouble
 } from 'react-icons/fa';
 import { MdDashboard, MdMenu, MdMessage, MdSettings } from 'react-icons/md';
-import CandidateProfile from '../../Candidate/CandidateProfile/page';
+import CandidateProfile from '../CondidateProfile/page';
 import toast from 'react-hot-toast';
 import { 
   useGetAllJobsQuery, 

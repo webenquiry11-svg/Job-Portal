@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
-import { FaEnvelope, FaSearch, FaFileAlt, FaBell, FaBuilding, FaQuoteLeft, FaBriefcase, FaUsers, FaUser, FaHeadset, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaArrowRight, FaTimes, FaFilter, FaSpinner, FaQuestionCircle, FaShieldAlt, FaLock, FaFileContract, FaCoins, FaUnlock, FaChevronDown } from 'react-icons/fa';
+import { FaEnvelope, FaSearch, FaFileAlt, FaBell, FaBuilding, FaQuoteLeft, FaBriefcase, FaUsers, FaUser, FaHeadset, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaArrowRight, FaTimes, FaFilter, FaSpinner, FaQuestionCircle, FaShieldAlt, FaLock, FaFileContract, FaCoins, FaUnlock, FaChevronDown, FaCheckCircle } from 'react-icons/fa';
 import LoginModal from './login/login';
 import Link from 'next/link';
 import { useGetAllJobsQuery } from '@/features/jobapi';
@@ -95,80 +95,107 @@ const LoginDashboard = () => {
 
   return (
     <div className="grow flex flex-col">
-      {/* NEW HERO SECTION - EXACT IMAGE MATCH */}
-      <section className="relative bg-[#f8f9fc] overflow-hidden pt-6 lg:pt-10 pb-12">
+      {/* REDESIGNED PREMIUM HERO SECTION */}
+      <section className="relative bg-[#F8FAFC] overflow-hidden pt-16 lg:pt-24 pb-20">
+        {/* Dynamic Background Elements */}
+        <div className="absolute top-0 inset-x-0 h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#e49d04]/10 via-transparent to-transparent opacity-80 pointer-events-none"></div>
+        <div className="absolute -left-40 top-40 w-[600px] h-[600px] bg-blue-100/40 rounded-full blur-3xl pointer-events-none"></div>
+
         <div className="container mx-auto px-6 md:px-12 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center">
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
             
             {/* Left Content */}
-            <div className="w-full lg:w-3/5 text-left">
-              <span className="inline-flex items-center justify-center py-1.5 px-4 rounded-full bg-yellow-50 text-[#e49d04] text-xs font-black tracking-widest uppercase mb-6 border border-yellow-100 shadow-sm">
-                INDIA&apos;S #1 JOB PLATFORM
-              </span>
-              <h1 className="text-4xl md:text-6xl font-black text-[#121212] mb-6 leading-tight">
-                Your job search <br /> <span className="text-[#e49d04] relative">ends here</span>
+            <div className="w-full lg:w-[55%] text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200 shadow-sm text-[#0B0C10] text-xs font-bold uppercase tracking-widest mb-6">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#e49d04] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#e49d04]"></span>
+                </span>
+                India's Premium Job Network
+              </div>
+              
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-[#121212] mb-6 leading-[1.15] tracking-tight">
+                Land your dream <br className="hidden md:block" />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e49d04] to-yellow-600 relative inline-block">
+                  career today.
+                  <svg className="absolute w-full h-3 -bottom-1 left-0 text-yellow-400/50" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 15 100 5" stroke="currentColor" strokeWidth="8" fill="transparent"/></svg>
+                </span>
               </h1>
-              <p className="text-xl text-gray-600 font-medium mb-10">
-                Discover 50 lakh+ career opportunities
+              
+              <p className="text-lg md:text-xl text-gray-600 font-medium mb-10 max-w-lg leading-relaxed">
+                Connect with leading enterprises and innovative startups. Over <span className="text-[#0B0C10] font-bold">50 lakh+</span> opportunities waiting for you.
               </p>
 
               {/* Modern Search Bar */}
-              <form onSubmit={handleSearch} className="flex flex-col md:flex-row items-center bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 p-2.5 max-w-4xl mb-12">
-                <div className="flex items-center flex-1 px-4 py-2 w-full">
-                  <FaSearch className="text-[#e49d04] mr-3 text-lg" />
+              <form onSubmit={handleSearch} className="bg-white p-2.5 rounded-[2rem] shadow-[0_20px_40px_rgb(0,0,0,0.06)] border border-gray-100 flex flex-col md:flex-row gap-2 max-w-4xl mb-12 relative z-20 transition-all hover:shadow-[0_20px_50px_rgb(228,157,4,0.1)]">
+                <div className="flex items-center flex-1 hover:bg-gray-50 transition-colors rounded-3xl px-5 py-3">
+                  <FaSearch className="text-[#e49d04] mr-3 text-lg shrink-0" />
                   <input 
                     type="text" 
-                    placeholder="Search jobs by &apos;title&apos;" 
-                    className="w-full outline-none text-gray-700 text-base font-medium placeholder-gray-400"
+                    placeholder="Job title, skill, or company" 
+                    className="w-full bg-transparent outline-none text-[#121212] text-sm md:text-base font-semibold placeholder-gray-400"
                     value={searchTitle}
                     onChange={(e) => setSearchTitle(e.target.value)}
                   />
                 </div>
-                <div className="hidden md:block w-px h-10 bg-gray-100"></div>
-                <div className="flex items-center flex-1 px-4 py-2 w-full relative">
-                  <FaBriefcase className="text-[#e49d04] mr-3 text-lg" />
-                  <select 
-                    className="w-full outline-none text-gray-700 text-base font-medium bg-transparent appearance-none cursor-pointer"
-                    value={filterExperience}
-                    onChange={(e) => setFilterExperience(e.target.value)}
-                  >
-                    <option value="">Your Experience</option>
-                    <option value="Entry Level (0-2 Yrs)">Fresher</option>
-                    <option value="Mid Level (3-5 Yrs)">1-3 Years</option>
-                    <option value="Senior Level (5+ Yrs)">3-5 Years</option>
-                    <option value="Executive">5+ Years</option>
-                  </select>
-                  <FaChevronDown className="absolute right-4 text-gray-400 text-xs pointer-events-none" />
-                </div>
-                <div className="hidden md:block w-px h-10 bg-gray-100"></div>
-                <div className="flex items-center flex-1 px-4 py-2 w-full">
-                  <FaMapMarkerAlt className="text-[#e49d04] mr-3 text-lg" />
+                
+                <div className="hidden md:block w-px h-10 bg-gray-100 self-center"></div>
+                
+                <div className="flex items-center flex-1 hover:bg-gray-50 transition-colors rounded-3xl px-5 py-3 relative">
+                  <FaMapMarkerAlt className="text-[#e49d04] mr-3 text-lg shrink-0" />
                   <input 
                     type="text" 
-                    placeholder="Search for an area or city" 
-                    className="w-full outline-none text-gray-700 text-base font-medium placeholder-gray-400"
+                    placeholder="Location or 'Remote'" 
+                    className="w-full bg-transparent outline-none text-[#121212] text-sm md:text-base font-semibold placeholder-gray-400"
                     value={searchLocation}
                     onChange={(e) => setSearchLocation(e.target.value)}
                   />
                 </div>
-                <button type="submit" className="w-full md:w-auto bg-[#e49d04] hover:bg-[#cc8c03] text-[#0B0C10] shadow-lg shadow-[#e49d04]/20 font-bold py-3.5 px-8 rounded-xl transition-all ml-0 md:ml-2 mt-2 md:mt-0 transform hover:-translate-y-0.5">
-                  Search jobs
+                
+                <button type="submit" className="w-full md:w-auto bg-[#0B0C10] hover:bg-[#1f2833] text-[#e49d04] shadow-lg shadow-black/10 font-bold py-4 px-10 rounded-[1.5rem] transition-all transform hover:scale-105 active:scale-95 shrink-0 flex items-center justify-center gap-2">
+                  Search <FaArrowRight className="text-sm" />
                 </button>
               </form>
 
-              {/* Proud to Support Section */}
-              <div className="mb-10">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Proud to Support</p>
-                <div className="flex items-center gap-8 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Gov" className="h-10" />
-                  <img src="https://www.startupindia.gov.in/content/dam/invest-india/new_startup_india_logo.png" alt="DPIIT" className="h-8" />
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+                <div className="flex -space-x-4">
+                   <img className="w-12 h-12 rounded-full border-[3px] border-[#F8FAFC] object-cover shadow-sm hover:-translate-y-1 transition-transform cursor-pointer" src="https://img.freepik.com/free-photo/handsome-bearded-businessman-rubbing-hands-having-deal_176420-18778.jpg" alt="User" />
+                   <img className="w-12 h-12 rounded-full border-[3px] border-[#F8FAFC] object-cover shadow-sm hover:-translate-y-1 transition-transform cursor-pointer" src="https://img.freepik.com/free-photo/close-up-portrait-smiling-young-woman-looking-camera_171337-17994.jpg" alt="User" />
+                   <img className="w-12 h-12 rounded-full border-[3px] border-[#F8FAFC] object-cover shadow-sm hover:-translate-y-1 transition-transform cursor-pointer" src="https://img.freepik.com/free-photo/portrait-optimistic-businessman-blind-test-smiling_1262-21111.jpg" alt="User" />
+                   <div className="w-12 h-12 rounded-full border-[3px] border-[#F8FAFC] bg-[#e49d04] flex items-center justify-center text-xs font-black text-[#0B0C10] shadow-sm">+2M</div>
                 </div>
+                <p className="text-sm font-semibold text-gray-600 max-w-[200px] leading-snug">
+                  Trusted by over <span className="text-[#121212] font-black">2 Million</span> professionals.
+                </p>
               </div>
 
-              {/* Trusted By Section */}
-              <div className="w-full relative max-w-full overflow-hidden">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Trusted by 1000+ enterprises and 7 lakh+ MSMEs for hiring</p>
-                
+            </div>
+
+            {/* Right Graphic Section */}
+            <div className="w-full lg:w-[45%] mt-12 lg:mt-0 relative flex justify-center lg:justify-end">
+               <div className="relative w-full max-w-[500px]">
+                  {/* Abstract Background Effect */}
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-[#e49d04]/10 to-transparent rounded-full blur-[60px] animate-pulse" style={{ animationDuration: '6s' }}></div>
+                  
+                  {/* Abstract SVG Blob */}
+                  <svg className="absolute top-0 -right-10 w-full h-full text-[#e49d04]/5 transform -rotate-6 scale-110" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="currentColor" d="M44.7,-76.4C58.8,-69.2,71.8,-59.1,81.3,-46.3C90.8,-33.5,96.8,-18,97.7,-2.1C98.6,13.8,94.4,30.1,84.7,42.7C75.1,55.3,60,64.2,45.2,72.1C30.4,80,15.2,86.9,-0.6,88C-16.4,89.1,-32.8,84.4,-47.5,76.1C-62.2,67.8,-75.2,55.9,-83.4,41.6C-91.6,27.3,-95,10.6,-92.9,-5.3C-90.8,-21.2,-83.2,-36.3,-72.6,-48C-62,-59.7,-48.4,-68.1,-34.5,-75.1C-20.6,-82.1,-10.3,-87.7,2.3,-91.6C14.9,-95.5,29.8,-93.7,44.7,-76.4Z" transform="translate(100 100)" />
+                  </svg>
+                  
+                  {/* Hero Image */}
+                  <img 
+                    src="/HeroSection.png" 
+                    alt="Click4Jobs Hero" 
+                    className="relative z-10 w-full object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.2)] transform transition-transform hover:scale-[1.03] duration-700"
+                  />
+               </div>
+            </div>
+          </div>
+          
+          {/* Moving Marquee to bottom of the section in a neat separated banner */}
+          <div className="mt-20 pt-10 border-t border-gray-100">
+             <p className="text-center text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Top Companies Hiring Right Now</p>
+             <div className="w-full relative max-w-full overflow-hidden" style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}>
                 <style>{`
                   @keyframes marquee {
                     0% { transform: translateX(0); }
@@ -183,39 +210,25 @@ const LoginDashboard = () => {
                   }
                 `}</style>
                 
-                <div className="carousel-container overflow-hidden w-full relative" style={{ maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)' }}>
-                  <div className="animate-marquee flex grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                <div className="carousel-container overflow-hidden w-full relative">
+                  <div className="animate-marquee flex grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500 items-center">
                     {[...Array(2)].map((_, i) => (
-                      <div key={i} className="flex items-center justify-center gap-12 md:gap-16 pr-12 md:pr-16 shrink-0">
-                        <img src="https://cdn.worldvectorlogo.com/logos/google-1-1.svg" alt="Google" className="h-6 md:h-8 w-auto object-contain" />
-                        <img src="https://cdn.worldvectorlogo.com/logos/amazon-2.svg" alt="Amazon" className="h-6 md:h-8 w-auto object-contain" />
-                        <img src="https://cdn.worldvectorlogo.com/logos/microsoft-5.svg" alt="Microsoft" className="h-6 md:h-8 w-auto object-contain" />
-                        <img src="https://cdn.worldvectorlogo.com/logos/infosys.svg" alt="Infosys" className="h-6 md:h-8 w-auto object-contain" />
-                        <img src="https://cdn.worldvectorlogo.com/logos/tata-consultancy-services.svg" alt="TCS" className="h-6 md:h-8 w-auto object-contain" />
-                        <img src="https://cdn.worldvectorlogo.com/logos/wipro-logo-new-1.svg" alt="Wipro" className="h-6 md:h-8 w-auto object-contain" />
-                        <img src="https://cdn.worldvectorlogo.com/logos/tech-mahindra-1.svg" alt="Tech Mahindra" className="h-4 md:h-6 w-auto object-contain" />
-                        <img src="https://cdn.worldvectorlogo.com/logos/flipkart.svg" alt="Flipkart" className="h-6 md:h-8 w-auto object-contain" />
-                        <img src="https://cdn.worldvectorlogo.com/logos/ibm.svg" alt="IBM" className="h-6 md:h-8 w-auto object-contain" />
+                      <div key={i} className="flex items-center justify-center gap-12 md:gap-20 pr-12 md:pr-20 shrink-0">
+                        <img src="/hero%20logos/airtel.png" alt="Airtel" className="h-12 md:h-16 w-auto object-contain" />
+                        <img src="/hero%20logos/bajaj.webp" alt="Bajaj" className="h-12 md:h-16 w-auto object-contain" />
+                        <img src="/hero%20logos/flipkart.webp" alt="Flipkart" className="h-20 md:h-28 w-auto object-contain" />
+                        <img src="/hero%20logos/icici.png" alt="ICICI" className="h-20 md:h-28 w-auto object-contain" />
+                        <img src="/hero%20logos/myntra.webp" alt="Myntra" className="h-10 md:h-12 w-auto object-contain" />
+                        <img src="/hero%20logos/reliance.png" alt="Reliance" className="h-7 md:h-8 w-auto object-contain" />
+                        <img src="/hero%20logos/paytm.png" alt="Paytm" className="h-8 md:h-10 w-auto object-contain" />
+                        <img src="/hero%20logos/tcs.png" alt="TCS" className="h-20 md:h-28 w-auto object-contain" />
+                        <img src="/hero%20logos/tech%20mahindra.png" alt="Tech Mahindra" className="h-16 md:h-24 w-auto object-contain" />
+                        <img src="/hero%20logos/zomato.png" alt="Zomato" className="h-20 md:h-28 w-auto object-contain" />
                       </div>
                     ))}
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Right Graphic Section */}
-            <div className="w-full lg:w-2/5 mt-12 lg:mt-0 relative flex justify-center">
-               <div className="relative">
-                  {/* Circle background effect */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-100 rounded-full blur-3xl opacity-50"></div>
-                  {/* Hero Image */}
-                  <img 
-                    src="/HeroSection.png" 
-                    alt="Click4Jobs Hero" 
-                    className="relative z-10 w-full max-w-lg object-contain drop-shadow-2xl"
-                  />
-               </div>
-            </div>
+             </div>
           </div>
         </div>
       </section>
@@ -569,7 +582,7 @@ const LoginDashboard = () => {
               <h2 className="text-3xl font-bold text-[#121212] mb-6 flex items-center gap-3"><FaShieldAlt className="text-[#e49d04]" /> Trust & Safety (Anti-Fraud Policy)</h2>
               <p className="text-gray-600 mb-6"><strong className="text-[#121212]">Your Safety is Our Priority:</strong> Click4Jobs is committed to maintaining a secure and transparent hiring environment. However, the internet requires vigilance. Please adhere to the following safety guidelines:</p>
               <ul className="space-y-4 text-gray-600 text-sm md:text-base leading-relaxed">
-                <li><strong className="text-[#121212]">Never Pay for a Job:</strong> Click4Jobs will never ask candidates for money to register, schedule an interview, or secure a job. If an employer asks you for a "security deposit," "laptop fee," or "training fee," it is a scam. Report them immediately.</li>
+                <li><strong className="text-[#121212]">Never Pay for a Job:</strong> Click4Jobs will never ask candidates for money to register, schedule an interview, or secure a job. If an employer asks you for a "security deposit," "laptop fee," or "training fee," it is a scam. Report them immediately at <a href="mailto:helpdesk@click4jobs.in" className="text-[#e49d04] font-bold hover:underline">helpdesk@click4jobs.in</a>.</li>
                 <li><strong className="text-[#121212]">Verify the Employer:</strong> While we vet companies on our platform, always do your own research before attending an interview or sharing sensitive documents like your Aadhar or PAN card.</li>
                 <li><strong className="text-[#121212]">Secure Communication:</strong> Keep your initial communications on the platform or via official company email addresses. Be wary of employers who insist on conducting all business via personal WhatsApp numbers before an official interview.</li>
               </ul>

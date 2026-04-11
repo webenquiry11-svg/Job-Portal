@@ -113,12 +113,14 @@ const Navbar = () => {
 
           <div className="flex items-center gap-4">
             <button
+              id="nav-signin-btn"
               onClick={() => setShowLoginModal(true)}
               className="text-sm font-bold text-gray-600 hover:text-[#0B0C10] px-2 py-2 transition-colors hidden sm:block"
             >
               Sign In
             </button>
             <button
+              id="nav-signup-btn"
               onClick={() => setShowRegisterModal(true)}
               className="px-6 py-2.5 text-sm font-bold text-[#0B0C10] bg-[#e49d04] rounded-full hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all transform hover:-translate-y-0.5"
             >

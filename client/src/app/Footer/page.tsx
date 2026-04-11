@@ -74,7 +74,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                   <FaEnvelope className="text-[#e49d04] flex-shrink-0 text-base" />
-                  <span>grievance@click4jobs.in</span>
+                  <span>helpdesk@click4jobs.in</span>
               </li>
               <li className="flex items-center gap-3">
                   <FaClock className="text-[#e49d04] flex-shrink-0 text-base" />

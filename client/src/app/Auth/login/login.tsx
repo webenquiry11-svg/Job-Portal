@@ -107,7 +107,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
 
         <p className="mt-8 text-center text-xs text-gray-500">
             Don't have an account?{' '}
-            <button className="font-bold text-[#0F172A] hover:text-[#1E293B] transition-colors">
+            <button type="button" onClick={() => { onClose(); setTimeout(() => document.getElementById('nav-signup-btn')?.click(), 100); }} className="font-bold text-[#0F172A] hover:text-[#1E293B] transition-colors">
             Sign up
             </button>
         </p>
