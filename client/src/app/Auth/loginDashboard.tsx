@@ -49,10 +49,26 @@ const LoginDashboard = () => {
   const realJobsToShow = filteredRealJobs.slice(0, 6);
 
   const dummyJobs = [
-    { _id: 'dummy1', title: 'Senior UI/UX Designer', employerId: { companyName: 'Creative Solutions', name: 'Creative Solutions' }, workMode: 'Remote', location: 'Anywhere, India', salaryMin: 90000, salaryMax: 140000, createdAt: new Date(Date.now() - 86400000).toISOString(), skills: ['Figma', 'UI/UX', 'Prototyping'], },
-    { _id: 'dummy2', title: 'Lead Backend Engineer (Node.js)', employerId: { companyName: 'Innovatech', name: 'Innovatech' }, workMode: 'Hybrid', location: 'Bangalore, IN', salaryMin: 120000, salaryMax: 180000, createdAt: new Date(Date.now() - 2 * 86400000).toISOString(), skills: ['Node.js', 'AWS', 'PostgreSQL'], },
-    { _id: 'dummy3', title: 'Digital Marketing Manager', employerId: { companyName: 'MarketPro', name: 'MarketPro' }, workMode: 'On-site', location: 'Mumbai, IN', salaryMin: 70000, salaryMax: 110000, createdAt: new Date(Date.now() - 3 * 86400000).toISOString(), skills: ['SEO', 'SEM', 'Social Media'], },
-    { _id: 'dummy4', title: 'Data Scientist', employerId: { companyName: 'Data Insights Co.', name: 'Data Insights Co.' }, workMode: 'Remote', location: 'Anywhere, India', salaryMin: 110000, salaryMax: 160000, createdAt: new Date(Date.now() - 4 * 86400000).toISOString(), skills: ['Python', 'ML', 'TensorFlow'], },
+    { 
+      _id: 'dummy1', title: 'Senior UI/UX Designer', employerId: { companyName: 'Creative Solutions', name: 'Creative Solutions' }, workMode: 'Remote', location: 'Anywhere, India', salaryMin: 90000, salaryMax: 140000, createdAt: new Date(Date.now() - 86400000).toISOString(), skills: ['Figma', 'UI/UX', 'Prototyping'],
+      description: 'We are looking for an experienced Senior UI/UX Designer to lead our design system. You will be responsible for creating highly intuitive and visually appealing interfaces for our core products. Must have a strong portfolio demonstrating user-centered design solutions.',
+      experience: '4-6 Years', salaryType: 'Yearly', contactPreference: 'Email', immediateJoiner: true, screeningQuestion: 'Please share a link to your Dribbble/Behance portfolio.'
+    },
+    { 
+      _id: 'dummy2', title: 'Lead Backend Engineer (Node.js)', employerId: { companyName: 'Innovatech', name: 'Innovatech' }, workMode: 'Hybrid', location: 'Bangalore, IN', salaryMin: 120000, salaryMax: 180000, createdAt: new Date(Date.now() - 2 * 86400000).toISOString(), skills: ['Node.js', 'AWS', 'PostgreSQL'],
+      description: 'Join our engineering team to architect and scale our backend infrastructure. You will work on microservices, optimize database queries, and ensure system reliability for millions of requests per day.',
+      experience: '5+ Years', salaryType: 'Yearly', contactPreference: 'Phone', immediateJoiner: false
+    },
+    { 
+      _id: 'dummy3', title: 'Digital Marketing Manager', employerId: { companyName: 'MarketPro', name: 'MarketPro' }, workMode: 'On-site', location: 'Mumbai, IN', salaryMin: 70000, salaryMax: 110000, createdAt: new Date(Date.now() - 3 * 86400000).toISOString(), skills: ['SEO', 'SEM', 'Social Media'],
+      description: 'Drive our digital presence by managing SEO, SEM, and social media campaigns. You will analyze performance metrics, optimize conversion rates, and collaborate with the content team to boost brand awareness.',
+      experience: '3-5 Years', salaryType: 'Monthly', contactPreference: 'Email', immediateJoiner: true, screeningQuestion: 'What is the largest marketing budget you have managed?'
+    },
+    { 
+      _id: 'dummy4', title: 'Data Scientist', employerId: { companyName: 'Data Insights Co.', name: 'Data Insights Co.' }, workMode: 'Remote', location: 'Anywhere, India', salaryMin: 110000, salaryMax: 160000, createdAt: new Date(Date.now() - 4 * 86400000).toISOString(), skills: ['Python', 'ML', 'TensorFlow'],
+      description: 'We are seeking a Data Scientist to build predictive models and extract actionable insights from large datasets. You should have strong mathematical fundamentals and proficiency in machine learning frameworks.',
+      experience: '2-4 Years', salaryType: 'Yearly', contactPreference: 'Email', immediateJoiner: false
+    },
   ];
 
   let displayJobs = [...realJobsToShow];

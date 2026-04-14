@@ -69,11 +69,11 @@ const Footer = () => {
             <h4 className="text-sm font-bold text-[#121212] uppercase tracking-wider mb-6">Stay Connected</h4>
             <ul className="space-y-4 text-sm text-gray-500 font-medium mb-8">
               <li className="flex items-center gap-3">
-                  <FaEnvelope className="text-[#e49d04] flex-shrink-0 text-base" />
+                  <FaEnvelope className="text-[#e49d04] shrink-0 text-base" />
                   <span>helpdesk@click4jobs.in</span>
               </li>
               <li className="flex items-center gap-3">
-                  <FaClock className="text-[#e49d04] flex-shrink-0 text-base" />
+                  <FaClock className="text-[#e49d04] shrink-0 text-base" />
                   <span>Mon - Fri (9:00 AM to 6:00 PM IST)</span>
               </li>
             </ul>

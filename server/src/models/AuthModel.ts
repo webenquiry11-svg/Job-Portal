@@ -42,7 +42,7 @@ const authSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String }, // Optional at DB level to cleanly allow OAuth logins
-  role: { type: String, enum: ['seeker', 'employer'], required: true },
+  role: { type: String, enum: ['seeker', 'employer', 'admin'], required: true },
   
   // Common fields
   phone: { type: String },

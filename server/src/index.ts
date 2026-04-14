@@ -15,7 +15,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as MicrosoftStrategy } from 'passport-microsoft';
 import jwt from 'jsonwebtoken';
 import AuthModel from './models/AuthModel';
-import { sendWelcomeEmail } from './utils/mailer';
+import { sendWelcomeEmail, sendOtpEmail } from './utils/mailer';
 import https from 'https';
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
@@ -192,6 +192,84 @@ app.post('/auth/google/onetap', (req: Request, res: Response): any => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Server error during One Tap login' });
+  }
+});
+
+// --- Admin Setup & Verification Routes ---
+// Mounted before `app.use('/api', apiRouter)` to solve the 404 Route Not Found bug
+app.get(['/api/auth/check-admin', '/auth/check-admin'], async (req: Request, res: Response) => {
+  try {
+    const count = await AuthModel.countDocuments({ role: 'admin' });
+    res.status(200).json({ hasAdmin: count > 0 });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to check admin status' });
+  }
+});
+
+app.post(['/api/auth/setup-admin', '/auth/setup-admin'], async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { email, password } = req.body;
+    const count = await AuthModel.countDocuments({ role: 'admin' });
+    if (count > 0) return res.status(403).json({ message: 'Admin account already exists.' });
+
+    let hashedPassword = password;
+    try { 
+      const bcrypt = require('bcryptjs'); 
+      hashedPassword = await bcrypt.hash(password, 10); 
+    } catch (e) {
+      try { const bcrypt = require('bcrypt'); hashedPassword = await bcrypt.hash(password, 10); } 
+      catch (e2) { console.warn('No bcrypt installed. Using fallback.'); }
+    }
+
+    const admin = await AuthModel.create({ name: 'Super Admin', email, password: hashedPassword, role: 'admin', isEmailVerified: true });
+    res.status(201).json({ message: 'Admin account created successfully.', admin });
+  } catch (error) {
+    res.status(500).json({ error: 'Admin setup failed' });
+  }
+});
+
+app.post(['/api/auth/admin-forgot-password', '/auth/admin-forgot-password'], async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { email } = req.body;
+    const admin = await AuthModel.findOne({ email, role: 'admin' });
+    if (!admin) return res.status(404).json({ message: 'Admin not found or invalid email.' });
+    
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    admin.emailOtp = otp;
+    await admin.save();
+    
+    await sendOtpEmail(admin.email, otp);
+    return res.status(200).json({ message: 'OTP sent to admin email.' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Failed to process forgot password.' });
+  }
+});
+
+app.post(['/api/auth/admin-reset-password', '/auth/admin-reset-password'], async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { oldEmail, otp, newEmail, newPassword } = req.body;
+    const admin = await AuthModel.findOne({ email: oldEmail, role: 'admin' });
+    
+    if (!admin) return res.status(404).json({ message: 'Admin not found.' });
+    if (admin.emailOtp !== otp) return res.status(400).json({ message: 'Invalid or expired OTP.' });
+    
+    let hashedPassword = newPassword;
+    try { 
+      const bcrypt = require('bcryptjs'); 
+      hashedPassword = await bcrypt.hash(newPassword, 10); 
+    } catch (e) {
+      try { const bcrypt = require('bcrypt'); hashedPassword = await bcrypt.hash(newPassword, 10); } 
+      catch (e2) { console.warn('No bcrypt installed. Using fallback.'); }
+    }
+    
+    admin.email = newEmail || oldEmail;
+    admin.password = hashedPassword;
+    admin.emailOtp = ''; // Clear OTP after success
+    await admin.save();
+    
+    return res.status(200).json({ message: 'Admin credentials updated successfully.' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Failed to reset credentials.' });
   }
 });
 

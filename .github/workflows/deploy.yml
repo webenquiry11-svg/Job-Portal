@@ -15,18 +15,23 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            # 1. Ensure the shell uses the new Node and PM2 paths
+            export PATH=/usr/local/bin:/root/.nvm/versions/node/v22.19.0/bin:$PATH
+            
             cd /var/www/click4jobs
             git pull origin main
             
-            # Build and Restart Backend
+            # 2. Build and Restart Backend
             cd server
             npm install
             npm run build
-            pm2 restart click4jobs-api --update-env
+            # Using the absolute path we found earlier
+            pm2 restart click4jobs-api --update-env || pm2 start dist/index.js --name click4jobs-api
             
-            # Build Frontend
+            # 3. Build Frontend
             cd ../client
             npm install
             npm run build
+            # Sync permissions for Nginx
             sudo chown -R www-data:www-data out
             sudo chmod -R 755 out
