@@ -1,0 +1,32 @@
+name: Deploy Click4Jobs
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/click4jobs
+            git pull origin main
+            
+            # Build and Restart Backend
+            cd server
+            npm install
+            npm run build
+            pm2 restart click4jobs-api --update-env
+            
+            # Build Frontend
+            cd ../client
+            npm install
+            npm run build
+            sudo chown -R www-data:www-data out
+            sudo chmod -R 755 out
