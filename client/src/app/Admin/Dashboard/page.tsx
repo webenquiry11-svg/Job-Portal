@@ -13,7 +13,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn');
-    if (!isAdminLoggedIn) router.push('/Admin');
+    if (!isAdminLoggedIn) router.push('/admin');
   }, [router]);
 
   const { data: users = [], isLoading: isUsersLoading } = useGetAllUsersForAdminQuery();
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('isAdminLoggedIn');
-    router.push('/Admin');
+    router.push('/admin');
     toast.success('Admin logged out securely.');
   };
 

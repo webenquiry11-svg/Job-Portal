@@ -45,7 +45,7 @@ export default function AdminGate() {
       if (result.result.role === 'admin') {
         localStorage.setItem('isAdminLoggedIn', 'true');
         toast.success('Admin authentication successful');
-        router.push('/Admin/Dashboard');
+        router.push('/admin/dashboard');
       } else {
         toast.error('Unauthorized. Master Admin access only.');
       }
