@@ -52,7 +52,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
 
     try {
       const result = await register({ ...formData, role }).unwrap();
-      let finalProfileData = { ...result };
+      
+      // Normalize backend response to always have the 'result' key for consistency
+      const normalizedUser = result.result || result.user || result;
+      let finalProfileData = { ...result, result: normalizedUser };
       
       // Token ko pehle hi save karein taaki resume upload ki request authenticate ho sake
       localStorage.setItem('profile', JSON.stringify(finalProfileData));

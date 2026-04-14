@@ -93,7 +93,7 @@ const EmployerDashboard = () => {
     if (profile) {
       try {
         const parsedProfile = JSON.parse(profile);
-        const userData = parsedProfile.result || parsedProfile;
+        const userData = parsedProfile.result || parsedProfile.user || parsedProfile;
 
         if (userData.role !== "employer") {
           router.push("/"); // Redirect if not an employer
