@@ -68,27 +68,12 @@ passport.use(new GoogleStrategy({
     try {
       const email = profile.emails?.[0].value;
       let user = await AuthModel.findOne({ email });
-      let isNewUser = false;
       if (!user) {
-        isNewUser = true;
-        console.log("👉 Creating new Google OAuth user...");
-        user = await AuthModel.create({
-          name: profile.displayName,
-          email: email,
-          role: 'seeker',
-          googleId: profile.id,
-          isEmailVerified: true,
-          profilePicture: profile.photos?.[0]?.value
-        });
+        console.log("👉 Login rejected: Account does not exist.");
+        return done(new Error("Account not found. Please sign up using the registration form first."), false);
       } else if (!user.googleId) {
         console.log("👉 Linking Google account to existing user...");
         await AuthModel.findByIdAndUpdate(user._id, { googleId: profile.id });
-      }
-      if (!user) {
-        return done(new Error("User authentication failed."), false);
-      }
-      if (isNewUser) {
-        try { await sendWelcomeEmail(user.email, user.name, user.role); } catch (err) { console.error('Failed to send welcome email:', err); }
       }
       const token = jwt.sign({ email: user.email, id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
       return done(null, { user: user.toObject ? user.toObject() : user, token });
@@ -109,26 +94,12 @@ passport.use(new MicrosoftStrategy({
     try {
       const email = profile.emails?.[0]?.value || profile._json?.userPrincipalName;
       let user = await AuthModel.findOne({ email });
-      let isNewUser = false;
       if (!user) {
-        isNewUser = true;
-        console.log("👉 Creating new Microsoft OAuth user...");
-        user = await AuthModel.create({
-          name: profile.displayName,
-          email: email,
-          role: 'seeker',
-          microsoftId: profile.id,
-          isEmailVerified: true
-        });
+        console.log("👉 Login rejected: Account does not exist.");
+        return done(new Error("Account not found. Please sign up using the registration form first."), false);
       } else if (!user.microsoftId) {
         console.log("👉 Linking Microsoft account to existing user...");
         await AuthModel.findByIdAndUpdate(user._id, { microsoftId: profile.id });
-      }
-      if (!user) {
-        return done(new Error("User authentication failed."), false);
-      }
-      if (isNewUser) {
-        try { await sendWelcomeEmail(user.email, user.name, user.role); } catch (err) { console.error('Failed to send welcome email:', err); }
       }
       const token = jwt.sign({ email: user.email, id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
       return done(null, { user: user.toObject ? user.toObject() : user, token });
@@ -158,26 +129,13 @@ app.post('/auth/google/onetap', (req: Request, res: Response): any => {
 
           const email = profile.email;
           let user = await AuthModel.findOne({ email });
-          let isNewUser = false;
           
           if (!user) {
-            isNewUser = true;
-            console.log("👉 Creating new Google One Tap user...");
-            user = await AuthModel.create({
-              name: profile.name,
-              email: email,
-              role: 'seeker',
-              googleId: profile.sub,
-              isEmailVerified: true,
-              profilePicture: profile.picture
-            });
+            console.log("👉 One Tap rejected: Account does not exist.");
+            return res.status(404).json({ message: 'Account not found. Please sign up using the registration form first.' });
           } else if (!user.googleId) {
             console.log("👉 Linking Google account to existing user...");
             await AuthModel.findByIdAndUpdate(user._id, { googleId: profile.sub });
-          }
-
-          if (isNewUser) {
-            try { await sendWelcomeEmail(user.email, user.name, user.role); } catch (err) { console.error('Failed to send welcome email:', err); }
           }
 
           const token = jwt.sign({ email: user.email, id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
@@ -196,8 +154,8 @@ app.post('/auth/google/onetap', (req: Request, res: Response): any => {
 });
 
 // --- Admin Setup & Verification Routes ---
-// Mounted before `app.use('/api', apiRouter)` to solve the 404 Route Not Found bug
-app.get(['/api/auth/check-admin', '/auth/check-admin'], async (req: Request, res: Response) => {
+// Using a completely unique prefix attached directly to 'app' to avoid ALL routing conflicts
+app.get('/api/admin-system/check', async (req: Request, res: Response) => {
   try {
     const count = await AuthModel.countDocuments({ role: 'admin' });
     res.status(200).json({ hasAdmin: count > 0 });
@@ -206,11 +164,11 @@ app.get(['/api/auth/check-admin', '/auth/check-admin'], async (req: Request, res
   }
 });
 
-app.post(['/api/auth/setup-admin', '/auth/setup-admin'], async (req: Request, res: Response): Promise<any> => {
+app.post('/api/admin-system/setup', async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     const count = await AuthModel.countDocuments({ role: 'admin' });
-    if (count > 0) return res.status(403).json({ message: 'Admin account already exists.' });
+    if (count > 0) { res.status(403).json({ message: 'Admin account already exists.' }); return; }
 
     let hashedPassword = password;
     try { 
@@ -228,30 +186,30 @@ app.post(['/api/auth/setup-admin', '/auth/setup-admin'], async (req: Request, re
   }
 });
 
-app.post(['/api/auth/admin-forgot-password', '/auth/admin-forgot-password'], async (req: Request, res: Response): Promise<any> => {
+app.post('/api/admin-system/forgot-password', async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
     const admin = await AuthModel.findOne({ email, role: 'admin' });
-    if (!admin) return res.status(404).json({ message: 'Admin not found or invalid email.' });
+    if (!admin) { res.status(404).json({ message: 'Admin not found or invalid email.' }); return; }
     
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     admin.emailOtp = otp;
     await admin.save();
     
     await sendOtpEmail(admin.email, otp);
-    return res.status(200).json({ message: 'OTP sent to admin email.' });
+    res.status(200).json({ message: 'OTP sent to admin email.' });
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to process forgot password.' });
+    res.status(500).json({ message: 'Failed to process forgot password.' });
   }
 });
 
-app.post(['/api/auth/admin-reset-password', '/auth/admin-reset-password'], async (req: Request, res: Response): Promise<any> => {
+app.post('/api/admin-system/reset-password', async (req: Request, res: Response) => {
   try {
     const { oldEmail, otp, newEmail, newPassword } = req.body;
     const admin = await AuthModel.findOne({ email: oldEmail, role: 'admin' });
     
-    if (!admin) return res.status(404).json({ message: 'Admin not found.' });
-    if (admin.emailOtp !== otp) return res.status(400).json({ message: 'Invalid or expired OTP.' });
+    if (!admin) { res.status(404).json({ message: 'Admin not found.' }); return; }
+    if (admin.emailOtp !== otp) { res.status(400).json({ message: 'Invalid or expired OTP.' }); return; }
     
     let hashedPassword = newPassword;
     try { 
@@ -267,9 +225,9 @@ app.post(['/api/auth/admin-reset-password', '/auth/admin-reset-password'], async
     admin.emailOtp = ''; // Clear OTP after success
     await admin.save();
     
-    return res.status(200).json({ message: 'Admin credentials updated successfully.' });
+    res.status(200).json({ message: 'Admin credentials updated successfully.' });
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to reset credentials.' });
+    res.status(500).json({ message: 'Failed to reset credentials.' });
   }
 });
 
