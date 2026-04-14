@@ -117,10 +117,25 @@ const EmployerDashboard = () => {
 
   if (isLoading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="h-12 w-12 bg-slate-200 rounded-full mb-4"></div>
-          <div className="h-4 w-32 bg-gray-300 rounded"></div>
+      <div className="flex min-h-screen bg-gray-50 font-sans">
+        <div className="hidden md:flex w-72 bg-white border-r border-gray-100 flex-col z-40">
+          <div className="p-6 h-20 flex items-center border-b border-gray-50"><div className="w-32 h-8 bg-gray-200 rounded-lg animate-pulse"></div></div>
+          <div className="p-4 space-y-3 mt-4">
+            {[...Array(6)].map((_, i) => <div key={i} className="h-12 w-full bg-gray-100 rounded-xl animate-pulse"></div>)}
+          </div>
+        </div>
+        <div className="flex-1 flex flex-col min-w-0">
+          <div className="h-20 bg-white border-b border-gray-200/50 flex items-center justify-between px-6 lg:px-10">
+            <div className="w-48 h-8 bg-gray-200 rounded-lg animate-pulse"></div>
+            <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
+          </div>
+          <div className="p-6 lg:p-10 space-y-8">
+            <div className="w-64 h-10 bg-gray-200 rounded-lg animate-pulse"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-white rounded-3xl border border-gray-100 animate-pulse"></div>)}
+            </div>
+            <div className="h-80 bg-white rounded-3xl border border-gray-100 animate-pulse mt-8"></div>
+          </div>
         </div>
       </div>
     );

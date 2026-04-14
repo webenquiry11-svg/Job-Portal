@@ -23,8 +23,25 @@ const AdminDashboard = () => {
 
   if (isUsersLoading || isJobsLoading || isGstLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <FaSpinner className="animate-spin text-4xl text-gray-500" />
+      <div className="flex min-h-screen bg-gray-50 font-sans">
+        <div className="hidden md:flex w-72 bg-white border-r border-gray-100 flex-col z-40">
+          <div className="p-8 flex items-center gap-3 border-b border-gray-100"><div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div><div className="w-32 h-6 bg-gray-200 rounded-md animate-pulse"></div></div>
+          <div className="p-4 space-y-3 mt-4">
+            {[...Array(5)].map((_, i) => <div key={i} className="h-12 w-full bg-gray-100 rounded-xl animate-pulse"></div>)}
+          </div>
+        </div>
+        <div className="flex-1 flex flex-col min-w-0">
+          <div className="h-[73px] bg-white border-b border-gray-200 flex items-center justify-between px-6 lg:px-8">
+            <div className="w-40 h-8 bg-gray-200 rounded-lg animate-pulse"></div>
+            <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
+          </div>
+          <div className="p-4 md:p-8 space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-white rounded-3xl border border-gray-100 animate-pulse"></div>)}
+            </div>
+            <div className="h-64 bg-white rounded-3xl border border-gray-100 animate-pulse mt-8"></div>
+          </div>
+        </div>
       </div>
     );
   }
