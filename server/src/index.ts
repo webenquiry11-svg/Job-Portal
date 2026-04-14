@@ -153,39 +153,6 @@ app.post('/auth/google/onetap', (req: Request, res: Response): any => {
   }
 });
 
-// --- Admin Setup & Verification Routes ---
-// Using a completely unique prefix attached directly to 'app' to avoid ALL routing conflicts
-app.get('/api/admin-system/check', async (req: Request, res: Response) => {
-  try {
-    const count = await AuthModel.countDocuments({ role: 'admin' });
-    res.status(200).json({ hasAdmin: count > 0 });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to check admin status' });
-  }
-});
-
-app.post('/api/admin-system/setup', async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
-    const count = await AuthModel.countDocuments({ role: 'admin' });
-    if (count > 0) { res.status(403).json({ message: 'Admin account already exists.' }); return; }
-
-    let hashedPassword = password;
-    try { 
-      const bcrypt = require('bcryptjs'); 
-      hashedPassword = await bcrypt.hash(password, 10); 
-    } catch (e) {
-      try { const bcrypt = require('bcrypt'); hashedPassword = await bcrypt.hash(password, 10); } 
-      catch (e2) { console.warn('No bcrypt installed. Using fallback.'); }
-    }
-
-    const admin = await AuthModel.create({ name: 'Super Admin', email, password: hashedPassword, role: 'admin', isEmailVerified: true });
-    res.status(201).json({ message: 'Admin account created successfully.', admin });
-  } catch (error) {
-    res.status(500).json({ error: 'Admin setup failed' });
-  }
-});
-
 app.post('/api/admin-system/forgot-password', async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
@@ -285,7 +252,27 @@ if (!process.env.MICROSOFT_CLIENT_ID || !process.env.MICROSOFT_CLIENT_SECRET) {
 }
 
 mongoose.connect(CONNECTION_URL)
-  .then(() => {
+  .then(async () => {
+    // Automatically seed the default Master Admin if it doesn't exist
+    try {
+      const adminCount = await AuthModel.countDocuments({ role: 'admin' });
+      if (adminCount === 0) {
+        let bcrypt;
+        try { bcrypt = require('bcryptjs'); } catch(e) { bcrypt = require('bcrypt'); }
+        const hashedPassword = await bcrypt.hash('Admin@123', 10);
+        await AuthModel.create({
+          name: 'Super Admin',
+          email: 'ayushsharma.starpublicity@gmail.com',
+          password: hashedPassword,
+          role: 'admin',
+          isEmailVerified: true
+        });
+        console.log('✅ Default Master Admin seeded successfully (ayushsharma.starpublicity@gmail.com)');
+      }
+    } catch (seedErr) {
+      console.error('Failed to seed default admin:', seedErr);
+    }
+
     startCronJobs(); // Initialize the Daily Job Alert worker
     app.listen(PORT, () => {
     console.log(`

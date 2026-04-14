@@ -17,7 +17,6 @@ const getApiUrl = () => {
 };
 
 export default function AdminGate() {
-  const [hasAdmin, setHasAdmin] = useState<boolean | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
@@ -39,23 +38,6 @@ export default function AdminGate() {
     return await fetch(`${baseUrl}/api/admin-system/${action}`, options);
   };
 
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      try {
-        const res = await fetchAdminApi('check');
-        if (res && res.ok) {
-          const data = await res.json();
-          setHasAdmin(data.hasAdmin);
-        } else {
-          setHasAdmin(false); // Show the UI for Creating Email and Password seamlessly
-        }
-      } catch (error) {
-        setHasAdmin(false);
-      }
-    };
-    checkAdminStatus();
-  }, []);
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -69,40 +51,6 @@ export default function AdminGate() {
       }
     } catch (err: any) {
       toast.error(err?.data?.message || 'Invalid master credentials');
-    }
-  };
-
-  const handleSetup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await fetchAdminApi('setup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      
-      if (res && res.ok) {
-        toast.success('Admin created successfully! Logging you in...');
-        
-        // Auto-login immediately after creation
-        try {
-          const result = await login({ email, password }).unwrap();
-          if (result.result.role === 'admin') {
-            localStorage.setItem('isAdminLoggedIn', 'true');
-            router.push('/Admin/Dashboard');
-          }
-        } catch (loginErr) {
-          setHasAdmin(true);
-          toast.error('Created, but auto-login failed. Please log in manually.');
-        }
-      } else if (res && res.status === 404) {
-        toast.error('Backend server issue. Please ensure the backend is running.');
-      } else {
-        const data = await res?.json().catch(() => ({}));
-        toast.error(data.message || 'Setup failed');
-      }
-    } catch (err) {
-      toast.error('Network Error');
     }
   };
 
@@ -163,14 +111,6 @@ export default function AdminGate() {
   // Input Styling
   const inputClass = "mt-1 w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#0F172A] transition-all duration-200 text-sm";
 
-  if (hasAdmin === null) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
-        <div className="w-12 h-12 border-4 border-[#e49d04] border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background Decor */}
@@ -182,8 +122,8 @@ export default function AdminGate() {
           <div className="mx-auto w-16 h-16 bg-[#0B0C10] rounded-2xl flex items-center justify-center text-[#e49d04] mb-4 shadow-lg">
              <FaUserShield size={28} />
           </div>
-          <h2 className="text-3xl font-black text-[#121212] tracking-tight">{isForgotPassword ? 'Reset Credentials' : hasAdmin ? 'Admin Portal' : 'Initialize Admin'}</h2>
-          <p className="text-sm text-gray-500 mt-2">{isForgotPassword ? 'Verify OTP to update your master email and password.' : hasAdmin ? 'Secure access for authorized personnel only.' : 'No admin found. Set up the master credentials.'}</p>
+          <h2 className="text-3xl font-black text-[#121212] tracking-tight">{isForgotPassword ? 'Reset Credentials' : 'Admin Portal'}</h2>
+          <p className="text-sm text-gray-500 mt-2">{isForgotPassword ? 'Verify OTP to update your master email and password.' : 'Secure access for authorized personnel only.'}</p>
         </div>
 
         {isForgotPassword ? (
@@ -224,7 +164,7 @@ export default function AdminGate() {
             )}
           </form>
         ) : (
-          <form onSubmit={hasAdmin ? handleLogin : handleSetup} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-6">
             <div className="relative">
               <FaEnvelope className="absolute top-3.5 left-3.5 text-gray-400" />
               <input type="email" placeholder="Admin Email" required className={inputClass} value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -233,11 +173,9 @@ export default function AdminGate() {
               <FaLock className="absolute top-3.5 left-3.5 text-gray-400" />
               <input type="password" placeholder="Secure Password" required className={inputClass} value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
-            {hasAdmin && (
-             <div className="flex justify-end"><button type="button" onClick={() => setIsForgotPassword(true)} className="text-xs font-bold text-[#e49d04] hover:text-[#cc8c03]">Forgot password?</button></div>
-            )}
-            <button type="submit" disabled={isLoggingIn} className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-[#0B0C10] hover:bg-[#1E293B] focus:outline-none transition-all duration-200 transform hover:-translate-y-0.5">
-              {hasAdmin ? (isLoggingIn ? 'Verifying...' : 'Secure Login') : 'Create Master Admin'}
+            <div className="flex justify-end"><button type="button" onClick={() => setIsForgotPassword(true)} className="text-xs font-bold text-[#e49d04] hover:text-[#cc8c03]">Forgot password?</button></div>
+            <button type="submit" disabled={isLoggingIn} className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-[#0B0C10] hover:bg-[#1E293B] focus:outline-none transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50">
+              {isLoggingIn ? 'Verifying...' : 'Secure Login'}
             </button>
           </form>
         )}
