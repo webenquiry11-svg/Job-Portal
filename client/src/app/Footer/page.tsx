@@ -10,7 +10,15 @@ const Footer = () => {
   const pathname = usePathname();
   const [email, setEmail] = useState('');
 
-  if (pathname?.toLowerCase().startsWith('/admin') || pathname?.toLowerCase().includes('privacy')) {
+  if (
+    pathname?.toLowerCase().startsWith('/admin') || 
+    pathname?.toLowerCase().includes('privacy') ||
+    pathname?.toLowerCase().startsWith('/employer/dashboard') ||
+    pathname?.toLowerCase().startsWith('/candidate/dashboard') ||
+    pathname?.toLowerCase().startsWith('/condidate/dashboard') ||
+    pathname?.toLowerCase().startsWith('/dashboard') ||
+    pathname?.toLowerCase().startsWith('/employer-profile')
+  ) {
     return null;
   }
 
