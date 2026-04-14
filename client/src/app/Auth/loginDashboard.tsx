@@ -83,6 +83,19 @@ const LoginDashboard = () => {
   // Intercept the token coming back from Passport.js Redirect
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // Auto-redirect lowercase URLs to match the exact case of the folders
+      const currentPath = window.location.pathname;
+      if (currentPath === '/admin') {
+        window.location.replace('/Admin');
+        return;
+      } else if (currentPath.toLowerCase() === '/admin/dashboard' && currentPath !== '/Admin/Dashboard') {
+        window.location.replace('/Admin/Dashboard');
+        return;
+      } else if (currentPath.toLowerCase() === '/candidate/dashboard' && currentPath !== '/Candidate/Dashboard') {
+        window.location.replace('/Candidate/Dashboard');
+        return;
+      }
+
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
       const userStr = urlParams.get('user');
