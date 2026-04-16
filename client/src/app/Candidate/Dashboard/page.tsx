@@ -2624,7 +2624,6 @@ const InteractiveJobMap = ({
         const L =
           (await import("leaflet")).default || (await import("leaflet"));
         const RL = await import("react-leaflet");
-        await import("leaflet/dist/leaflet.css");
 
         if (!isMounted) return;
 
