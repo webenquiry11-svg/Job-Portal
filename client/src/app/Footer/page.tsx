@@ -59,7 +59,9 @@ const Footer = () => {
           
           {/* Company Identity */}
           <div className="lg:col-span-4">
-            <img src="/Click4Jobs Logo.png" alt="Click4Jobs" className="h-10 w-auto mb-8 hover:opacity-80 transition-opacity" />
+            <div className="h-10 mb-8 flex items-center overflow-hidden">
+              <img src="/Click4Jobs Logo.png" alt="Click4Jobs" className="h-[200px] w-auto hover:opacity-80 transition-opacity" />
+            </div>
             <p className="text-gray-500 text-lg leading-relaxed mb-8 pr-4">
               Click4Jobs is India's most trusted recruitment ecosystem, utilizing AI-driven matching to connect top-tier talent with industry leaders.
             </p>
