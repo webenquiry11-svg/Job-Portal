@@ -3,7 +3,7 @@
 // @ts-ignore
 import 'leaflet/dist/leaflet.css';
 import React, { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { 
   FaBriefcase, 
   FaBookmark, 
@@ -29,7 +29,12 @@ import {
   FaCheck,
   FaPaperPlane,
   FaCommentDots,
-  FaCheckDouble
+  FaCheckDouble,
+  FaMap,
+  FaList,
+  FaFileAlt,
+  FaUser,
+  FaHeadset
 } from 'react-icons/fa';
 import { MdDashboard, MdMenu, MdMessage, MdSettings } from 'react-icons/md';
 import CandidateProfile from '../CandidateProfile/page';
@@ -45,9 +50,8 @@ import {
 } from '@/features/jobapi';
 import { useToggleFollowCompanyMutation, useUpdateProfileMutation } from '@/features/authApi';
 import { useGetMessagesQuery, useSendMessageMutation, useMarkAsSeenMutation, useGetConversationsQuery, useGetUnreadMessageCountQuery } from '@/features/chatApi';
+import { useRouter } from 'next/navigation';
 
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import L from 'leaflet';
 const CandidateDashboard = () => {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
@@ -70,7 +74,11 @@ const CandidateDashboard = () => {
   const [jobToApply, setJobToApply] = useState<any>(null);
   const [selectedMessageUser, setSelectedMessageUser] = useState<any>(null);
   const [applicationFilter, setApplicationFilter] = useState('All');
+  const [exploreViewMode, setExploreViewMode] = useState<'list' | 'map'>('map');
 
+  const [smartApplyData, setSmartApplyData] = useState<{city: string, roles: number} | null>(null);
+  const [pendingSmartApplyPin, setPendingSmartApplyPin] = useState<{name: string, jobs: number} | null>(null);
+  
   const [isClient, setIsClient] = useState(false);
   const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery();
   const { data: notifications = [] } = useGetNotificationsQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
@@ -125,6 +133,18 @@ const CandidateDashboard = () => {
       toast.success('Job removed from saved list');
     } else {
       toast.success('Job saved successfully!');
+    }
+  };
+
+  const handleSmartApply = (pin: {name: string, jobs: number}) => {
+    if (user?.resume) {
+        // If resume exists, show success modal directly
+        setSmartApplyData({ city: pin.name, roles: pin.jobs });
+    } else {
+        // If no resume, store the pin info and open the resume upload modal
+        setPendingSmartApplyPin(pin);
+        setJobToApply(null); // No specific job for this flow
+        setIsResumeModalOpen(true);
     }
   };
 
@@ -449,30 +469,112 @@ const CandidateDashboard = () => {
 
           {activeTab === 'explore' && (
             <div className="space-y-6 animate-fade-in-up">
-              <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold text-[#121212]">Explore All Jobs</h2>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-3xl font-bold text-[#121212]">Explore All Jobs</h2>
+                  <p className="text-sm text-gray-500 mt-1">Discover opportunities by category or interactive map</p>
+                </div>
+                <div className="flex bg-gray-100 p-1 rounded-xl w-full sm:w-auto shrink-0">
+                  <button onClick={() => setExploreViewMode('map')} className={`flex-1 sm:flex-none px-6 py-2.5 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${exploreViewMode === 'map' ? 'bg-[#0B0C10] shadow-sm text-[#e49d04]' : 'text-gray-500 hover:text-[#121212]'}`}><FaMap /> Map View</button>
+                  <button onClick={() => setExploreViewMode('list')} className={`flex-1 sm:flex-none px-6 py-2.5 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${exploreViewMode === 'list' ? 'bg-white shadow-sm text-[#0B0C10]' : 'text-gray-500 hover:text-[#121212]'}`}><FaList /> List View</button>
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
-                {isLoadingJobs ? (
-                  <p className="text-sm text-gray-500 animate-pulse col-span-full">Loading jobs...</p>
-                ) : filteredJobs.length > 0 ? (
-                  filteredJobs.map((job: any) => (
-                    <RecommendedJobCard 
-                      key={job._id}
-                      job={job}
-                      onViewDetails={() => setSelectedJob(job)}
-                      isSaved={savedJobIds.includes(job._id)}
-                      onToggleSave={() => toggleSaveJob(job._id)}
-                      onViewCompany={(id: string) => setSelectedCompanyId(id)}
-                    />
-                  ))
+
+              {/* Category Slider inside Explore Jobs */}
+              <div className="category-carousel-container flex flex-col gap-4 relative w-full overflow-hidden py-2" style={{ maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)' }}>
+                <style>{`
+                  @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+                  @keyframes scroll-right { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+                  .animate-scroll-left { animation: scroll-left 40s linear infinite; width: max-content; }
+                  .animate-scroll-right { animation: scroll-right 40s linear infinite; width: max-content; }
+                  .category-carousel-container:hover .animate-scroll-left, .category-carousel-container:hover .animate-scroll-right { animation-play-state: paused; }
+                `}</style>
+                <div className="animate-scroll-right flex gap-4">
+                  {[...Array(4)].map((_, arrayIndex) => (
+                    <div key={arrayIndex} className="flex gap-4 shrink-0">
+                      {[
+                        { name: 'Housekeeping', count: '360 openings', icon: <FaBuilding /> },
+                        { name: 'Computer / Data Entry', count: '309 openings', icon: <FaFileAlt /> },
+                        { name: 'Hospitality/ Hotel/ Event', count: '301 openings', icon: <FaUsers /> },
+                        { name: 'Graphic Designer', count: '275 openings', icon: <FaFileAlt /> },
+                        { name: 'Office Help / Peon', count: '247 openings', icon: <FaBriefcase /> },
+                      ].map((cat, idx) => (
+                        <div key={idx} onClick={() => { setSearchQuery(cat.name); setExploreViewMode('list'); }} className="flex items-center p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-72 shrink-0">
+                            <div className="w-10 h-10 shrink-0 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100 group-hover:bg-[#e49d04]/10 group-hover:text-[#e49d04] transition-colors">
+                                <div className="text-base">{cat.icon}</div>
+                            </div>
+                            <div className="ml-3 flex-grow min-w-0 text-left">
+                                <h3 className="font-bold text-[#1a1a1a] text-[14px] leading-tight truncate">{cat.name}</h3>
+                                <p className="text-[11px] text-gray-400 mt-0.5 font-medium">{cat.count}</p>
+                            </div>
+                            <div className="ml-2 text-gray-300 group-hover:text-[#e49d04] group-hover:translate-x-1 transition-all">
+                                <FaArrowRight size={12} />
+                            </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+                <div className="animate-scroll-left flex gap-4">
+                  {[...Array(4)].map((_, arrayIndex) => (
+                    <div key={arrayIndex} className="flex gap-4 shrink-0">
+                      {[
+                        { name: 'Painter', count: '16 openings', icon: <FaUser /> },
+                        { name: 'Mobile Technician', count: '16 openings', icon: <FaHeadset /> },
+                        { name: 'Electronic Engineer', count: '14 openings', icon: <FaBuilding /> },
+                        { name: 'Tool and Die Maker', count: '13 openings', icon: <FaBriefcase /> },
+                        { name: 'Plumber', count: '13 openings', icon: <FaUser /> },
+                      ].map((cat, idx) => (
+                        <div key={idx} onClick={() => { setSearchQuery(cat.name); setExploreViewMode('list'); }} className="flex items-center p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-72 shrink-0">
+                            <div className="w-10 h-10 shrink-0 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100 group-hover:bg-[#e49d04]/10 group-hover:text-[#e49d04] transition-colors">
+                                <div className="text-base">{cat.icon}</div>
+                            </div>
+                            <div className="ml-3 flex-grow min-w-0 text-left">
+                                <h3 className="font-bold text-[#1a1a1a] text-[14px] leading-tight truncate">{cat.name}</h3>
+                                <p className="text-[11px] text-gray-400 mt-0.5 font-medium">{cat.count}</p>
+                            </div>
+                            <div className="ml-2 text-gray-300 group-hover:text-[#e49d04] group-hover:translate-x-1 transition-all">
+                                <FaArrowRight size={12} />
+                            </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {exploreViewMode === 'list' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
+                  {isLoadingJobs ? (
+                    <p className="text-sm text-gray-500 animate-pulse col-span-full">Loading jobs...</p>
+                  ) : filteredJobs.length > 0 ? (
+                    filteredJobs.map((job: any) => (
+                      <RecommendedJobCard 
+                        key={job._id}
+                        job={job}
+                        onViewDetails={() => setSelectedJob(job)}
+                        isSaved={savedJobIds.includes(job._id)}
+                        onToggleSave={() => toggleSaveJob(job._id)}
+                        onViewCompany={(id: string) => setSelectedCompanyId(id)}
+                      />
+                    ))
+                  ) : (
+                    <div className="col-span-full py-16 flex flex-col items-center justify-center bg-white rounded-3xl border border-dashed border-gray-200">
+                      <FaSearch className="text-5xl text-gray-200 mb-4" />
+                      <p className="text-gray-500 font-medium">{searchQuery || filterIndustry || filterWorkMode || filterExperience ? "No jobs match your search criteria." : "No jobs available right now."}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (isClient ? (
+                  <InteractiveJobMap
+                    onSelectCity={(pin: { name: string; jobs: number }) => {
+                      handleSmartApply(pin);
+                    }}
+                  />
                 ) : (
-                  <div className="col-span-full py-16 flex flex-col items-center justify-center bg-white rounded-3xl border border-dashed border-gray-200">
-                    <FaSearch className="text-5xl text-gray-200 mb-4" />
-                    <p className="text-gray-500 font-medium">{searchQuery || filterIndustry || filterWorkMode || filterExperience ? "No jobs match your search criteria." : "No jobs available right now."}</p>
-                  </div>
-                )}
-              </div>
+                  <div className="w-full h-[600px] bg-gray-100 border border-gray-200 rounded-3xl animate-pulse flex items-center justify-center text-gray-400 font-bold mt-6 shadow-sm">Loading Interactive Map...</div>
+                )
+              )}
             </div>
           )}
 
@@ -596,8 +698,20 @@ const CandidateDashboard = () => {
             user={user}
             setUser={setUser}
             jobToApply={jobToApply}
-            onClose={() => setIsResumeModalOpen(false)}
+            onClose={() => {
+                setIsResumeModalOpen(false);
+                setPendingSmartApplyPin(null);
+            }}
+            onUploadComplete={() => {
+                if (pendingSmartApplyPin) {
+                    setSmartApplyData({ city: pendingSmartApplyPin.name, roles: pendingSmartApplyPin.jobs });
+                    setPendingSmartApplyPin(null);
+                }
+            }}
         />
+      )}
+      {smartApplyData && (
+        <SmartApplySuccessModal data={smartApplyData} onClose={() => { setSmartApplyData(null); setActiveTab('dashboard'); }} />
       )}
     </div>
   );
@@ -895,7 +1009,29 @@ const JobDetailsModal = ({ job, onClose, user, onApply }: any) => {
   );
 };
 
-const ResumeUploadModal = ({ user, setUser, jobToApply, onClose }: any) => {
+const SmartApplySuccessModal = ({ data, onClose }: { data: {city: string, roles: number} | null, onClose: () => void }) => {
+    if (!data) return null;
+    
+    return (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[60] p-4">
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md relative animate-fade-in-up p-8 text-center">
+                <FaCheckCircle className="text-5xl text-green-500 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-[#121212] mb-2">Applications Scaled</h2>
+                <p className="text-gray-600 mb-6">
+                    Success. Your resume is now in the priority queue for all <strong>{data.roles}</strong> roles across <strong>{data.city}</strong>.
+                </p>
+                <button 
+                    onClick={onClose}
+                    className="px-8 py-3 bg-[#e49d04] text-[#0B0C10] font-bold rounded-xl hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all"
+                >
+                    Return to Dashboard
+                </button>
+            </div>
+        </div>
+    );
+};
+
+const ResumeUploadModal = ({ user, setUser, jobToApply, onClose, onUploadComplete }: any) => {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [updateProfile, { isLoading: isUploading }] = useUpdateProfileMutation();
   const [applyForJob, { isLoading: isApplying }] = useApplyForJobMutation();
@@ -925,18 +1061,23 @@ const ResumeUploadModal = ({ user, setUser, jobToApply, onClose }: any) => {
       localStorage.setItem('profile', JSON.stringify(currentProfile));
       toast.success('Resume uploaded successfully!');
 
-      await applyForJob({ jobId: jobToApply._id, candidateId: updatedUser._id }).unwrap();
-      toast.success(`🎉 Successfully applied for ${jobToApply.title}! The employer has been notified.`, {
-        duration: 5000,
-        position: 'top-center',
-        style: {
-                  background: '#0B0C10',
-                  color: '#e49d04',
-          fontWeight: 'bold',
-          padding: '16px',
-          borderRadius: '12px',
-        },
-      });
+      if (jobToApply) {
+        await applyForJob({ jobId: jobToApply._id, candidateId: updatedUser._id }).unwrap();
+        toast.success(`🎉 Successfully applied for ${jobToApply.title}! The employer has been notified.`, {
+          duration: 5000,
+          position: 'top-center',
+          style: {
+            background: '#0B0C10',
+            color: '#e49d04',
+            fontWeight: 'bold',
+            padding: '16px',
+            borderRadius: '12px',
+          },
+        });
+      }
+
+      if (onUploadComplete) onUploadComplete();
+
       onClose();
     } catch (err: any) {
       console.error(err);
@@ -949,7 +1090,9 @@ const ResumeUploadModal = ({ user, setUser, jobToApply, onClose }: any) => {
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md relative animate-fade-in-up" onClick={e => e.stopPropagation()}>
         <div className="p-6 border-b border-gray-100">
           <h2 className="text-xl font-bold text-[#121212]">Upload Your Resume</h2>
-          <p className="text-sm text-gray-500 mt-1">You need to upload a resume before applying for "{jobToApply?.title}".</p>
+          <p className="text-sm text-gray-500 mt-1">
+            You need to upload a resume to continue{jobToApply ? ` with your application for "${jobToApply.title}"` : ''}.
+          </p>
         </div>
         <div className="p-6 space-y-4">
           <div>
@@ -1339,3 +1482,108 @@ function useIncrementProfileViewMutation(): [any] {
   };
   return [incrementProfileView];
 }
+
+const InteractiveJobMap = ({ onSelectCity }: { onSelectCity: (pin: { name: string; jobs: number }) => void }) => {
+  const [selectedState, setSelectedState] = useState<string>('India');
+  const [center, setCenter] = useState<[number, number]>([20.5937, 78.9629]);
+  const [zoom, setZoom] = useState<number>(5);
+  const [mapData, setMapData] = useState<any>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const L = (await import('leaflet')).default || await import('leaflet');
+        const { MapContainer, TileLayer, Marker, Popup, useMap } = await import('react-leaflet');
+
+        if (!isMounted) return;
+
+        const customIcon = new L.Icon({
+          iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+          iconSize: [32, 32],
+          iconAnchor: [16, 32],
+          popupAnchor: [0, -32]
+        });
+
+        const MapController = ({ centerPos, zoomLevel }: { centerPos: [number, number], zoomLevel: number }) => {
+          const map = useMap();
+          useEffect(() => {
+            map.flyTo(centerPos, zoomLevel, { duration: 1.5 });
+          }, [centerPos, zoomLevel, map]);
+          return null;
+        };
+
+        setMapData({ MapContainer, TileLayer, Marker, Popup, MapController, customIcon });
+      } catch (err) {
+        console.error("Failed to load map modules", err);
+      }
+    })();
+    return () => { isMounted = false; };
+  }, []);
+
+  const locations: any = {
+    'India': { center: [20.5937, 78.9629], zoom: 5 },
+    'Punjab': { center: [31.1471, 75.3412], zoom: 8 },
+    'Maharashtra': { center: [19.7515, 75.7139], zoom: 7 },
+    'Karnataka': { center: [15.3173, 75.7139], zoom: 7 },
+    'Delhi': { center: [28.7041, 77.1025], zoom: 10 }
+  };
+
+  const pins = [
+    { name: 'Amritsar', pos: [31.6340, 74.8723], jobs: 123, state: 'Punjab' },
+    { name: 'Jalandhar', pos: [31.3260, 75.5762], jobs: 43, state: 'Punjab' },
+    { name: 'Ludhiana', pos: [30.9010, 75.8573], jobs: 71, state: 'Punjab' },
+    { name: 'Patiala', pos: [30.3398, 76.3869], jobs: 6, state: 'Punjab' },
+    { name: 'Chandigarh', pos: [30.7333, 76.7794], jobs: 89, state: 'Punjab' },
+    { name: 'Mumbai', pos: [19.0760, 72.8777], jobs: 1205, state: 'Maharashtra' },
+    { name: 'Pune', pos: [18.5204, 73.8567], jobs: 380, state: 'Maharashtra' },
+    { name: 'Bangalore', pos: [12.9716, 77.5946], jobs: 980, state: 'Karnataka' },
+    { name: 'New Delhi', pos: [28.6139, 77.2090], jobs: 850, state: 'Delhi' }
+  ];
+
+  const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    setSelectedState(val);
+    setCenter(locations[val].center);
+    setZoom(locations[val].zoom);
+  };
+
+  const visiblePins = selectedState === 'India' ? pins : pins.filter((p: any) => p.state === selectedState);
+
+  if (!mapData) {
+    return <div className="w-full h-[600px] bg-gray-100 border border-gray-200 rounded-3xl animate-pulse flex items-center justify-center text-gray-400 font-bold mt-6 shadow-sm">Loading Interactive Map...</div>;
+  }
+
+  const { MapContainer, TileLayer, Marker, Popup, MapController, customIcon } = mapData;
+
+  return (
+    <div className="relative w-full h-[600px] rounded-3xl overflow-hidden shadow-sm border border-gray-200 mt-6 z-0">
+      <div className="absolute top-6 right-6 z-[1000] bg-white p-4 rounded-2xl shadow-lg border border-gray-100">
+        <h3 className="font-bold text-[#121212] mb-2 text-sm">Select Region</h3>
+        <select value={selectedState} onChange={handleStateChange} className="w-full bg-gray-50 text-[#121212] border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e49d04] cursor-pointer">
+          <option value="India">All India</option>
+          <option value="Punjab">Punjab</option>
+          <option value="Maharashtra">Maharashtra</option>
+          <option value="Karnataka">Karnataka</option>
+          <option value="Delhi">Delhi NCR</option>
+        </select>
+      </div>
+
+      <MapContainer center={center} zoom={zoom} style={{ width: '100%', height: '100%' }} zoomControl={false}>
+        <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" attribution='&copy; CartoDB' />
+        <MapController centerPos={center} zoomLevel={zoom} />
+        {visiblePins.map((pin: any, idx: number) => (
+          <Marker key={idx} position={pin.pos as [number, number]} icon={customIcon}>
+            <Popup className="custom-popup rounded-2xl">
+              <div className="text-center p-1 min-w-[120px]">
+                <h4 className="font-bold text-[#121212] text-base">{pin.name}</h4>
+                <div className="bg-yellow-50 text-yellow-700 border border-yellow-200 px-3 py-1 rounded-lg text-xs font-bold my-2">{pin.jobs} Priority Openings</div>
+                <button onClick={() => onSelectCity(pin)} className="w-full bg-[#0B0C10] text-[#e49d04] text-xs font-bold py-2 rounded-xl hover:bg-gray-800 transition-colors shadow-md">Smart Apply</button>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
+    </div>
+  );
+};
