@@ -1578,7 +1578,7 @@ const InteractiveJobMap = ({ onSelectCity, searchQuery }: { onSelectCity: (pin: 
       </div>
 
       <MapContainer center={center} zoom={zoom} style={{ width: '100%', height: '100%' }} zoomControl={false}>
-        <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" attribution='&copy; CartoDB' />
+        <TileLayer url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" attribution="&copy; Google Maps" />
         <MapController centerPos={center} zoomLevel={zoom} />
         {visiblePins.map((pin: any, idx: number) => (
           <Marker key={idx} position={pin.pos as [number, number]} icon={customIcon}>
