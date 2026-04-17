@@ -2,7 +2,7 @@
 
 // @ts-ignore
 import 'leaflet/dist/leaflet.css';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { 
   FaBriefcase, 
@@ -23,7 +23,7 @@ import {
   FaSearch,
   FaFilter,
   FaGlobe,
-  FaUsers,
+  FaUsers, 
   FaBuilding,
   FaPlus,
   FaCheck,
@@ -51,6 +51,17 @@ import {
 import { useToggleFollowCompanyMutation, useUpdateProfileMutation } from '@/features/authApi';
 import { useGetMessagesQuery, useSendMessageMutation, useMarkAsSeenMutation, useGetConversationsQuery, useGetUnreadMessageCountQuery } from '@/features/chatApi';
 import { useRouter } from 'next/navigation';
+
+const SidebarItem = ({ icon, label, active, onClick, badge, collapsed }: any) => (
+  <button onClick={onClick} title={collapsed ? label : undefined} className={`w-full flex items-center justify-between py-3.5 rounded-xl transition-all duration-200 font-medium group relative ${collapsed ? 'md:px-0 md:justify-center px-4' : 'px-4'} ${active ? 'bg-gray-100 text-[#0B0C10] font-bold' : 'text-gray-500 hover:bg-gray-100 hover:text-[#0B0C10]'}`}>
+    <div className={`flex items-center ${collapsed ? 'md:gap-0 gap-3' : 'gap-3'}`}>
+        <span className={`text-xl shrink-0 ${active ? 'text-[#0B0C10]' : 'text-gray-400 group-hover:text-[#0B0C10]'}`}>{icon}</span>
+        <span className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${collapsed ? 'md:max-w-0 md:opacity-0' : 'max-w-[200px] opacity-100'}`}>{label}</span>
+    </div>
+    {badge && <span className={`text-xs font-bold px-2 py-0.5 rounded-md whitespace-nowrap transition-all duration-300 ${collapsed ? 'md:hidden' : ''} ${active ? 'bg-gray-200 text-[#0B0C10]' : 'bg-gray-200 text-[#0B0C10]'}`}>{badge}</span>}
+    {badge && collapsed && <span className="hidden md:block absolute top-3 right-3 w-2 h-2 rounded-full bg-red-500 border border-white"></span>}
+  </button>
+);
 
 const CandidateDashboard = () => {
   const router = useRouter();
@@ -499,7 +510,7 @@ const CandidateDashboard = () => {
                         { name: 'Graphic Designer', count: '275 openings', icon: <FaFileAlt /> },
                         { name: 'Office Help / Peon', count: '247 openings', icon: <FaBriefcase /> },
                       ].map((cat, idx) => (
-                        <div key={idx} onClick={() => { setSearchQuery(cat.name); setExploreViewMode('list'); }} className="flex items-center p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-72 shrink-0">
+                        <div key={idx} onClick={() => { setSearchQuery(cat.name); setExploreViewMode('map'); }} className="flex items-center p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-72 shrink-0">
                             <div className="w-10 h-10 shrink-0 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100 group-hover:bg-[#e49d04]/10 group-hover:text-[#e49d04] transition-colors">
                                 <div className="text-base">{cat.icon}</div>
                             </div>
@@ -525,7 +536,7 @@ const CandidateDashboard = () => {
                         { name: 'Tool and Die Maker', count: '13 openings', icon: <FaBriefcase /> },
                         { name: 'Plumber', count: '13 openings', icon: <FaUser /> },
                       ].map((cat, idx) => (
-                        <div key={idx} onClick={() => { setSearchQuery(cat.name); setExploreViewMode('list'); }} className="flex items-center p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-72 shrink-0">
+                        <div key={idx} onClick={() => { setSearchQuery(cat.name); setExploreViewMode('map'); }} className="flex items-center p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-72 shrink-0">
                             <div className="w-10 h-10 shrink-0 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100 group-hover:bg-[#e49d04]/10 group-hover:text-[#e49d04] transition-colors">
                                 <div className="text-base">{cat.icon}</div>
                             </div>
@@ -567,6 +578,7 @@ const CandidateDashboard = () => {
                 </div>
               ) : (isClient ? (
                   <InteractiveJobMap
+                    searchQuery={searchQuery}
                     onSelectCity={(pin: { name: string; jobs: number }) => {
                       handleSmartApply(pin);
                     }}
@@ -716,17 +728,6 @@ const CandidateDashboard = () => {
     </div>
   );
 }
-
-const SidebarItem = ({ icon, label, active, onClick, badge, collapsed }: any) => (
-  <button onClick={onClick} title={collapsed ? label : undefined} className={`w-full flex items-center justify-between py-3.5 rounded-xl transition-all duration-200 font-medium group relative ${collapsed ? 'md:px-0 md:justify-center px-4' : 'px-4'} ${active ? 'bg-gray-100 text-[#0B0C10] font-bold' : 'text-gray-500 hover:bg-gray-100 hover:text-[#0B0C10]'}`}>
-    <div className={`flex items-center ${collapsed ? 'md:gap-0 gap-3' : 'gap-3'}`}>
-        <span className={`text-xl shrink-0 ${active ? 'text-[#0B0C10]' : 'text-gray-400 group-hover:text-[#0B0C10]'}`}>{icon}</span>
-        <span className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${collapsed ? 'md:max-w-0 md:opacity-0' : 'max-w-[200px] opacity-100'}`}>{label}</span>
-    </div>
-    {badge && <span className={`text-xs font-bold px-2 py-0.5 rounded-md whitespace-nowrap transition-all duration-300 ${collapsed ? 'md:hidden' : ''} ${active ? 'bg-gray-200 text-[#0B0C10]' : 'bg-gray-200 text-[#0B0C10]'}`}>{badge}</span>}
-    {badge && collapsed && <span className="hidden md:block absolute top-3 right-3 w-2 h-2 rounded-full bg-red-500 border border-white"></span>}
-  </button>
-);
 
 const StatCard = ({ icon, label, value, color }: any) => (
   <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
@@ -1483,7 +1484,7 @@ function useIncrementProfileViewMutation(): [any] {
   return [incrementProfileView];
 }
 
-const InteractiveJobMap = ({ onSelectCity }: { onSelectCity: (pin: { name: string; jobs: number }) => void }) => {
+const InteractiveJobMap = ({ onSelectCity, searchQuery }: { onSelectCity: (pin: { name: string; jobs: number }) => void, searchQuery?: string }) => {
   const [selectedState, setSelectedState] = useState<string>('India');
   const [center, setCenter] = useState<[number, number]>([20.5937, 78.9629]);
   const [zoom, setZoom] = useState<number>(5);
@@ -1529,17 +1530,24 @@ const InteractiveJobMap = ({ onSelectCity }: { onSelectCity: (pin: { name: strin
     'Delhi': { center: [28.7041, 77.1025], zoom: 10 }
   };
 
-  const pins = [
-    { name: 'Amritsar', pos: [31.6340, 74.8723], jobs: 123, state: 'Punjab' },
-    { name: 'Jalandhar', pos: [31.3260, 75.5762], jobs: 43, state: 'Punjab' },
-    { name: 'Ludhiana', pos: [30.9010, 75.8573], jobs: 71, state: 'Punjab' },
-    { name: 'Patiala', pos: [30.3398, 76.3869], jobs: 6, state: 'Punjab' },
-    { name: 'Chandigarh', pos: [30.7333, 76.7794], jobs: 89, state: 'Punjab' },
-    { name: 'Mumbai', pos: [19.0760, 72.8777], jobs: 1205, state: 'Maharashtra' },
-    { name: 'Pune', pos: [18.5204, 73.8567], jobs: 380, state: 'Maharashtra' },
-    { name: 'Bangalore', pos: [12.9716, 77.5946], jobs: 980, state: 'Karnataka' },
-    { name: 'New Delhi', pos: [28.6139, 77.2090], jobs: 850, state: 'Delhi' }
-  ];
+  const pins = useMemo(() => {
+    const basePins = [
+      { name: 'Amritsar', pos: [31.6340, 74.8723], jobs: 123, state: 'Punjab' },
+      { name: 'Jalandhar', pos: [31.3260, 75.5762], jobs: 43, state: 'Punjab' },
+      { name: 'Ludhiana', pos: [30.9010, 75.8573], jobs: 71, state: 'Punjab' },
+      { name: 'Patiala', pos: [30.3398, 76.3869], jobs: 6, state: 'Punjab' },
+      { name: 'Chandigarh', pos: [30.7333, 76.7794], jobs: 89, state: 'Punjab' },
+      { name: 'Mumbai', pos: [19.0760, 72.8777], jobs: 1205, state: 'Maharashtra' },
+      { name: 'Pune', pos: [18.5204, 73.8567], jobs: 380, state: 'Maharashtra' },
+      { name: 'Bangalore', pos: [12.9716, 77.5946], jobs: 980, state: 'Karnataka' },
+      { name: 'New Delhi', pos: [28.6139, 77.2090], jobs: 850, state: 'Delhi' }
+    ];
+    if (!searchQuery) return basePins;
+    return basePins.map(pin => {
+      const hash = (searchQuery + pin.name).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      return { ...pin, jobs: (hash % 300) + 10 };
+    });
+  }, [searchQuery]);
 
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
