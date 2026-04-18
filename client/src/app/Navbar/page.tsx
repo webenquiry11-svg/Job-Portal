@@ -118,14 +118,14 @@ const Navbar = () => {
   }
     
   return (
-    <div className={`fixed w-full z-[100] transition-all duration-500 ${scrolled ? 'top-0 sm:top-4 sm:px-6 lg:px-8' : 'top-0'}`}>
+    <div className={`fixed w-full z-40 transition-all duration-500 ${scrolled ? 'top-0 sm:top-4 sm:px-6 lg:px-8' : 'top-0'}`}>
       <nav className={`mx-auto max-w-7xl relative transition-all duration-500 ${scrolled ? 'bg-white/90 backdrop-blur-2xl border-b sm:border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.06)] sm:rounded-full' : 'bg-white/70 backdrop-blur-xl border-b border-gray-200/50'}`}>
         <div className={`px-6 md:px-8 flex justify-between items-center transition-all duration-500 ${scrolled ? 'py-2.5' : 'py-4'}`}>
           <Link href="/" className="flex items-center gap-2 group h-14">
             <div className="relative w-40 h-full group-hover:scale-105 transition-transform duration-300 origin-left z-50 hidden sm:block">
               <img src="/Click4Jobs Logo.png" alt="Click4Jobs" className="absolute top-1/2 left-0 -translate-y-1/2 h-[200px] w-auto max-w-none object-contain" />
             </div>
-            <div className="relative h-full group-hover:scale-105 transition-transform duration-300 z-50 sm:hidden">
+            <div className="relative h-full group-hover:scale-105 transition-transform duration-300 z-20 sm:hidden">
               <img src="/Fav Icon.png" alt="Click4Jobs" className="h-14 w-auto object-contain" />
             </div>
           </Link>
