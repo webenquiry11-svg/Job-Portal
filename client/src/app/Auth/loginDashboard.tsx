@@ -14,6 +14,7 @@ const LoginDashboard = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const router = useRouter();
+  const [user, setUser] = useState<any>(null);
 
   const [searchTitle, setSearchTitle] = useState('');
   const [searchLocation, setSearchLocation] = useState('');
@@ -80,6 +81,18 @@ const LoginDashboard = () => {
       displayJobs.push(...dummyJobs.slice(0, dummyJobsNeeded));
   }
 
+  useEffect(() => {
+    const profileStr = localStorage.getItem('profile');
+    if (profileStr) {
+      try {
+        const profile = JSON.parse(profileStr);
+        setUser(profile.result || profile.user || profile);
+      } catch (e) {
+        console.error('Error parsing profile:', e);
+      }
+    }
+  }, []);
+
   // Intercept the token coming back from Passport.js Redirect
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -138,6 +151,15 @@ const LoginDashboard = () => {
 
   const handleMicrosoftLogin = () => {
     window.location.href = `${getApiUrl()}/auth/microsoft`;
+  };
+
+  const handleProtectedAction = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (user) {
+      router.push(user.role === 'employer' ? '/employer/dashboard' : '/Candidate/Dashboard');
+    } else {
+      setIsLoginModalOpen(true);
+    }
   };
 
   return (
@@ -446,7 +468,7 @@ const LoginDashboard = () => {
                     { name: 'Graphic Designer', count: '275 openings', icon: <FaFileAlt /> },
                     { name: 'Office Help / Peon', count: '247 openings', icon: <FaBriefcase /> },
                   ].map((cat, idx) => (
-                        <div key={idx} onClick={() => setIsLoginModalOpen(true)} className="flex items-center p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(228,157,4,0.2)] hover:-translate-y-1.5 hover:border-[#e49d04]/40 transition-all duration-500 cursor-pointer group w-[360px] shrink-0 relative overflow-hidden z-10">
+                        <div key={idx} onClick={() => handleProtectedAction()} className="flex items-center p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(228,157,4,0.2)] hover:-translate-y-1.5 hover:border-[#e49d04]/40 transition-all duration-500 cursor-pointer group w-[360px] shrink-0 relative overflow-hidden z-10">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#e49d04]/10 to-transparent rounded-bl-[100%] -z-10 transform scale-0 group-hover:scale-100 transition-transform duration-500 origin-top-right"></div>
                             
                             <div className="w-16 h-16 shrink-0 rounded-[1.25rem] bg-orange-50 flex items-center justify-center text-[#e49d04] group-hover:bg-[#e49d04] group-hover:text-[#121212] transition-all duration-500 shadow-sm relative z-10 group-hover:-rotate-6">
@@ -480,7 +502,7 @@ const LoginDashboard = () => {
                     { name: 'Tool and Die Maker', count: '13 openings', icon: <FaBriefcase /> },
                     { name: 'Plumber', count: '13 openings', icon: <FaUser /> },
                   ].map((cat, idx) => (
-                        <div key={idx} onClick={() => setIsLoginModalOpen(true)} className="flex items-center p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(228,157,4,0.2)] hover:-translate-y-1.5 hover:border-[#e49d04]/40 transition-all duration-500 cursor-pointer group w-[360px] shrink-0 relative overflow-hidden z-10">
+                        <div key={idx} onClick={() => handleProtectedAction()} className="flex items-center p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(228,157,4,0.2)] hover:-translate-y-1.5 hover:border-[#e49d04]/40 transition-all duration-500 cursor-pointer group w-[360px] shrink-0 relative overflow-hidden z-10">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#e49d04]/10 to-transparent rounded-bl-[100%] -z-10 transform scale-0 group-hover:scale-100 transition-transform duration-500 origin-top-right"></div>
                             
                             <div className="w-16 h-16 shrink-0 rounded-[1.25rem] bg-orange-50 flex items-center justify-center text-[#e49d04] group-hover:bg-[#e49d04] group-hover:text-[#121212] transition-all duration-500 shadow-sm relative z-10 group-hover:-rotate-6">
@@ -552,7 +574,7 @@ const LoginDashboard = () => {
                                         <span key={i} className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition-colors truncate max-w-[80px]">#{tag}</span>
                                     ))}
                                 </div>
-                                <button onClick={(e) => { e.stopPropagation(); setIsLoginModalOpen(true); }} className="text-[#0B0C10] font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all hover:text-[#cc8c03] shrink-0">
+                                <button onClick={(e) => handleProtectedAction(e)} className="text-[#0B0C10] font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all hover:text-[#cc8c03] shrink-0">
                                     Apply Now <FaArrowRight />
                                 </button>
                             </div>
@@ -575,7 +597,7 @@ const LoginDashboard = () => {
                         setFilterWorkMode('');
                         setFilterExperience('');
                     } else {
-                        setIsLoginModalOpen(true);
+                        handleProtectedAction();
                     }
                 }} className="px-8 py-3.5 bg-[#e49d04] text-[#0B0C10] font-bold rounded-full hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all duration-300 transform hover:-translate-y-1">
                     {isSearching ? 'Clear Search' : 'View All Jobs'}
@@ -698,8 +720,8 @@ const LoginDashboard = () => {
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Ready to Start Your Career Journey?</h2>
                   <p className="text-slate-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">Join thousands of professionals who have advanced their careers with Click4Jobs. Create your account today.</p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <button onClick={() => setIsLoginModalOpen(true)} className="bg-[#e49d04] text-[#0B0C10] font-bold py-4 px-10 rounded-full shadow-xl hover:bg-[#cc8c03] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
-                      Get Started Now
+                  <button onClick={() => handleProtectedAction()} className="bg-[#e49d04] text-[#0B0C10] font-bold py-4 px-10 rounded-full shadow-xl hover:bg-[#cc8c03] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
+                      {user ? 'Go to Dashboard' : 'Get Started Now'}
                   </button>
                   <Link href="/Subscription/Pricing" className="bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold py-4 px-10 rounded-full shadow-xl hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
                       View Pricing Plans
@@ -720,10 +742,25 @@ const LoginDashboard = () => {
           onClose={() => setSelectedJob(null)} 
           onApply={() => {
             setSelectedJob(null);
-            setIsLoginModalOpen(true);
+            handleProtectedAction();
           }} 
         />
       )}
+
+      {/* Footer Section */}
+      <footer className="bg-white border-t border-gray-100 py-8 mt-auto z-10 relative">
+        <div className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-3">
+            <img src="/Fav Icon.png" alt="Click4Jobs" className="h-6 w-auto object-contain grayscale opacity-60" />
+            <span className="text-sm font-semibold text-gray-500">© {new Date().getFullYear()} Click4Jobs. All rights reserved.</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <Link href="/privacy-policy" className="text-sm font-bold text-gray-500 hover:text-[#e49d04] transition-colors">Privacy Policy</Link>
+            <Link href="/privacy-policy" className="text-sm font-bold text-gray-500 hover:text-[#e49d04] transition-colors">Terms & Conditions</Link>
+          </div>
+        </div>
+      </footer>
+
     </div>
   );
 };
@@ -757,7 +794,7 @@ const JobDetailsModal = ({ job, onClose, onApply }: any) => {
       </div>
       <div className="p-6 border-t border-gray-100 flex items-center justify-end bg-gray-50/50 rounded-b-3xl">
         <button onClick={onApply} className="px-8 py-3 bg-[#e49d04] text-[#0B0C10] font-black rounded-xl hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
-          Login to Apply <FaArrowRight />
+          Proceed to Apply <FaArrowRight />
         </button>
       </div>
     </div>
