@@ -150,8 +150,7 @@ const Footer = () => {
           </div>
           
           <div className="flex items-center gap-6 text-sm font-medium">
-            <Link href="#" className="text-gray-500 hover:text-gray-900 transition-colors">Privacy</Link>
-            <Link href="#" className="text-gray-500 hover:text-gray-900 transition-colors">Terms</Link>
+            <Link href="/privacy-policy" className="text-gray-500 hover:text-gray-900 transition-colors">Privacy Policy & Terms</Link>
             <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-green-50 text-green-600 border border-green-100">
               <FaShieldAlt className="text-xs" />
               <span className="text-[10px] font-bold uppercase tracking-tighter">Verified Secure</span>

@@ -527,7 +527,8 @@ const LoginDashboard = () => {
           </div>
       </section>
 
-      {/* Featured Jobs / Search Results Section */}
+      {/* Featured Jobs / Search Results Section - TEMPORARILY COMMENTED OUT */}
+      {false && (
       <section id="jobs-section" className="bg-gray-50 py-24 scroll-mt-16">
         <div className="container mx-auto px-6 md:px-12">
             <div className="text-center mb-16">
@@ -605,6 +606,7 @@ const LoginDashboard = () => {
             </div>
           </div>
       </section>
+      )}
 
       {/* Testimonials Section (New) */}
       <section className="bg-white py-24 relative">
@@ -714,20 +716,46 @@ const LoginDashboard = () => {
       </section>
 
       {/* CTA Section (New) */}
-      <section className="py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[#0B0C10] z-0"></div>
-          <div className="container mx-auto px-6 md:px-12 text-center relative z-10">
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Ready to Start Your Career Journey?</h2>
-                  <p className="text-slate-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">Join thousands of professionals who have advanced their careers with Click4Jobs. Create your account today.</p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <button onClick={() => handleProtectedAction()} className="bg-[#e49d04] text-[#0B0C10] font-bold py-4 px-10 rounded-full shadow-xl hover:bg-[#cc8c03] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
-                      {user ? 'Go to Dashboard' : 'Get Started Now'}
-                  </button>
-                  <Link href="/Subscription/Pricing" className="bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold py-4 px-10 rounded-full shadow-xl hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl">
-                      View Pricing Plans
-                  </Link>
-              </div>
+      <section className="py-4 relative bg-white">
+        <div className="container mx-auto px-6 md:px-12">
+          <div className="bg-[#F8FAFC] rounded-[2.5rem] md:rounded-[3rem] border border-gray-100 shadow-sm relative overflow-hidden">
+            
+            {/* Subtle Abstract Background - matches portal clean look */}
+            <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none transform translate-x-1/4 -translate-y-1/4">
+              <svg width="400" height="400" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#e49d04" d="M44.7,-76.4C58.8,-69.2,71.8,-59.1,81.3,-46.3C90.8,-33.5,96.8,-18,97.7,-2.1C98.6,13.8,94.4,30.1,84.7,42.7C75.1,55.3,60,64.2,45.2,72.1C30.4,80,15.2,86.9,-0.6,88C-16.4,89.1,-32.8,84.4,-47.5,76.1C-62.2,67.8,-75.2,55.9,-83.4,41.6C-91.6,27.3,-95,10.6,-92.9,-5.3C-90.8,-21.2,-83.2,-36.3,-72.6,-48C-62,-59.7,-48.4,-68.1,-34.5,-75.1C-20.6,-82.1,-10.3,-87.7,2.3,-91.6C14.9,-95.5,29.8,-93.7,44.7,-76.4Z" transform="translate(100 100)" />
+              </svg>
+            </div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#e49d04]/10 rounded-full blur-3xl pointer-events-none -translate-x-1/2 translate-y-1/2"></div>
+            
+            <div className="px-6 py-8 md:py-10 text-center relative z-10 max-w-4xl mx-auto">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200 text-[#121212] text-xs font-bold uppercase tracking-widest mb-8 shadow-sm">
+                  <span className="text-base">🚀</span> Elevate Your Future
+                </div>
+                
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#121212] mb-6 tracking-tight leading-tight">
+                    Ready to Start Your <br className="hidden sm:block" />
+                    <span className="text-[#e49d04] relative inline-block">
+                      Career Journey?
+                      <svg className="absolute w-full h-3 -bottom-1 left-0 text-yellow-400/40" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 15 100 5" stroke="currentColor" strokeWidth="8" fill="transparent"/></svg>
+                    </span>
+                </h2>
+                
+                <p className="text-gray-600 font-medium text-lg md:text-xl mb-8 leading-relaxed max-w-2xl mx-auto">
+                  Join thousands of professionals who have advanced their careers with Click4Jobs. Create your account today and unlock a world of opportunities.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button onClick={() => handleProtectedAction()} className="w-full sm:w-auto bg-[#0B0C10] hover:bg-[#1f2833] text-[#e49d04] shadow-lg shadow-black/10 font-bold py-4 px-10 rounded-full transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3">
+                        {user ? 'Go to Dashboard' : 'Get Started Now'} <FaArrowRight />
+                    </button>
+                    <Link href="/Subscription/Pricing" className="w-full sm:w-auto bg-white text-gray-700 border border-gray-200 font-bold py-4 px-10 rounded-full shadow-sm hover:shadow-md hover:border-[#e49d04]/30 hover:text-[#e49d04] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                        View Pricing Plans
+                    </Link>
+                </div>
+            </div>
           </div>
+        </div>
       </section>
 
       {/* Login Modal */}
@@ -746,20 +774,6 @@ const LoginDashboard = () => {
           }} 
         />
       )}
-
-      {/* Footer Section */}
-      <footer className="bg-white border-t border-gray-100 py-8 mt-auto z-10 relative">
-        <div className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-3">
-            <img src="/Fav Icon.png" alt="Click4Jobs" className="h-6 w-auto object-contain grayscale opacity-60" />
-            <span className="text-sm font-semibold text-gray-500">© {new Date().getFullYear()} Click4Jobs. All rights reserved.</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <Link href="/privacy-policy" className="text-sm font-bold text-gray-500 hover:text-[#e49d04] transition-colors">Privacy Policy</Link>
-            <Link href="/privacy-policy" className="text-sm font-bold text-gray-500 hover:text-[#e49d04] transition-colors">Terms & Conditions</Link>
-          </div>
-        </div>
-      </footer>
 
     </div>
   );
