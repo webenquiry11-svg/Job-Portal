@@ -301,72 +301,113 @@ const LoginDashboard = () => {
                 <p className="text-lg text-gray-600 max-w-2xl mx-auto">Click4Jobs operates on a dual-sided, transparent model designed to maximize efficiency for both job seekers and hiring managers.</p>
             </div>
             
-            <h3 className="text-2xl font-bold text-[#121212] mb-8 text-center"><span className="text-[#e49d04]">For Candidates:</span> Seamless Discovery</h3>
-            <div className="grid md:grid-cols-3 gap-8 mb-16">
-                <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                <div className="w-14 h-14 bg-[#0B0C10] text-[#e49d04] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <FaUser size={24} />
+            {/* For Candidates Section */}
+            <div className="relative mb-24">
+                {/* Connecting background line */}
+                <div className="hidden md:block absolute top-[55%] left-[10%] right-[10%] h-[2px] border-t-2 border-dashed border-gray-200 -z-10"></div>
+                
+                <h3 className="text-2xl font-black text-[#121212] mb-10 text-center flex items-center justify-center gap-3">
+                  <span className="bg-[#e49d04] text-white px-5 py-2.5 rounded-xl shadow-md border border-[#e49d04]">For Candidates</span>
+                  <span className="text-[#121212] drop-shadow-sm">Seamless Discovery</span>
+                </h3>
+                
+                <div className="grid md:grid-cols-3 gap-8">
+                    <div className="bg-white p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-[#e49d04]/50 relative group overflow-hidden hover:-translate-y-2">
+                        <div className="absolute -right-4 -top-6 text-[120px] font-black text-gray-50 group-hover:text-[#e49d04]/5 transition-colors z-0 select-none">1</div>
+                        <div className="relative z-10">
+                            <div className="w-16 h-16 bg-[#e49d04]/10 text-[#e49d04] rounded-2xl flex items-center justify-center mb-6 shadow-sm transform group-hover:scale-110 transition-transform duration-300">
+                                <FaUser size={26} />
+                            </div>
+                            <h3 className="text-xl font-bold text-[#121212] mb-3 group-hover:text-[#e49d04] transition-colors">Create Your Profile</h3>
+                            <p className="text-gray-700 leading-relaxed font-medium">Register for free and build a comprehensive profile detailing your skills, experience, and location preferences anywhere in India.</p>
+                        </div>
                     </div>
-                    <h3 className="text-xl font-bold text-[#121212] mb-3">1. Create Your Profile</h3>
-                    <p className="text-gray-600 leading-relaxed">Register for free and build a comprehensive profile detailing your skills, experience, and location preferences anywhere in India.</p>
-                </div>
 
-                <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#e49d04] to-[#cc8c03] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                    <div className="w-14 h-14 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <FaSearch size={24} />
+                    <div className="bg-white p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-[#e49d04]/50 relative group overflow-hidden hover:-translate-y-2 md:translate-y-6">
+                        <div className="absolute -right-4 -top-6 text-[120px] font-black text-gray-50 group-hover:text-[#e49d04]/5 transition-colors z-0 select-none">2</div>
+                        <div className="relative z-10">
+                            <div className="w-16 h-16 bg-[#e49d04]/10 text-[#e49d04] rounded-2xl flex items-center justify-center mb-6 shadow-sm transform group-hover:scale-110 transition-transform duration-300">
+                                <FaSearch size={26} />
+                            </div>
+                            <h3 className="text-xl font-bold text-[#121212] mb-3 group-hover:text-[#e49d04] transition-colors">AI-Powered Matching</h3>
+                            <p className="text-gray-700 leading-relaxed font-medium">Our intelligent algorithm analyzes your data and automatically aligns your profile with open roles that fit your exact qualifications.</p>
+                        </div>
                     </div>
-                    <h3 className="text-xl font-bold text-[#121212] mb-3">2. AI-Powered Matching</h3>
-                    <p className="text-gray-600 leading-relaxed">Our intelligent algorithm analyzes your data and automatically aligns your profile with open roles that fit your exact qualifications.</p>
-                </div>
 
-                <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                <div className="w-14 h-14 bg-[#0B0C10] text-[#e49d04] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <FaBell size={24} />
+                    <div className="bg-white p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-[#e49d04]/50 relative group overflow-hidden hover:-translate-y-2">
+                        <div className="absolute -right-4 -top-6 text-[120px] font-black text-gray-50 group-hover:text-[#e49d04]/5 transition-colors z-0 select-none">3</div>
+                        <div className="relative z-10">
+                            <div className="w-16 h-16 bg-[#e49d04]/10 text-[#e49d04] rounded-2xl flex items-center justify-center mb-6 shadow-sm transform group-hover:scale-110 transition-transform duration-300">
+                                <FaBell size={26} />
+                            </div>
+                            <h3 className="text-xl font-bold text-[#121212] mb-3 group-hover:text-[#e49d04] transition-colors">Get Scouted</h3>
+                            <p className="text-gray-700 leading-relaxed font-medium">Instead of sending countless applications into a void, Click4Jobs puts your verified profile directly in front of active employers.</p>
+                        </div>
                     </div>
-                    <h3 className="text-xl font-bold text-[#121212] mb-3">3. Get Scouted</h3>
-                    <p className="text-gray-600 leading-relaxed">Instead of sending countless applications into a void, Click4Jobs puts your verified profile directly in front of active employers. When there is a match, you are notified instantly.</p>
                 </div>
             </div>
 
-            <h3 className="text-2xl font-bold text-[#121212] mb-8 text-center"><span className="text-[#e49d04]">For Employers:</span> Credit-Based Precision</h3>
-            <div className="grid md:grid-cols-3 gap-8">
-                <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
-                <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                <div className="w-14 h-14 bg-[#0B0C10] text-[#e49d04] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <FaBuilding size={24} />
+            {/* For Employers Section */}
+            <div className="relative">
+                {/* Connecting background line */}
+                <div className="hidden md:block absolute top-[55%] left-[10%] right-[10%] h-[2px] border-t-2 border-dashed border-gray-200 -z-10"></div>
+                
+                <h3 className="text-2xl font-black text-[#121212] mb-10 text-center flex items-center justify-center gap-3">
+                  <span className="bg-[#121212] text-[#e49d04] px-5 py-2.5 rounded-xl shadow-md border border-[#121212]">For Employers</span>
+                  <span className="text-[#121212] drop-shadow-sm">Credit-Based Precision</span>
+                </h3>
+                
+                <div className="grid md:grid-cols-3 gap-8">
+                    <div className="bg-white p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-[#e49d04]/50 relative group overflow-hidden hover:-translate-y-2">
+                        <div className="absolute -right-4 -top-6 text-[120px] font-black text-gray-50 group-hover:text-[#e49d04]/5 transition-colors z-0 select-none">1</div>
+                        <div className="relative z-10">
+                            <div className="w-16 h-16 bg-[#e49d04]/10 text-[#e49d04] rounded-2xl flex items-center justify-center mb-6 shadow-sm transform group-hover:scale-110 transition-transform duration-300">
+                                <FaBuilding size={26} />
+                            </div>
+                            <h3 className="text-xl font-bold text-[#121212] mb-3 group-hover:text-[#e49d04] transition-colors">Post Opportunities</h3>
+                            <p className="text-gray-600 leading-relaxed font-medium">List your open roles on our Pan-India network quickly and easily at no base cost.</p>
+                        </div>
                     </div>
-                    <h3 className="text-xl font-bold text-[#121212] mb-3">1. Post Opportunities</h3>
-                    <p className="text-gray-600 leading-relaxed">List your open roles on our Pan-India network quickly and easily at no base cost.</p>
-                </div>
-                <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#e49d04] to-[#cc8c03] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                    <div className="w-14 h-14 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <FaCoins size={24} />
+
+                    <div className="bg-white p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-[#e49d04]/50 relative group overflow-hidden hover:-translate-y-2 md:translate-y-6">
+                        <div className="absolute -right-4 -top-6 text-[120px] font-black text-gray-50 group-hover:text-[#e49d04]/5 transition-colors z-0 select-none">2</div>
+                        <div className="relative z-10">
+                            <div className="w-16 h-16 bg-[#e49d04]/10 text-[#e49d04] rounded-2xl flex items-center justify-center mb-6 shadow-sm transform group-hover:scale-110 transition-transform duration-300">
+                                <FaCoins size={26} />
+                            </div>
+                            <h3 className="text-xl font-bold text-[#121212] mb-3 group-hover:text-[#e49d04] transition-colors">Purchase Match Credits</h3>
+                            <p className="text-gray-600 leading-relaxed font-medium">Transition away from expensive, flat-fee job postings. Employers purchase secure "Match Credits" via their Click4Jobs dashboard.</p>
+                        </div>
                     </div>
-                    <h3 className="text-xl font-bold text-[#121212] mb-3">2. Purchase Match Credits</h3>
-                    <p className="text-gray-600 leading-relaxed">Transition away from expensive, flat-fee job postings. Employers purchase secure "Match Credits" via their Click4Jobs dashboard.</p>
-                </div>
-                <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 relative group">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] rounded-t-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                <div className="w-14 h-14 bg-[#0B0C10] text-[#e49d04] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <FaUnlock size={24} />
+
+                    <div className="bg-white p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-[#e49d04]/50 relative group overflow-hidden hover:-translate-y-2">
+                        <div className="absolute -right-4 -top-6 text-[120px] font-black text-gray-50 group-hover:text-[#e49d04]/5 transition-colors z-0 select-none">3</div>
+                        <div className="relative z-10">
+                            <div className="w-16 h-16 bg-[#e49d04]/10 text-[#e49d04] rounded-2xl flex items-center justify-center mb-6 shadow-sm transform group-hover:scale-110 transition-transform duration-300">
+                                <FaUnlock size={26} />
+                            </div>
+                            <h3 className="text-xl font-bold text-[#121212] mb-3 group-hover:text-[#e49d04] transition-colors">Unlock Verified Talent</h3>
+                            <p className="text-gray-600 leading-relaxed font-medium">Use credits to unlock the contact information of highly-matched candidates or boost job visibility. You only spend when you are ready.</p>
+                        </div>
                     </div>
-                    <h3 className="text-xl font-bold text-[#121212] mb-3">3. Unlock Verified Talent</h3>
-                    <p className="text-gray-600 leading-relaxed">Use your credits strategically to unlock the contact information of highly-matched candidates, trigger technical assessments, or boost your job listing’s visibility. You only spend credits when you are ready to engage with top-tier talent.</p>
                 </div>
             </div>
         </div>
       </section>
       
       {/* Popular Categories Section - EXACT IMAGE MATCH */}
-      <section id="categories-section" className="bg-white py-16 md:py-24 scroll-mt-16 overflow-hidden">
+      <section id="categories-section" className="bg-[#F8FAFC] py-20 md:py-28 scroll-mt-16 overflow-hidden relative z-10">
+          {/* Decorative Background Elements */}
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#e49d04]/10 via-transparent to-transparent -z-10 pointer-events-none"></div>
+          <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-blue-100/40 via-transparent to-transparent -z-10 pointer-events-none"></div>
+
           <div className="container mx-auto px-6 md:px-12 mb-12">
               <div className="text-center">
-                  <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-4">Popular Categories</h2>
-                  <p className="text-lg text-gray-600 max-w-2xl mx-auto">Explore thousands of jobs in the most in-demand industries.</p>
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-100 text-[#e49d04] text-xs font-black uppercase tracking-widest mb-4 shadow-sm">
+                      🔥 Hot & Trending
+                  </div>
+                  <h2 className="text-3xl md:text-5xl font-black text-[#121212] mb-4 tracking-tight">Explore Popular Categories</h2>
+                  <p className="text-lg text-gray-600 max-w-2xl mx-auto font-medium">Discover thousands of active job opportunities in the most in-demand industries right now.</p>
               </div>
           </div>
 
@@ -405,18 +446,24 @@ const LoginDashboard = () => {
                     { name: 'Graphic Designer', count: '275 openings', icon: <FaFileAlt /> },
                     { name: 'Office Help / Peon', count: '247 openings', icon: <FaBriefcase /> },
                   ].map((cat, idx) => (
-                    <div key={idx} onClick={() => setIsLoginModalOpen(true)} className="flex items-center p-4 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-80 shrink-0">
-                        <div className="w-12 h-12 shrink-0 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100 group-hover:bg-[#e49d04]/10 group-hover:text-[#e49d04] transition-colors">
-                            <div className="text-lg">{cat.icon}</div>
+                        <div key={idx} onClick={() => setIsLoginModalOpen(true)} className="flex items-center p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(228,157,4,0.2)] hover:-translate-y-1.5 hover:border-[#e49d04]/40 transition-all duration-500 cursor-pointer group w-[360px] shrink-0 relative overflow-hidden z-10">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#e49d04]/10 to-transparent rounded-bl-[100%] -z-10 transform scale-0 group-hover:scale-100 transition-transform duration-500 origin-top-right"></div>
+                            
+                            <div className="w-16 h-16 shrink-0 rounded-[1.25rem] bg-orange-50 flex items-center justify-center text-[#e49d04] group-hover:bg-[#e49d04] group-hover:text-[#121212] transition-all duration-500 shadow-sm relative z-10 group-hover:-rotate-6">
+                                <div className="text-2xl">{cat.icon}</div>
+                            </div>
+                            
+                            <div className="ml-5 flex-grow min-w-0 text-left relative z-10">
+                                <h3 className="font-bold text-[#121212] text-[17px] leading-tight truncate group-hover:text-[#e49d04] transition-colors duration-300">{cat.name}</h3>
+                                <p className="text-sm text-gray-500 mt-1.5 font-medium flex items-center gap-2">
+                                   <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span> {cat.count}
+                                </p>
+                            </div>
+                            
+                            <div className="ml-2 w-10 h-10 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-[#121212] group-hover:text-[#e49d04] group-hover:border-[#121212] transition-all duration-500 relative z-10 transform group-hover:translate-x-1 group-hover:shadow-md">
+                                <FaArrowRight size={14} />
+                            </div>
                         </div>
-                        <div className="ml-4 flex-grow min-w-0 text-left">
-                            <h3 className="font-bold text-[#1a1a1a] text-[15px] leading-tight truncate">{cat.name}</h3>
-                            <p className="text-sm text-gray-400 mt-1 font-medium">{cat.count}</p>
-                        </div>
-                        <div className="ml-2 text-gray-300 group-hover:text-[#e49d04] group-hover:translate-x-1 transition-all">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                    </div>
                   ))}
                 </div>
               ))}
@@ -433,18 +480,24 @@ const LoginDashboard = () => {
                     { name: 'Tool and Die Maker', count: '13 openings', icon: <FaBriefcase /> },
                     { name: 'Plumber', count: '13 openings', icon: <FaUser /> },
                   ].map((cat, idx) => (
-                    <div key={idx} onClick={() => setIsLoginModalOpen(true)} className="flex items-center p-4 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-80 shrink-0">
-                        <div className="w-12 h-12 shrink-0 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100 group-hover:bg-[#e49d04]/10 group-hover:text-[#e49d04] transition-colors">
-                            <div className="text-lg">{cat.icon}</div>
+                        <div key={idx} onClick={() => setIsLoginModalOpen(true)} className="flex items-center p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(228,157,4,0.2)] hover:-translate-y-1.5 hover:border-[#e49d04]/40 transition-all duration-500 cursor-pointer group w-[360px] shrink-0 relative overflow-hidden z-10">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#e49d04]/10 to-transparent rounded-bl-[100%] -z-10 transform scale-0 group-hover:scale-100 transition-transform duration-500 origin-top-right"></div>
+                            
+                            <div className="w-16 h-16 shrink-0 rounded-[1.25rem] bg-orange-50 flex items-center justify-center text-[#e49d04] group-hover:bg-[#e49d04] group-hover:text-[#121212] transition-all duration-500 shadow-sm relative z-10 group-hover:-rotate-6">
+                                <div className="text-2xl">{cat.icon}</div>
+                            </div>
+                            
+                            <div className="ml-5 flex-grow min-w-0 text-left relative z-10">
+                                <h3 className="font-bold text-[#121212] text-[17px] leading-tight truncate group-hover:text-[#e49d04] transition-colors duration-300">{cat.name}</h3>
+                                <p className="text-sm text-gray-500 mt-1.5 font-medium flex items-center gap-2">
+                                   <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span> {cat.count}
+                                </p>
+                            </div>
+                            
+                            <div className="ml-2 w-10 h-10 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-[#121212] group-hover:text-[#e49d04] group-hover:border-[#121212] transition-all duration-500 relative z-10 transform group-hover:translate-x-1 group-hover:shadow-md">
+                                <FaArrowRight size={14} />
+                            </div>
                         </div>
-                        <div className="ml-4 flex-grow min-w-0 text-left">
-                            <h3 className="font-bold text-[#1a1a1a] text-[15px] leading-tight truncate">{cat.name}</h3>
-                            <p className="text-sm text-gray-400 mt-1 font-medium">{cat.count}</p>
-                        </div>
-                        <div className="ml-2 text-gray-300 group-hover:text-[#e49d04] group-hover:translate-x-1 transition-all">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                    </div>
                   ))}
                 </div>
               ))}
