@@ -34,7 +34,11 @@ import {
   FaList,
   FaFileAlt,
   FaUser,
-  FaHeadset
+  FaHeadset,
+  FaLaptopCode,
+  FaServer,
+  FaChartLine,
+  FaBullhorn
 } from 'react-icons/fa';
 import { MdDashboard, MdMenu, MdMessage, MdSettings } from 'react-icons/md';
 import CandidateProfile from '../CandidateProfile/page';
@@ -504,11 +508,16 @@ const CandidateDashboard = () => {
                   {[...Array(4)].map((_, arrayIndex) => (
                     <div key={arrayIndex} className="flex gap-4 shrink-0">
                       {[
-                        { name: 'Housekeeping', count: '360 openings', icon: <FaBuilding /> },
-                        { name: 'Computer / Data Entry', count: '309 openings', icon: <FaFileAlt /> },
-                        { name: 'Hospitality/ Hotel/ Event', count: '301 openings', icon: <FaUsers /> },
-                        { name: 'Graphic Designer', count: '275 openings', icon: <FaFileAlt /> },
-                        { name: 'Office Help / Peon', count: '247 openings', icon: <FaBriefcase /> },
+                        { name: 'Software Engineer', count: '1,204 openings', icon: <FaLaptopCode /> },
+                        { name: 'Full Stack Developer', count: '980 openings', icon: <FaServer /> },
+                        { name: 'Frontend Developer', count: '850 openings', icon: <FaLaptopCode /> },
+                        { name: 'Backend Developer', count: '720 openings', icon: <FaServer /> },
+                        { name: 'Data Scientist', count: '542 openings', icon: <FaChartLine /> },
+                        { name: 'UI/UX Designer', count: '410 openings', icon: <FaFileAlt /> },
+                        { name: 'Product Manager', count: '320 openings', icon: <FaBriefcase /> },
+                        { name: 'Business Analyst', count: '450 openings', icon: <FaChartLine /> },
+                        { name: 'DevOps Engineer', count: '390 openings', icon: <FaGlobe /> },
+                        { name: 'QA Engineer', count: '260 openings', icon: <FaCheckDouble /> },
                       ].map((cat, idx) => (
                         <div key={idx} onClick={() => { setSearchQuery(cat.name); setExploreViewMode('map'); }} className="flex items-center p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-72 shrink-0">
                             <div className="w-10 h-10 shrink-0 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100 group-hover:bg-[#e49d04]/10 group-hover:text-[#e49d04] transition-colors">
@@ -530,11 +539,16 @@ const CandidateDashboard = () => {
                   {[...Array(4)].map((_, arrayIndex) => (
                     <div key={arrayIndex} className="flex gap-4 shrink-0">
                       {[
-                        { name: 'Painter', count: '16 openings', icon: <FaUser /> },
-                        { name: 'Mobile Technician', count: '16 openings', icon: <FaHeadset /> },
-                        { name: 'Electronic Engineer', count: '14 openings', icon: <FaBuilding /> },
-                        { name: 'Tool and Die Maker', count: '13 openings', icon: <FaBriefcase /> },
-                        { name: 'Plumber', count: '13 openings', icon: <FaUser /> },
+                        { name: 'Digital Marketing', count: '850 openings', icon: <FaBullhorn /> },
+                        { name: 'SEO Executive', count: '620 openings', icon: <FaSearch /> },
+                        { name: 'Sales Executive', count: '1,450 openings', icon: <FaUsers /> },
+                        { name: 'HR Manager', count: '290 openings', icon: <FaUser /> },
+                        { name: 'Cloud Architect', count: '180 openings', icon: <FaGlobe /> },
+                        { name: 'Content Writer', count: '340 openings', icon: <FaFileAlt /> },
+                        { name: 'Financial Analyst', count: '210 openings', icon: <FaMoneyBillWave /> },
+                        { name: 'Operations Manager', count: '150 openings', icon: <FaBuilding /> },
+                        { name: 'Customer Success', count: '560 openings', icon: <FaHeadset /> },
+                        { name: 'IT Support Specialist', count: '310 openings', icon: <FaLaptopCode /> },
                       ].map((cat, idx) => (
                         <div key={idx} onClick={() => { setSearchQuery(cat.name); setExploreViewMode('map'); }} className="flex items-center p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-72 shrink-0">
                             <div className="w-10 h-10 shrink-0 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100 group-hover:bg-[#e49d04]/10 group-hover:text-[#e49d04] transition-colors">
