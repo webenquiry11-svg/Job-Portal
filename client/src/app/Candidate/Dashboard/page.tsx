@@ -1,9 +1,10 @@
 'use client';
 
 // @ts-ignore
-import 'leaflet/dist/leaflet.css';
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import 'leaflet/dist/leaflet.css'; // Correctly imported at the top
+import React, { useEffect, useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 import { 
   FaBriefcase, 
   FaBookmark, 
@@ -23,7 +24,7 @@ import {
   FaSearch,
   FaFilter,
   FaGlobe,
-  FaUsers, 
+  FaUsers,
   FaBuilding,
   FaPlus,
   FaCheck,
@@ -34,14 +35,7 @@ import {
   FaList,
   FaFileAlt,
   FaUser,
-  FaHeadset,
-  FaLaptopCode,
-  FaServer,
-  FaChartLine,
-  FaBullhorn,
-  FaEdit,
-  FaEnvelope,
-  FaPhone
+  FaHeadset
 } from 'react-icons/fa';
 import { MdDashboard, MdMenu, MdMessage, MdSettings } from 'react-icons/md';
 import CandidateProfile from '../CandidateProfile/page';
@@ -57,18 +51,6 @@ import {
 } from '@/features/jobapi';
 import { useToggleFollowCompanyMutation, useUpdateProfileMutation } from '@/features/authApi';
 import { useGetMessagesQuery, useSendMessageMutation, useMarkAsSeenMutation, useGetConversationsQuery, useGetUnreadMessageCountQuery } from '@/features/chatApi';
-import { useRouter } from 'next/navigation';
-
-const SidebarItem = ({ icon, label, active, onClick, badge, collapsed }: any) => (
-  <button onClick={onClick} title={collapsed ? label : undefined} className={`w-full flex items-center justify-between py-3.5 rounded-xl transition-all duration-200 font-medium group relative ${collapsed ? 'md:px-0 md:justify-center px-4' : 'px-4'} ${active ? 'bg-gray-100 text-[#0B0C10] font-bold' : 'text-gray-500 hover:bg-gray-100 hover:text-[#0B0C10]'}`}>
-    <div className={`flex items-center ${collapsed ? 'md:gap-0 gap-3' : 'gap-3'}`}>
-        <span className={`text-xl shrink-0 ${active ? 'text-[#0B0C10]' : 'text-gray-400 group-hover:text-[#0B0C10]'}`}>{icon}</span>
-        <span className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${collapsed ? 'md:max-w-0 md:opacity-0' : 'max-w-[200px] opacity-100'}`}>{label}</span>
-    </div>
-    {badge && <span className={`text-xs font-bold px-2 py-0.5 rounded-md whitespace-nowrap transition-all duration-300 ${collapsed ? 'md:hidden' : ''} ${active ? 'bg-gray-200 text-[#0B0C10]' : 'bg-gray-200 text-[#0B0C10]'}`}>{badge}</span>}
-    {badge && collapsed && <span className="hidden md:block absolute top-3 right-3 w-2 h-2 rounded-full bg-red-500 border border-white"></span>}
-  </button>
-);
 
 const CandidateDashboard = () => {
   const router = useRouter();
@@ -94,7 +76,6 @@ const CandidateDashboard = () => {
   const [applicationFilter, setApplicationFilter] = useState('All');
   const [exploreViewMode, setExploreViewMode] = useState<'list' | 'map'>('map');
 
-  const [confirmSmartApplyData, setConfirmSmartApplyData] = useState<{city: string, roles: number} | null>(null);
   const [smartApplyData, setSmartApplyData] = useState<{city: string, roles: number} | null>(null);
   const [pendingSmartApplyPin, setPendingSmartApplyPin] = useState<{name: string, jobs: number} | null>(null);
   
@@ -157,8 +138,8 @@ const CandidateDashboard = () => {
 
   const handleSmartApply = (pin: {name: string, jobs: number}) => {
     if (user?.resume) {
-        // If resume exists, show confirmation modal first
-        setConfirmSmartApplyData({ city: pin.name, roles: pin.jobs });
+        // If resume exists, show success modal directly
+        setSmartApplyData({ city: pin.name, roles: pin.jobs });
     } else {
         // If no resume, store the pin info and open the resume upload modal
         setPendingSmartApplyPin(pin);
@@ -504,26 +485,21 @@ const CandidateDashboard = () => {
                 <style>{`
                   @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
                   @keyframes scroll-right { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
-                  .animate-scroll-left { animation: scroll-left 40s linear infinite; width: max-content; }
-                  .animate-scroll-right { animation: scroll-right 40s linear infinite; width: max-content; }
+                  .animate-scroll-left { animation: scroll-left 80s linear infinite; width: max-content; }
+                  .animate-scroll-right { animation: scroll-right 80s linear infinite; width: max-content; }
                   .category-carousel-container:hover .animate-scroll-left, .category-carousel-container:hover .animate-scroll-right { animation-play-state: paused; }
                 `}</style>
                 <div className="animate-scroll-right flex gap-4">
                   {[...Array(4)].map((_, arrayIndex) => (
                     <div key={arrayIndex} className="flex gap-4 shrink-0">
                       {[
-                        { name: 'Software Engineer', count: '1,204 openings', icon: <FaLaptopCode /> },
-                        { name: 'Full Stack Developer', count: '980 openings', icon: <FaServer /> },
-                        { name: 'Frontend Developer', count: '850 openings', icon: <FaLaptopCode /> },
-                        { name: 'Backend Developer', count: '720 openings', icon: <FaServer /> },
-                        { name: 'Data Scientist', count: '542 openings', icon: <FaChartLine /> },
-                        { name: 'UI/UX Designer', count: '410 openings', icon: <FaFileAlt /> },
-                        { name: 'Product Manager', count: '320 openings', icon: <FaBriefcase /> },
-                        { name: 'Business Analyst', count: '450 openings', icon: <FaChartLine /> },
-                        { name: 'DevOps Engineer', count: '390 openings', icon: <FaGlobe /> },
-                        { name: 'QA Engineer', count: '260 openings', icon: <FaCheckDouble /> },
+                        { name: 'Housekeeping', count: '360 openings', icon: <FaBuilding /> },
+                        { name: 'Computer / Data Entry', count: '309 openings', icon: <FaFileAlt /> },
+                        { name: 'Hospitality/ Hotel/ Event', count: '301 openings', icon: <FaUsers /> },
+                        { name: 'Graphic Designer', count: '275 openings', icon: <FaFileAlt /> },
+                        { name: 'Office Help / Peon', count: '247 openings', icon: <FaBriefcase /> },
                       ].map((cat, idx) => (
-                        <div key={idx} onClick={() => { setSearchQuery(cat.name); setExploreViewMode('map'); }} className="flex items-center p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-72 shrink-0">
+                        <div key={idx} onClick={() => { setSearchQuery(cat.name); setExploreViewMode('list'); }} className="flex items-center p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-72 shrink-0">
                             <div className="w-10 h-10 shrink-0 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100 group-hover:bg-[#e49d04]/10 group-hover:text-[#e49d04] transition-colors">
                                 <div className="text-base">{cat.icon}</div>
                             </div>
@@ -543,18 +519,13 @@ const CandidateDashboard = () => {
                   {[...Array(4)].map((_, arrayIndex) => (
                     <div key={arrayIndex} className="flex gap-4 shrink-0">
                       {[
-                        { name: 'Digital Marketing', count: '850 openings', icon: <FaBullhorn /> },
-                        { name: 'SEO Executive', count: '620 openings', icon: <FaSearch /> },
-                        { name: 'Sales Executive', count: '1,450 openings', icon: <FaUsers /> },
-                        { name: 'HR Manager', count: '290 openings', icon: <FaUser /> },
-                        { name: 'Cloud Architect', count: '180 openings', icon: <FaGlobe /> },
-                        { name: 'Content Writer', count: '340 openings', icon: <FaFileAlt /> },
-                        { name: 'Financial Analyst', count: '210 openings', icon: <FaMoneyBillWave /> },
-                        { name: 'Operations Manager', count: '150 openings', icon: <FaBuilding /> },
-                        { name: 'Customer Success', count: '560 openings', icon: <FaHeadset /> },
-                        { name: 'IT Support Specialist', count: '310 openings', icon: <FaLaptopCode /> },
+                        { name: 'Painter', count: '16 openings', icon: <FaUser /> },
+                        { name: 'Mobile Technician', count: '16 openings', icon: <FaHeadset /> },
+                        { name: 'Electronic Engineer', count: '14 openings', icon: <FaBuilding /> },
+                        { name: 'Tool and Die Maker', count: '13 openings', icon: <FaBriefcase /> },
+                        { name: 'Plumber', count: '13 openings', icon: <FaUser /> },
                       ].map((cat, idx) => (
-                        <div key={idx} onClick={() => { setSearchQuery(cat.name); setExploreViewMode('map'); }} className="flex items-center p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-72 shrink-0">
+                        <div key={idx} onClick={() => { setSearchQuery(cat.name); setExploreViewMode('list'); }} className="flex items-center p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-72 shrink-0">
                             <div className="w-10 h-10 shrink-0 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100 group-hover:bg-[#e49d04]/10 group-hover:text-[#e49d04] transition-colors">
                                 <div className="text-base">{cat.icon}</div>
                             </div>
@@ -596,7 +567,6 @@ const CandidateDashboard = () => {
                 </div>
               ) : (isClient ? (
                   <InteractiveJobMap
-                    searchQuery={searchQuery}
                     onSelectCity={(pin: { name: string; jobs: number }) => {
                       handleSmartApply(pin);
                     }}
@@ -734,22 +704,10 @@ const CandidateDashboard = () => {
             }}
             onUploadComplete={() => {
                 if (pendingSmartApplyPin) {
-                    setConfirmSmartApplyData({ city: pendingSmartApplyPin.name, roles: pendingSmartApplyPin.jobs });
+                    setSmartApplyData({ city: pendingSmartApplyPin.name, roles: pendingSmartApplyPin.jobs });
                     setPendingSmartApplyPin(null);
                 }
             }}
-        />
-      )}
-      {confirmSmartApplyData && (
-        <SmartApplyConfirmationModal 
-          user={user} 
-          data={confirmSmartApplyData}
-          onConfirm={() => {
-            setSmartApplyData(confirmSmartApplyData);
-            setConfirmSmartApplyData(null);
-          }}
-          onCancel={() => setConfirmSmartApplyData(null)}
-          onEditProfile={() => { setConfirmSmartApplyData(null); setActiveTab('profile'); }}
         />
       )}
       {smartApplyData && (
@@ -758,6 +716,17 @@ const CandidateDashboard = () => {
     </div>
   );
 }
+
+const SidebarItem = ({ icon, label, active, onClick, badge, collapsed }: any) => (
+  <button onClick={onClick} title={collapsed ? label : undefined} className={`w-full flex items-center justify-between py-3.5 rounded-xl transition-all duration-200 font-medium group relative ${collapsed ? 'md:px-0 md:justify-center px-4' : 'px-4'} ${active ? 'bg-gray-100 text-[#0B0C10] font-bold' : 'text-gray-500 hover:bg-gray-100 hover:text-[#0B0C10]'}`}>
+    <div className={`flex items-center ${collapsed ? 'md:gap-0 gap-3' : 'gap-3'}`}>
+        <span className={`text-xl shrink-0 ${active ? 'text-[#0B0C10]' : 'text-gray-400 group-hover:text-[#0B0C10]'}`}>{icon}</span>
+        <span className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${collapsed ? 'md:max-w-0 md:opacity-0' : 'max-w-[200px] opacity-100'}`}>{label}</span>
+    </div>
+    {badge && <span className={`text-xs font-bold px-2 py-0.5 rounded-md whitespace-nowrap transition-all duration-300 ${collapsed ? 'md:hidden' : ''} ${active ? 'bg-gray-200 text-[#0B0C10]' : 'bg-gray-200 text-[#0B0C10]'}`}>{badge}</span>}
+    {badge && collapsed && <span className="hidden md:block absolute top-3 right-3 w-2 h-2 rounded-full bg-red-500 border border-white"></span>}
+  </button>
+);
 
 const StatCard = ({ icon, label, value, color }: any) => (
   <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
@@ -1040,66 +1009,6 @@ const JobDetailsModal = ({ job, onClose, user, onApply }: any) => {
   );
 };
 
-const SmartApplyConfirmationModal = ({ user, data, onConfirm, onCancel, onEditProfile }: any) => {
-    const [isAgreed, setIsAgreed] = useState(false);
-
-    if (!data || !user) return null;
-
-    return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[60] p-4" onClick={onCancel}>
-            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg relative animate-fade-in-up flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 rounded-t-3xl shrink-0">
-                    <h2 className="text-xl font-bold text-[#121212]">Review Application</h2>
-                    <button onClick={onCancel} className="text-gray-400 hover:text-[#121212] transition-colors p-1"><FaTimes /></button>
-                </div>
-                <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 bg-white">
-                    <p className="text-gray-600 mb-6 text-sm">
-                        You are about to bulk apply for <strong>{data.roles}</strong> priority openings in <strong>{data.city}</strong>. Please verify your details below.
-                    </p>
-                    
-                    <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 mb-6 relative group">
-                        <div className="flex items-center gap-4 mb-4 border-b border-gray-200 pb-4">
-                            <div className="w-12 h-12 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#e49d04] font-bold shadow-inner shrink-0 overflow-hidden">
-                                {user?.profilePicture ? <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" /> : user?.name?.charAt(0).toUpperCase() || 'U'}
-                            </div>
-                            <div className="min-w-0">
-                                <h3 className="font-bold text-[#121212] truncate">{user?.name}</h3>
-                                <p className="text-xs text-gray-500 truncate">{user?.professionalTitle || 'Candidate'}</p>
-                            </div>
-                        </div>
-                        <div className="space-y-3 text-sm">
-                            <div className="flex items-center gap-3 text-gray-600 truncate"><FaEnvelope className="text-gray-400 shrink-0" /> <span className="truncate">{user?.email}</span></div>
-                            {user?.phone && <div className="flex items-center gap-3 text-gray-600 truncate"><FaPhone className="text-gray-400 shrink-0" /> <span className="truncate">{user?.phone}</span></div>}
-                            {user?.location && <div className="flex items-center gap-3 text-gray-600 truncate"><FaMapMarkerAlt className="text-gray-400 shrink-0" /> <span className="truncate">{user?.location}</span></div>}
-                        </div>
-                        <div className="mt-5 flex justify-end">
-                            <button onClick={onEditProfile} className="text-xs font-bold text-[#0B0C10] bg-white border border-gray-200 px-3 py-1.5 rounded-lg hover:border-[#e49d04] hover:text-[#e49d04] flex items-center gap-1.5 transition-all shadow-sm">
-                                <FaEdit /> Edit Details
-                            </button>
-                        </div>
-                    </div>
-
-                    <label className="flex items-start gap-3 cursor-pointer group mb-2 bg-yellow-50/50 p-4 rounded-xl border border-yellow-100 hover:border-yellow-200 transition-colors">
-                        <div className="relative flex items-center justify-center mt-0.5 shrink-0">
-                            <input type="checkbox" className="peer appearance-none w-5 h-5 border-2 border-gray-300 bg-white rounded-md checked:bg-[#e49d04] checked:border-[#e49d04] transition-all cursor-pointer" checked={isAgreed} onChange={(e) => setIsAgreed(e.target.checked)} />
-                            <FaCheck className="absolute text-[#0B0C10] text-[10px] font-black opacity-0 peer-checked:opacity-100 pointer-events-none" />
-                        </div>
-                        <span className="text-sm text-gray-700 font-medium leading-snug">
-                            I confirm that the information provided is accurate and consent to submitting my profile for these roles.
-                        </span>
-                    </label>
-                </div>
-                <div className="p-6 bg-gray-50/50 border-t border-gray-100 flex justify-end gap-3 rounded-b-3xl shrink-0">
-                    <button onClick={onCancel} className="px-6 py-2.5 text-sm font-bold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors shadow-sm">Cancel</button>
-                    <button onClick={onConfirm} disabled={!isAgreed} className="px-6 py-2.5 text-sm font-bold text-[#0B0C10] bg-[#e49d04] rounded-xl hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-                        Submit Application <FaPaperPlane />
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
 const SmartApplySuccessModal = ({ data, onClose }: { data: {city: string, roles: number} | null, onClose: () => void }) => {
     if (!data) return null;
     
@@ -1107,7 +1016,7 @@ const SmartApplySuccessModal = ({ data, onClose }: { data: {city: string, roles:
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[60] p-4">
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md relative animate-fade-in-up p-8 text-center">
                 <FaCheckCircle className="text-5xl text-green-500 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-[#121212] mb-2">Application Submitted</h2>
+                <h2 className="text-2xl font-bold text-[#121212] mb-2">Applications Scaled</h2>
                 <p className="text-gray-600 mb-6">
                     Success. Your resume is now in the priority queue for all <strong>{data.roles}</strong> roles across <strong>{data.city}</strong>.
                 </p>
@@ -1574,7 +1483,7 @@ function useIncrementProfileViewMutation(): [any] {
   return [incrementProfileView];
 }
 
-const InteractiveJobMap = ({ onSelectCity, searchQuery }: { onSelectCity: (pin: { name: string; jobs: number }) => void, searchQuery?: string }) => {
+const InteractiveJobMap = ({ onSelectCity }: { onSelectCity: (pin: { name: string; jobs: number }) => void }) => {
   const [selectedState, setSelectedState] = useState<string>('India');
   const [center, setCenter] = useState<[number, number]>([20.5937, 78.9629]);
   const [zoom, setZoom] = useState<number>(5);
@@ -1620,24 +1529,17 @@ const InteractiveJobMap = ({ onSelectCity, searchQuery }: { onSelectCity: (pin: 
     'Delhi': { center: [28.7041, 77.1025], zoom: 10 }
   };
 
-  const pins = useMemo(() => {
-    const basePins = [
-      { name: 'Amritsar', pos: [31.6340, 74.8723], jobs: 123, state: 'Punjab' },
-      { name: 'Jalandhar', pos: [31.3260, 75.5762], jobs: 43, state: 'Punjab' },
-      { name: 'Ludhiana', pos: [30.9010, 75.8573], jobs: 71, state: 'Punjab' },
-      { name: 'Patiala', pos: [30.3398, 76.3869], jobs: 6, state: 'Punjab' },
-      { name: 'Chandigarh', pos: [30.7333, 76.7794], jobs: 89, state: 'Punjab' },
-      { name: 'Mumbai', pos: [19.0760, 72.8777], jobs: 1205, state: 'Maharashtra' },
-      { name: 'Pune', pos: [18.5204, 73.8567], jobs: 380, state: 'Maharashtra' },
-      { name: 'Bangalore', pos: [12.9716, 77.5946], jobs: 980, state: 'Karnataka' },
-      { name: 'New Delhi', pos: [28.6139, 77.2090], jobs: 850, state: 'Delhi' }
-    ];
-    if (!searchQuery) return basePins;
-    return basePins.map(pin => {
-      const hash = (searchQuery + pin.name).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      return { ...pin, jobs: (hash % 300) + 10 };
-    });
-  }, [searchQuery]);
+  const pins = [
+    { name: 'Amritsar', pos: [31.6340, 74.8723], jobs: 123, state: 'Punjab' },
+    { name: 'Jalandhar', pos: [31.3260, 75.5762], jobs: 43, state: 'Punjab' },
+    { name: 'Ludhiana', pos: [30.9010, 75.8573], jobs: 71, state: 'Punjab' },
+    { name: 'Patiala', pos: [30.3398, 76.3869], jobs: 6, state: 'Punjab' },
+    { name: 'Chandigarh', pos: [30.7333, 76.7794], jobs: 89, state: 'Punjab' },
+    { name: 'Mumbai', pos: [19.0760, 72.8777], jobs: 1205, state: 'Maharashtra' },
+    { name: 'Pune', pos: [18.5204, 73.8567], jobs: 380, state: 'Maharashtra' },
+    { name: 'Bangalore', pos: [12.9716, 77.5946], jobs: 980, state: 'Karnataka' },
+    { name: 'New Delhi', pos: [28.6139, 77.2090], jobs: 850, state: 'Delhi' }
+  ];
 
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
@@ -1668,7 +1570,7 @@ const InteractiveJobMap = ({ onSelectCity, searchQuery }: { onSelectCity: (pin: 
       </div>
 
       <MapContainer center={center} zoom={zoom} style={{ width: '100%', height: '100%' }} zoomControl={false}>
-        <TileLayer url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" attribution="&copy; Google Maps" />
+        <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" attribution='&copy; CartoDB' />
         <MapController centerPos={center} zoomLevel={zoom} />
         {visiblePins.map((pin: any, idx: number) => (
           <Marker key={idx} position={pin.pos as [number, number]} icon={customIcon}>
