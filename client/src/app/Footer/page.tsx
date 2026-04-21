@@ -69,8 +69,8 @@ const Footer = () => {
               {[
                 { icon: <FaLinkedinIn />, link: '#' },
                 { icon: <FaTwitter />, link: '#' },
-                { icon: <FaInstagram />, link: '#' },
-                { icon: <FaFacebookF />, link: '#' },
+                { icon: <FaInstagram />, link: 'https://www.instagram.com/click4jobs.in/' },
+                { icon: <FaFacebookF />, link: 'https://www.facebook.com/Click4Jobs.in' },
               ].map((social, i) => (
                 <a 
                   key={i} 
@@ -78,6 +78,8 @@ const Footer = () => {
                   href={social.link}
                   className="w-12 h-12 rounded-2xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300 group"
                   style={{ '--hover-bg': brandColor } as React.CSSProperties}
+                  target={social.link !== '#' ? "_blank" : undefined}
+                  rel={social.link !== '#' ? "noopener noreferrer" : undefined}
                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = brandColor}
                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                 >
