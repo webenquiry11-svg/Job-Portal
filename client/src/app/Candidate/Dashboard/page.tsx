@@ -35,7 +35,10 @@ import {
   FaList,
   FaFileAlt,
   FaUser,
-  FaHeadset
+  FaHeadset,
+  FaEdit,
+  FaEnvelope,
+  FaPhone
 } from 'react-icons/fa';
 import { MdDashboard, MdMenu, MdMessage, MdSettings } from 'react-icons/md';
 import CandidateProfile from '../CandidateProfile/page';
@@ -76,6 +79,7 @@ const CandidateDashboard = () => {
   const [applicationFilter, setApplicationFilter] = useState('All');
   const [exploreViewMode, setExploreViewMode] = useState<'list' | 'map'>('map');
 
+  const [confirmSmartApplyData, setConfirmSmartApplyData] = useState<{city: string, roles: number} | null>(null);
   const [smartApplyData, setSmartApplyData] = useState<{city: string, roles: number} | null>(null);
   const [pendingSmartApplyPin, setPendingSmartApplyPin] = useState<{name: string, jobs: number} | null>(null);
   
@@ -138,8 +142,8 @@ const CandidateDashboard = () => {
 
   const handleSmartApply = (pin: {name: string, jobs: number}) => {
     if (user?.resume) {
-        // If resume exists, show success modal directly
-        setSmartApplyData({ city: pin.name, roles: pin.jobs });
+        // If resume exists, show confirmation modal first
+        setConfirmSmartApplyData({ city: pin.name, roles: pin.jobs });
     } else {
         // If no resume, store the pin info and open the resume upload modal
         setPendingSmartApplyPin(pin);
@@ -704,10 +708,22 @@ const CandidateDashboard = () => {
             }}
             onUploadComplete={() => {
                 if (pendingSmartApplyPin) {
-                    setSmartApplyData({ city: pendingSmartApplyPin.name, roles: pendingSmartApplyPin.jobs });
+                    setConfirmSmartApplyData({ city: pendingSmartApplyPin.name, roles: pendingSmartApplyPin.jobs });
                     setPendingSmartApplyPin(null);
                 }
             }}
+        />
+      )}
+      {confirmSmartApplyData && (
+        <SmartApplyConfirmationModal 
+          user={user} 
+          data={confirmSmartApplyData}
+          onConfirm={() => {
+            setSmartApplyData(confirmSmartApplyData);
+            setConfirmSmartApplyData(null);
+          }}
+          onCancel={() => setConfirmSmartApplyData(null)}
+          onEditProfile={() => { setConfirmSmartApplyData(null); setActiveTab('profile'); }}
         />
       )}
       {smartApplyData && (
@@ -1009,6 +1025,66 @@ const JobDetailsModal = ({ job, onClose, user, onApply }: any) => {
   );
 };
 
+const SmartApplyConfirmationModal = ({ user, data, onConfirm, onCancel, onEditProfile }: any) => {
+    const [isAgreed, setIsAgreed] = useState(false);
+
+    if (!data || !user) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[60] p-4" onClick={onCancel}>
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg relative animate-fade-in-up flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+                <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 rounded-t-3xl shrink-0">
+                    <h2 className="text-xl font-bold text-[#121212]">Review Application</h2>
+                    <button onClick={onCancel} className="text-gray-400 hover:text-[#121212] transition-colors p-1"><FaTimes /></button>
+                </div>
+                <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar flex-1 bg-white">
+                    <p className="text-gray-600 mb-6 text-sm">
+                        You are about to bulk apply for <strong>{data.roles}</strong> priority openings in <strong>{data.city}</strong>. Please verify your details below.
+                    </p>
+                    
+                    <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 mb-6 relative group">
+                        <div className="flex items-center gap-4 mb-4 border-b border-gray-200 pb-4">
+                            <div className="w-12 h-12 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#e49d04] font-bold shadow-inner shrink-0 overflow-hidden">
+                                {user?.profilePicture ? <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" /> : user?.name?.charAt(0).toUpperCase() || 'U'}
+                            </div>
+                            <div className="min-w-0">
+                                <h3 className="font-bold text-[#121212] truncate">{user?.name}</h3>
+                                <p className="text-xs text-gray-500 truncate">{user?.professionalTitle || 'Candidate'}</p>
+                            </div>
+                        </div>
+                        <div className="space-y-3 text-sm">
+                            <div className="flex items-center gap-3 text-gray-600 truncate"><FaEnvelope className="text-gray-400 shrink-0" /> <span className="truncate">{user?.email}</span></div>
+                            {user?.phone && <div className="flex items-center gap-3 text-gray-600 truncate"><FaPhone className="text-gray-400 shrink-0" /> <span className="truncate">{user?.phone}</span></div>}
+                            {user?.location && <div className="flex items-center gap-3 text-gray-600 truncate"><FaMapMarkerAlt className="text-gray-400 shrink-0" /> <span className="truncate">{user?.location}</span></div>}
+                        </div>
+                        <div className="mt-5 flex justify-end">
+                            <button onClick={onEditProfile} className="text-xs font-bold text-[#0B0C10] bg-white border border-gray-200 px-3 py-1.5 rounded-lg hover:border-[#e49d04] hover:text-[#e49d04] flex items-center gap-1.5 transition-all shadow-sm">
+                                <FaEdit /> Edit Details
+                            </button>
+                        </div>
+                    </div>
+
+                    <label className="flex items-start gap-3 cursor-pointer group mb-2 bg-yellow-50/50 p-4 rounded-xl border border-yellow-100 hover:border-yellow-200 transition-colors">
+                        <div className="relative flex items-center justify-center mt-0.5 shrink-0">
+                            <input type="checkbox" className="peer appearance-none w-5 h-5 border-2 border-gray-300 bg-white rounded-md checked:bg-[#e49d04] checked:border-[#e49d04] transition-all cursor-pointer" checked={isAgreed} onChange={(e) => setIsAgreed(e.target.checked)} />
+                            <FaCheck className="absolute text-[#0B0C10] text-[10px] font-black opacity-0 peer-checked:opacity-100 pointer-events-none" />
+                        </div>
+                        <span className="text-sm text-gray-700 font-medium leading-snug">
+                            I confirm that the information provided is accurate and consent to submitting my profile for these roles.
+                        </span>
+                    </label>
+                </div>
+                <div className="p-6 bg-gray-50/50 border-t border-gray-100 flex justify-end gap-3 rounded-b-3xl shrink-0">
+                    <button onClick={onCancel} className="px-6 py-2.5 text-sm font-bold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors shadow-sm">Cancel</button>
+                    <button onClick={onConfirm} disabled={!isAgreed} className="px-6 py-2.5 text-sm font-bold text-[#0B0C10] bg-[#e49d04] rounded-xl hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                        Submit Application <FaPaperPlane />
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const SmartApplySuccessModal = ({ data, onClose }: { data: {city: string, roles: number} | null, onClose: () => void }) => {
     if (!data) return null;
     
@@ -1016,7 +1092,7 @@ const SmartApplySuccessModal = ({ data, onClose }: { data: {city: string, roles:
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-[60] p-4">
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md relative animate-fade-in-up p-8 text-center">
                 <FaCheckCircle className="text-5xl text-green-500 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-[#121212] mb-2">Applications Scaled</h2>
+                <h2 className="text-2xl font-bold text-[#121212] mb-2">Application Submitted</h2>
                 <p className="text-gray-600 mb-6">
                     Success. Your resume is now in the priority queue for all <strong>{data.roles}</strong> roles across <strong>{data.city}</strong>.
                 </p>
