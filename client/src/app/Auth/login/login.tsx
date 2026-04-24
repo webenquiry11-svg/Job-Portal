@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaTimes } from 'react-icons/fa';
 import { useLoginMutation } from '@/features/authApi';
@@ -15,6 +15,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
   const router = useRouter();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [login, { isLoading }] = useLoginMutation();
+
+  useEffect(() => {
+    const prefillEmail = localStorage.getItem('prefillEmail');
+    if (prefillEmail) {
+      setFormData(prev => ({ ...prev, email: prefillEmail }));
+      localStorage.removeItem('prefillEmail');
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

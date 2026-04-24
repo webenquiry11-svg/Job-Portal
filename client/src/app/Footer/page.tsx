@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram, FaPaperPlane, FaShieldAlt } from 'react-icons/fa';
+import { FaFacebookF, FaLinkedinIn, FaInstagram, FaPaperPlane, FaShieldAlt } from 'react-icons/fa';
 import { HiOutlineMailOpen } from 'react-icons/hi';
 
 const Footer = () => {
@@ -14,6 +14,15 @@ const Footer = () => {
   if (isDashboard) return null;
 
   const brandColor = "#e49d04";
+
+  const handleGetStarted = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim()) {
+      localStorage.setItem('prefillEmail', email.trim());
+    }
+    window.dispatchEvent(new Event('openLoginModal'));
+    setEmail('');
+  };
 
   return (
     <footer className="relative bg-[#f8f9fb] pt-20 pb-10 mt-auto overflow-hidden">
@@ -35,7 +44,7 @@ const Footer = () => {
             </h2>
           </div>
           
-          <form onSubmit={(e) => e.preventDefault()} className="w-full lg:w-auto flex flex-col sm:flex-row gap-3">
+          <form onSubmit={handleGetStarted} className="w-full lg:w-auto flex flex-col sm:flex-row gap-3">
             <div className="relative group">
               <input 
                 type="email" 
@@ -68,7 +77,6 @@ const Footer = () => {
             <div className="flex gap-4">
               {[
                 { icon: <FaLinkedinIn />, link: '#' },
-                { icon: <FaTwitter />, link: '#' },
                 { icon: <FaInstagram />, link: 'https://www.instagram.com/click4jobs.in/' },
                 { icon: <FaFacebookF />, link: 'https://www.facebook.com/Click4Jobs.in' },
               ].map((social, i) => (

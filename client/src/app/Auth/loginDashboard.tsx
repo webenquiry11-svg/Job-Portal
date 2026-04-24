@@ -93,6 +93,12 @@ const LoginDashboard = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleOpenModal = () => setIsLoginModalOpen(true);
+    window.addEventListener('openLoginModal', handleOpenModal);
+    return () => window.removeEventListener('openLoginModal', handleOpenModal);
+  }, []);
+
   // Intercept the token coming back from Passport.js Redirect
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -165,10 +171,10 @@ const LoginDashboard = () => {
   return (
     <div className="grow flex flex-col">
       {/* REDESIGNED PREMIUM HERO SECTION */}
-      <section className="relative bg-[#F8FAFC] overflow-hidden pt-16 lg:pt-24 pb-20">
+      <section className="relative bg-[#F8FAFC] overflow-hidden pt-24 lg:pt-32 pb-20">
         {/* Dynamic Background Elements */}
-        <div className="absolute top-0 inset-x-0 h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#e49d04]/10 via-transparent to-transparent opacity-80 pointer-events-none"></div>
-        <div className="absolute -left-40 top-40 w-[600px] h-[600px] bg-blue-100/40 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute top-0 inset-x-0 h-full bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-[#e49d04]/10 via-transparent to-transparent opacity-80 pointer-events-none"></div>
+        <div className="absolute -left-40 top-40 w-150 h-150 bg-blue-100/40 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="container mx-auto px-6 md:px-12 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
