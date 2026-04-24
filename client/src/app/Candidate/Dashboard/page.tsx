@@ -497,11 +497,11 @@ const CandidateDashboard = () => {
                   {[...Array(4)].map((_, arrayIndex) => (
                     <div key={arrayIndex} className="flex gap-4 shrink-0">
                       {[
-                        { name: 'Housekeeping', count: '360 openings', icon: <FaBuilding /> },
-                        { name: 'Computer / Data Entry', count: '309 openings', icon: <FaFileAlt /> },
-                        { name: 'Hospitality/ Hotel/ Event', count: '301 openings', icon: <FaUsers /> },
-                        { name: 'Graphic Designer', count: '275 openings', icon: <FaFileAlt /> },
-                        { name: 'Office Help / Peon', count: '247 openings', icon: <FaBriefcase /> },
+                        { name: 'Software Development', count: '12k+ openings', icon: <FaFileAlt /> },
+                        { name: 'Data Science & AI', count: '8k+ openings', icon: <FaBuilding /> },
+                        { name: 'UI/UX Design', count: '5k+ openings', icon: <FaUsers /> },
+                        { name: 'Product Management', count: '4k+ openings', icon: <FaBriefcase /> },
+                        { name: 'Digital Marketing', count: '9k+ openings', icon: <FaEnvelope /> },
                       ].map((cat, idx) => (
                         <div key={idx} onClick={() => { setSearchQuery(cat.name); setExploreViewMode('list'); }} className="flex items-center p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-72 shrink-0">
                             <div className="w-10 h-10 shrink-0 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100 group-hover:bg-[#e49d04]/10 group-hover:text-[#e49d04] transition-colors">
@@ -523,11 +523,11 @@ const CandidateDashboard = () => {
                   {[...Array(4)].map((_, arrayIndex) => (
                     <div key={arrayIndex} className="flex gap-4 shrink-0">
                       {[
-                        { name: 'Painter', count: '16 openings', icon: <FaUser /> },
-                        { name: 'Mobile Technician', count: '16 openings', icon: <FaHeadset /> },
-                        { name: 'Electronic Engineer', count: '14 openings', icon: <FaBuilding /> },
-                        { name: 'Tool and Die Maker', count: '13 openings', icon: <FaBriefcase /> },
-                        { name: 'Plumber', count: '13 openings', icon: <FaUser /> },
+                        { name: 'Sales & Business', count: '15k+ openings', icon: <FaMoneyBillWave /> },
+                        { name: 'Human Resources', count: '3k+ openings', icon: <FaUser /> },
+                        { name: 'Finance & Accounting', count: '6k+ openings', icon: <FaBriefcase /> },
+                        { name: 'Customer Success', count: '7k+ openings', icon: <FaHeadset /> },
+                        { name: 'IT & Networking', count: '4k+ openings', icon: <FaBuilding /> },
                       ].map((cat, idx) => (
                         <div key={idx} onClick={() => { setSearchQuery(cat.name); setExploreViewMode('list'); }} className="flex items-center p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#e49d04]/50 transition-all duration-300 cursor-pointer group w-72 shrink-0">
                             <div className="w-10 h-10 shrink-0 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100 group-hover:bg-[#e49d04]/10 group-hover:text-[#e49d04] transition-colors">

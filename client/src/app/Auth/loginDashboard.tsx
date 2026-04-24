@@ -468,11 +468,11 @@ const LoginDashboard = () => {
               {[...Array(4)].map((_, arrayIndex) => (
                 <div key={arrayIndex} className="flex gap-5 shrink-0">
                   {[
-                    { name: 'Housekeeping', count: '360 openings', icon: <FaBuilding /> },
-                    { name: 'Computer / Data Entry', count: '309 openings', icon: <FaFileAlt /> },
-                    { name: 'Hospitality/ Hotel/ Event', count: '301 openings', icon: <FaUsers /> },
-                    { name: 'Graphic Designer', count: '275 openings', icon: <FaFileAlt /> },
-                    { name: 'Office Help / Peon', count: '247 openings', icon: <FaBriefcase /> },
+                    { name: 'Software Development', count: '12k+ openings', icon: <FaFileAlt /> },
+                    { name: 'Data Science & AI', count: '8k+ openings', icon: <FaBuilding /> },
+                    { name: 'UI/UX Design', count: '5k+ openings', icon: <FaUsers /> },
+                    { name: 'Product Management', count: '4k+ openings', icon: <FaBriefcase /> },
+                    { name: 'Digital Marketing', count: '9k+ openings', icon: <FaEnvelope /> },
                   ].map((cat, idx) => (
                         <div key={idx} onClick={() => handleProtectedAction()} className="flex items-center p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(228,157,4,0.2)] hover:-translate-y-1.5 hover:border-[#e49d04]/40 transition-all duration-500 cursor-pointer group w-[360px] shrink-0 relative overflow-hidden z-10">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#e49d04]/10 to-transparent rounded-bl-[100%] -z-10 transform scale-0 group-hover:scale-100 transition-transform duration-500 origin-top-right"></div>
@@ -502,11 +502,11 @@ const LoginDashboard = () => {
               {[...Array(4)].map((_, arrayIndex) => (
                 <div key={arrayIndex} className="flex gap-5 shrink-0">
                   {[
-                    { name: 'Painter', count: '16 openings', icon: <FaUser /> },
-                    { name: 'Mobile Technician', count: '16 openings', icon: <FaHeadset /> },
-                    { name: 'Electronic Engineer', count: '14 openings', icon: <FaBuilding /> },
-                    { name: 'Tool and Die Maker', count: '13 openings', icon: <FaBriefcase /> },
-                    { name: 'Plumber', count: '13 openings', icon: <FaUser /> },
+                    { name: 'Sales & Business', count: '15k+ openings', icon: <FaMoneyBillWave /> },
+                    { name: 'Human Resources', count: '3k+ openings', icon: <FaUser /> },
+                    { name: 'Finance & Accounting', count: '6k+ openings', icon: <FaBriefcase /> },
+                    { name: 'Customer Success', count: '7k+ openings', icon: <FaHeadset /> },
+                    { name: 'IT & Networking', count: '4k+ openings', icon: <FaBuilding /> },
                   ].map((cat, idx) => (
                         <div key={idx} onClick={() => handleProtectedAction()} className="flex items-center p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(228,157,4,0.2)] hover:-translate-y-1.5 hover:border-[#e49d04]/40 transition-all duration-500 cursor-pointer group w-[360px] shrink-0 relative overflow-hidden z-10">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#e49d04]/10 to-transparent rounded-bl-[100%] -z-10 transform scale-0 group-hover:scale-100 transition-transform duration-500 origin-top-right"></div>
