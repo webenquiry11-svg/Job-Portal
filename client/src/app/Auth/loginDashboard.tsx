@@ -448,25 +448,59 @@ const LoginDashboard = () => {
               0% { transform: translateX(-50%); }
               100% { transform: translateX(0); }
             }
-            .animate-scroll-left {
-              animation: scroll-left 40s linear infinite;
-              width: max-content;
+            @keyframes scroll-up {
+              0% { transform: translateY(0); }
+              100% { transform: translateY(-50%); }
             }
-            .animate-scroll-right {
+            
+            .category-carousel-container:hover .scroll-track-1,
+            .category-carousel-container:hover .scroll-track-2 {
+              animation-play-state: paused;
+            }
+
+            /* Desktop Default */
+            .scroll-track-1 {
               animation: scroll-right 40s linear infinite;
               width: max-content;
+              display: flex;
+              flex-direction: row;
             }
-            .category-carousel-container:hover .animate-scroll-left,
-            .category-carousel-container:hover .animate-scroll-right {
-              animation-play-state: paused;
+            .scroll-track-2 {
+              animation: scroll-left 40s linear infinite;
+              width: max-content;
+              display: flex;
+              flex-direction: row;
+            }
+            .carousel-mask {
+              mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+              -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+            }
+
+            /* Mobile Overrides */
+            @media (max-width: 767px) {
+              .scroll-track-1 {
+                animation: scroll-up 30s linear infinite;
+                width: 100%;
+                height: max-content;
+                flex-direction: column;
+                align-items: center;
+              }
+              .scroll-track-2 {
+                display: none !important;
+              }
+              .carousel-mask {
+                height: 420px;
+                mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+                -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+              }
             }
           `}</style>
 
-          <div className="category-carousel-container flex flex-col gap-5 relative w-full" style={{ maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)' }}>
-            {/* Top Row: Left to Right */}
-            <div className="animate-scroll-right flex gap-5">
+          <div className="category-carousel-container flex flex-col gap-5 relative w-full carousel-mask">
+            {/* Top Row: Left to Right on Desktop / Bottom to Up on Mobile */}
+            <div className="scroll-track-1 gap-5">
               {[...Array(4)].map((_, arrayIndex) => (
-                <div key={arrayIndex} className="flex gap-5 shrink-0">
+                <div key={arrayIndex} className="flex flex-col md:flex-row gap-5 shrink-0 w-full sm:w-auto items-center md:items-stretch">
                   {[
                     { name: 'Software Development', count: '12k+ openings', icon: <FaFileAlt /> },
                     { name: 'Data Science & AI', count: '8k+ openings', icon: <FaBuilding /> },
@@ -474,7 +508,7 @@ const LoginDashboard = () => {
                     { name: 'Product Management', count: '4k+ openings', icon: <FaBriefcase /> },
                     { name: 'Digital Marketing', count: '9k+ openings', icon: <FaEnvelope /> },
                   ].map((cat, idx) => (
-                        <div key={idx} onClick={() => handleProtectedAction()} className="flex items-center p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(228,157,4,0.2)] hover:-translate-y-1.5 hover:border-[#e49d04]/40 transition-all duration-500 cursor-pointer group w-[360px] shrink-0 relative overflow-hidden z-10">
+                        <div key={idx} onClick={() => handleProtectedAction()} className="flex items-center p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(228,157,4,0.2)] hover:-translate-y-1.5 hover:border-[#e49d04]/40 transition-all duration-500 cursor-pointer group w-[90vw] max-w-[360px] md:w-[360px] shrink-0 relative overflow-hidden z-10">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#e49d04]/10 to-transparent rounded-bl-[100%] -z-10 transform scale-0 group-hover:scale-100 transition-transform duration-500 origin-top-right"></div>
                              
                             <div className="w-16 h-16 shrink-0 rounded-[1.25rem] bg-orange-50 flex items-center justify-center text-[#e49d04] group-hover:bg-[#e49d04] group-hover:text-[#121212] transition-all duration-500 shadow-sm relative z-10 group-hover:-rotate-6">
@@ -497,10 +531,10 @@ const LoginDashboard = () => {
               ))}
             </div>
 
-            {/* Bottom Row: Right to Left */}
-            <div className="animate-scroll-left flex gap-5">
+            {/* Bottom Row: Right to Left on Desktop / Hidden on Mobile */}
+            <div className="scroll-track-2 gap-5">
               {[...Array(4)].map((_, arrayIndex) => (
-                <div key={arrayIndex} className="flex gap-5 shrink-0">
+                <div key={arrayIndex} className="flex flex-col md:flex-row gap-5 shrink-0 w-full sm:w-auto items-center md:items-stretch">
                   {[
                     { name: 'Sales & Business', count: '15k+ openings', icon: <FaMoneyBillWave /> },
                     { name: 'Human Resources', count: '3k+ openings', icon: <FaUser /> },
@@ -508,7 +542,7 @@ const LoginDashboard = () => {
                     { name: 'Customer Success', count: '7k+ openings', icon: <FaHeadset /> },
                     { name: 'IT & Networking', count: '4k+ openings', icon: <FaBuilding /> },
                   ].map((cat, idx) => (
-                        <div key={idx} onClick={() => handleProtectedAction()} className="flex items-center p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(228,157,4,0.2)] hover:-translate-y-1.5 hover:border-[#e49d04]/40 transition-all duration-500 cursor-pointer group w-[360px] shrink-0 relative overflow-hidden z-10">
+                        <div key={idx} onClick={() => handleProtectedAction()} className="flex items-center p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(228,157,4,0.2)] hover:-translate-y-1.5 hover:border-[#e49d04]/40 transition-all duration-500 cursor-pointer group w-[90vw] max-w-[360px] md:w-[360px] shrink-0 relative overflow-hidden z-10">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#e49d04]/10 to-transparent rounded-bl-[100%] -z-10 transform scale-0 group-hover:scale-100 transition-transform duration-500 origin-top-right"></div>
                             
                             <div className="w-16 h-16 shrink-0 rounded-[1.25rem] bg-orange-50 flex items-center justify-center text-[#e49d04] group-hover:bg-[#e49d04] group-hover:text-[#121212] transition-all duration-500 shadow-sm relative z-10 group-hover:-rotate-6">
