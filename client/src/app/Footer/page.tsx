@@ -68,8 +68,8 @@ const Footer = () => {
           
           {/* Company Identity */}
           <div className="lg:col-span-4">
-            <div className="h-10 mb-8 flex items-center overflow-hidden">
-              <img src="/Click4Jobs Logo.png" alt="Click4Jobs" className="h-[200px] w-auto hover:opacity-80 transition-opacity" />
+            <div className="relative h-12 mb-8 w-48">
+              <img src="/Click4Jobs Logo.png" alt="Click4Jobs" className="absolute top-1/2 left-0 -translate-y-1/2 h-[200px] w-auto max-w-none object-contain hover:opacity-80 transition-opacity" />
             </div>
             <p className="text-gray-500 text-lg leading-relaxed mb-8 pr-4">
               Click4Jobs is India's most trusted recruitment ecosystem, utilizing AI-driven matching to connect top-tier talent with industry leaders.
@@ -78,7 +78,7 @@ const Footer = () => {
               {[
                 { icon: <FaLinkedinIn />, link: '#' },
                 { icon: <FaInstagram />, link: 'https://www.instagram.com/click4jobs.in/' },
-                { icon: <FaFacebookF />, link: 'https://www.facebook.com/Click4Jobs.in' },
+                { icon: <FaFacebookF />, link: 'https://www.facebook.com/profile.php?id=61588699678832' },
               ].map((social, i) => (
                 <a 
                   key={i} 

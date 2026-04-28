@@ -1626,6 +1626,11 @@ const InteractiveJobMap = ({ onSelectCity }: { onSelectCity: (pin: { name: strin
 
   const visiblePins = selectedState === 'India' ? pins : pins.filter((p: any) => p.state === selectedState);
 
+  const indiaBounds: [number, number][] = [
+    [5.0, 65.0],  // Southwest coordinates
+    [38.0, 100.0] // Northeast coordinates
+  ];
+
   if (!mapData) {
     return <div className="w-full h-[600px] bg-gray-100 border border-gray-200 rounded-3xl animate-pulse flex items-center justify-center text-gray-400 font-bold mt-6 shadow-sm">Loading Interactive Map...</div>;
   }
@@ -1645,8 +1650,20 @@ const InteractiveJobMap = ({ onSelectCity }: { onSelectCity: (pin: { name: strin
         </select>
       </div>
 
-      <MapContainer center={center} zoom={zoom} style={{ width: '100%', height: '100%' }} zoomControl={false}>
-        <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" attribution='&copy; CartoDB' />
+      <MapContainer 
+        center={center} 
+        zoom={zoom} 
+        style={{ width: '100%', height: '100%' }} 
+        zoomControl={false}
+        minZoom={4}
+        maxBounds={indiaBounds}
+        maxBoundsViscosity={1.0}
+      >
+        <TileLayer 
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" 
+          attribution='&copy; CartoDB' 
+          noWrap={true}
+        />
         <MapController centerPos={center} zoomLevel={zoom} />
         {visiblePins.map((pin: any, idx: number) => (
           <Marker key={idx} position={pin.pos as [number, number]} icon={customIcon}>

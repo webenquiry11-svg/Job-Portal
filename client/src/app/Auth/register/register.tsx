@@ -108,7 +108,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
   // Common Styles
   const inputClass = "mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F172A] focus:border-transparent transition-all duration-200 text-sm";
   const labelClass = "block text-sm font-semibold text-gray-700 mb-1.5";
-  const btnPrimary = "w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-slate-900/20 text-sm font-bold text-white bg-[#0F172A] hover:bg-[#1E293B] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0F172A] transition-all duration-200 transform hover:-translate-y-0.5";
+  const btnPrimary = "w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-[#e49d04]/20 text-sm font-bold text-[#0B0C10] bg-[#e49d04] hover:bg-[#cc8c03] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#e49d04] transition-all duration-200 transform hover:-translate-y-0.5";
   const btnDisabled = "w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-none text-sm font-bold text-white bg-gray-400 cursor-not-allowed transition-all duration-200";
 
   const renderStep1 = () => (

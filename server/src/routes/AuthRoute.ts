@@ -17,7 +17,8 @@ import {
   incrementProfileView,
   requestAccountDeletionOtp,
   deleteAccount,
-  getAllUsersForAdmin
+  getAllUsersForAdmin,
+  deleteUserByAdmin
 } from '../controllers/AuthController';
 import upload from '../middleware/uploadMiddleware';
 import passport from 'passport';
@@ -71,6 +72,7 @@ router.patch('/notifications/:userId/read', markNotificationsAsRead);
 router.get('/company/:id', getCompanyById);
 router.put('/profile/view/:id', incrementProfileView);
 router.get('/admin/all-users', getAllUsersForAdmin);
+router.delete('/admin/users/:id', deleteUserByAdmin);
 
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000';
 

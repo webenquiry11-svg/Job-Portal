@@ -134,7 +134,7 @@ export default function AdminGate() {
                   <FaEnvelope className="absolute top-3.5 left-3.5 text-gray-400" />
                   <input type="email" placeholder="Enter Current Admin Email" required className={inputClass} value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
-                <button type="submit" disabled={isProcessing} className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-[#0B0C10] hover:bg-[#1E293B] focus:outline-none transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50">
+            <button type="submit" disabled={isProcessing} className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-[#e49d04]/20 text-sm font-bold text-[#0B0C10] bg-[#e49d04] hover:bg-[#cc8c03] focus:outline-none transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50">
                   {isProcessing ? 'Sending OTP...' : 'Send OTP'}
                 </button>
                 <div className="text-center mt-4">
@@ -154,7 +154,7 @@ export default function AdminGate() {
                   <FaLock className="absolute top-3.5 left-3.5 text-gray-400" />
                   <input type="password" placeholder="New Secure Password" required className={inputClass} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
                 </div>
-                <button type="submit" disabled={isProcessing} className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-[#0B0C10] hover:bg-[#1E293B] focus:outline-none transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50">
+            <button type="submit" disabled={isProcessing} className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-[#e49d04]/20 text-sm font-bold text-[#0B0C10] bg-[#e49d04] hover:bg-[#cc8c03] focus:outline-none transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50">
                   {isProcessing ? 'Updating...' : 'Update Credentials'}
                 </button>
                 <div className="text-center mt-4">
@@ -174,7 +174,7 @@ export default function AdminGate() {
               <input type="password" placeholder="Secure Password" required className={inputClass} value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <div className="flex justify-end"><button type="button" onClick={() => setIsForgotPassword(true)} className="text-xs font-bold text-[#e49d04] hover:text-[#cc8c03]">Forgot password?</button></div>
-            <button type="submit" disabled={isLoggingIn} className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-[#0B0C10] hover:bg-[#1E293B] focus:outline-none transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50">
+        <button type="submit" disabled={isLoggingIn} className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg shadow-[#e49d04]/20 text-sm font-bold text-[#0B0C10] bg-[#e49d04] hover:bg-[#cc8c03] focus:outline-none transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50">
               {isLoggingIn ? 'Verifying...' : 'Secure Login'}
             </button>
           </form>

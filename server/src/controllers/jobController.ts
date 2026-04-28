@@ -80,7 +80,7 @@ export const applyForJob = async (req: Request, res: Response) => {
     }
     // Ensure no duplicate detail entry
     if (!job.applicantDetails.some(d => d.candidateId.toString() === candidateId)) {
-      job.applicantDetails.push({ candidateId: candidateId as any, status: 'Applied' });
+      job.applicantDetails.push({ candidateId: candidateId as any, status: 'Applied', appliedAt: new Date() });
     }
 
     await job.save();

@@ -171,7 +171,7 @@ const LoginDashboard = () => {
   return (
     <div className="grow flex flex-col">
       {/* REDESIGNED PREMIUM HERO SECTION */}
-      <section className="relative bg-[#F8FAFC] overflow-hidden pt-24 lg:pt-32 pb-20">
+      <section className="relative bg-[#F8FAFC] overflow-hidden pt-20 lg:pt-32 pb-12 lg:pb-20">
         {/* Dynamic Background Elements */}
         <div className="absolute top-0 inset-x-0 h-full bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-[#e49d04]/10 via-transparent to-transparent opacity-80 pointer-events-none"></div>
         <div className="absolute -left-40 top-40 w-150 h-150 bg-blue-100/40 rounded-full blur-3xl pointer-events-none"></div>
@@ -247,7 +247,7 @@ const LoginDashboard = () => {
             </div>
 
             {/* Right Graphic Section */}
-            <div className="w-full lg:w-[45%] mt-12 lg:mt-0 relative flex justify-center lg:justify-end">
+            <div className="hidden lg:flex w-full lg:w-[45%] mt-12 lg:mt-0 relative justify-center lg:justify-end">
                <div className="relative w-full max-w-[500px]">
                   {/* Abstract Background Effect */}
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-[#e49d04]/10 to-transparent rounded-full blur-[60px] animate-pulse" style={{ animationDuration: '6s' }}></div>
@@ -268,7 +268,7 @@ const LoginDashboard = () => {
           </div>
           
           {/* Moving Marquee to bottom of the section in a neat separated banner */}
-          <div className="mt-20 pt-10 border-t border-gray-100">
+          <div className="mt-12 lg:mt-20 pt-8 lg:pt-10 border-t border-gray-100">
              <p className="text-center text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Top Companies Hiring Right Now</p>
              <div className="w-full relative max-w-full overflow-hidden" style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}>
                 <style>{`
@@ -309,7 +309,7 @@ const LoginDashboard = () => {
       </section>
 
       {/* About Us Section */}
-      <section id="about" className="bg-white py-24 scroll-mt-16">
+      <section id="about" className="bg-white py-16 lg:py-24 scroll-mt-16">
         <div className="container mx-auto px-6 md:px-12">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-6">Empowering India’s Workforce Through Intelligent Matching</h2>
@@ -322,7 +322,7 @@ const LoginDashboard = () => {
       </section>
 
       {/* Features Section (Enhanced) */}
-      <section id="how-it-works" className="bg-gray-50 py-24 scroll-mt-16">
+      <section id="how-it-works" className="bg-gray-50 py-16 lg:py-24 scroll-mt-16">
         <div className="container mx-auto px-6 md:px-12">
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-4">How It Works</h2>
@@ -330,7 +330,7 @@ const LoginDashboard = () => {
             </div>
             
             {/* For Candidates Section */}
-            <div className="relative mb-24">
+            <div className="relative mb-16 lg:mb-24">
                 {/* Connecting background line */}
                 <div className="hidden md:block absolute top-[55%] left-[10%] right-[10%] h-[2px] border-t-2 border-dashed border-gray-200 -z-10"></div>
                 
@@ -424,7 +424,7 @@ const LoginDashboard = () => {
       </section>
       
       {/* Popular Categories Section - EXACT IMAGE MATCH */}
-      <section id="categories-section" className="bg-[#F8FAFC] py-20 md:py-28 scroll-mt-16 overflow-hidden relative z-10">
+      <section id="categories-section" className="bg-[#F8FAFC] py-16 md:py-28 scroll-mt-16 overflow-hidden relative z-10">
           {/* Decorative Background Elements */}
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#e49d04]/10 via-transparent to-transparent -z-10 pointer-events-none"></div>
           <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-blue-100/40 via-transparent to-transparent -z-10 pointer-events-none"></div>
@@ -476,7 +476,7 @@ const LoginDashboard = () => {
                   ].map((cat, idx) => (
                         <div key={idx} onClick={() => handleProtectedAction()} className="flex items-center p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(228,157,4,0.2)] hover:-translate-y-1.5 hover:border-[#e49d04]/40 transition-all duration-500 cursor-pointer group w-[360px] shrink-0 relative overflow-hidden z-10">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#e49d04]/10 to-transparent rounded-bl-[100%] -z-10 transform scale-0 group-hover:scale-100 transition-transform duration-500 origin-top-right"></div>
-                            
+                             
                             <div className="w-16 h-16 shrink-0 rounded-[1.25rem] bg-orange-50 flex items-center justify-center text-[#e49d04] group-hover:bg-[#e49d04] group-hover:text-[#121212] transition-all duration-500 shadow-sm relative z-10 group-hover:-rotate-6">
                                 <div className="text-2xl">{cat.icon}</div>
                             </div>
@@ -535,7 +535,7 @@ const LoginDashboard = () => {
 
       {/* Featured Jobs / Search Results Section - TEMPORARILY COMMENTED OUT */}
       {false && (
-      <section id="jobs-section" className="bg-gray-50 py-24 scroll-mt-16">
+      <section id="jobs-section" className="bg-gray-50 py-16 lg:py-24 scroll-mt-16">
         <div className="container mx-auto px-6 md:px-12">
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-4">
@@ -615,7 +615,7 @@ const LoginDashboard = () => {
       )}
 
       {/* Testimonials Section (New) */}
-      <section className="bg-white py-24 relative">
+      <section className="bg-white py-16 lg:py-24 relative">
         <div className="container mx-auto px-6 md:px-12">
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-[#121212] mb-4">What Our Users Say</h2>
@@ -654,7 +654,7 @@ const LoginDashboard = () => {
                 <div className="bg-gray-50 p-8 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex flex-col">
                     <div className="mb-6"><FaQuoteLeft className="text-slate-200 text-4xl" /></div>
                     <p className="text-gray-600 italic mb-6 flex-grow leading-relaxed">"The interface is so user-friendly and the job alerts kept me in the loop. I didn't miss a single opportunity."</p>
-                    <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
+                     <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
                         <div className="w-10 h-10 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#e49d04] font-bold shadow-md text-sm">AD</div>
                         <div>
                             <h4 className="font-bold text-[#121212] text-sm">Ananya Desai</h4>
@@ -667,8 +667,8 @@ const LoginDashboard = () => {
       </section>
 
       {/* Legal & Info Sections */}
-      <section className="bg-white py-24 border-t border-gray-100">
-         <div className="container mx-auto px-6 md:px-12 max-w-5xl space-y-24">
+      <section className="bg-white py-16 lg:py-24 border-t border-gray-100">
+         <div className="container mx-auto px-6 md:px-12 max-w-5xl space-y-16 lg:space-y-24">
             
             {/* FAQ */}
             <div id="faq" className="scroll-mt-24">

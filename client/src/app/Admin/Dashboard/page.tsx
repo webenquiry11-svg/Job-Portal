@@ -1,22 +1,24 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useGetAllUsersForAdminQuery, useGetAllJobsQuery, useGetPendingGstVerificationsQuery, useUpdateGstVerificationStatusMutation } from '@/features/jobapi';
-import { FaSpinner, FaUserShield, FaBuilding, FaUser, FaCheckCircle, FaTimesCircle, FaBriefcase, FaSignOutAlt, FaChartPie, FaFileInvoiceDollar, FaDownload } from 'react-icons/fa';
+import { useGetAllUsersForAdminQuery, useGetAllJobsQuery, useGetPendingGstVerificationsQuery, useUpdateGstVerificationStatusMutation, useGetJobsByEmployerQuery } from '@/features/jobapi';
+import { FaSpinner, FaUserShield, FaBuilding, FaUser, FaCheckCircle, FaTimesCircle, FaBriefcase, FaSignOutAlt, FaChartPie, FaFileInvoiceDollar, FaDownload, FaTrash, FaChevronDown } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 const AdminDashboard = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+  const [expandedEmployerId, setExpandedEmployerId] = useState<string | null>(null);
+  const [expandedCandidateId, setExpandedCandidateId] = useState<string | null>(null);
+  
   useEffect(() => {
     const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn');
     if (!isAdminLoggedIn) router.push('/admin');
   }, [router]);
 
-  const { data: users = [], isLoading: isUsersLoading } = useGetAllUsersForAdminQuery();
+  const { data: users = [], isLoading: isUsersLoading, refetch: refetchUsers } = useGetAllUsersForAdminQuery();
   const { data: jobs = [], isLoading: isJobsLoading } = useGetAllJobsQuery();
   const { data: pendingGsts = [], isLoading: isGstLoading } = useGetPendingGstVerificationsQuery(undefined, { pollingInterval: 5000 });
   const [updateGstStatus, { isLoading: isUpdatingGst }] = useUpdateGstVerificationStatusMutation();
@@ -76,6 +78,28 @@ const AdminDashboard = () => {
       toast.success(`GST Request marked as ${status}.`);
     } catch (e) {
       toast.error('Failed to update GST status.');
+    }
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    if (!window.confirm("Are you sure you want to permanently delete this user and their data?")) return;
+    try {
+      let apiUrl = 'http://localhost:5000';
+      if (typeof window !== 'undefined') {
+        apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : (process.env.NEXT_PUBLIC_API_URL || `${window.location.protocol}//${window.location.hostname}:5000`);
+        if (window.location.protocol === 'https:' && apiUrl.startsWith('http://')) apiUrl = apiUrl.replace('http://', 'https://');
+      }
+      apiUrl = apiUrl.replace(/\/$/, '').replace(/\/api$/, '');
+      
+      const res = await fetch(`${apiUrl}/auth/admin/users/${userId}`, { method: 'DELETE' });
+      if (res.ok) {
+        toast.success('User deleted successfully.');
+        refetchUsers(); // Refresh the table automatically
+      } else {
+        toast.error('Failed to delete user.');
+      }
+    } catch (e) {
+      toast.error('Error deleting user.');
     }
   };
 
@@ -313,10 +337,12 @@ const AdminDashboard = () => {
                 <table className="w-full text-sm text-left whitespace-nowrap lg:whitespace-normal">
                   <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
                     <tr>
-                      <th className="p-5 rounded-tl-xl">Name</th>
-                      <th className="p-5">Email Address</th>
+                      <th className="p-5 rounded-tl-xl">Candidate Name</th>
+                      <th className="p-5">Current Role</th>
+                      <th className="p-5">Joined On</th>
                       <th className="p-5">Verifications</th>
-                      <th className="p-5 rounded-tr-xl">Account Status</th>
+                      <th className="p-5">Account Status</th>
+                      <th className="p-5 text-right rounded-tr-xl">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -334,6 +360,11 @@ const AdminDashboard = () => {
                         <td className="p-5">
                           {u.isDeleted ? <span className="px-3 py-1.5 font-bold text-red-700 bg-red-50 border border-red-200 rounded-full text-[10px] uppercase">Deleted</span> : <span className="px-3 py-1.5 font-bold text-green-700 bg-green-50 border border-green-200 rounded-full text-[10px] uppercase">Active</span>}
                         </td>
+                        <td className="p-5 text-right">
+                          <button onClick={() => handleDeleteUser(u._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete Fake Data">
+                            <FaTrash size={16} />
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -344,6 +375,48 @@ const AdminDashboard = () => {
 
         </div>
       </main>
+    </div>
+  );
+};
+
+// New component for displaying a candidate's applications
+const CandidateApplicationsList = ({ candidateId, allJobs }: { candidateId: string, allJobs: any[] }) => {
+  const applications = allJobs
+    .map((job: any) => {
+      const detail = job.applicantDetails?.find((d: any) => String(d.candidateId) === String(candidateId));
+      if (detail) {
+        return {
+          jobTitle: job.title,
+          companyName: job.employerId?.companyName || job.employerId?.name || 'N/A',
+          appliedAt: detail.appliedAt,
+          status: detail.status,
+          _id: job._id
+        };
+      }
+      return null;
+    })
+    .filter(Boolean)
+    .sort((a: any, b: any) => new Date(b.appliedAt).getTime() - new Date(a.appliedAt).getTime());
+
+  if (applications.length === 0) {
+    return <div className="p-6 text-gray-500 text-sm italic">This candidate has not applied to any jobs yet.</div>;
+  }
+
+  return (
+    <div className="p-6 bg-gray-50 border-t border-gray-100 animate-fade-in-up">
+      <h4 className="font-bold text-[#121212] text-md mb-4">Application History:</h4>
+      <ul className="space-y-3">
+        {applications.map((app: any) => (
+          <li key={app._id} className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm grid grid-cols-1 md:grid-cols-4 items-center text-sm font-medium gap-4">
+            <span className="text-[#121212] font-bold col-span-1">{app.jobTitle}</span>
+            <span className="text-gray-600 col-span-1">at {app.companyName}</span>
+            <span className="text-gray-500 text-xs col-span-1">Applied on: {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : 'N/A'}</span>
+            <span className={`px-3 py-1.5 text-xs font-bold rounded-full justify-self-start md:justify-self-end ${app.status === 'Applied' ? 'bg-blue-50 border border-blue-200 text-blue-700' : app.status === 'Rejected' ? 'bg-red-50 border border-red-200 text-red-700' : app.status === 'Selected' || app.status === 'Offered' ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-yellow-50 border border-yellow-200 text-yellow-700'}`}>
+              {app.status}
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
@@ -363,3 +436,39 @@ const StatCard = ({ icon, label, value, color }: any) => (
 );
 
 export default AdminDashboard;
+
+// New component for displaying an employer's jobs
+const EmployerJobsList = ({ employerId }: { employerId: string }) => {
+  const { data: jobs = [], isLoading, isError } = useGetJobsByEmployerQuery(employerId, { skip: !employerId });
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center p-6 bg-white/70">
+        <FaSpinner className="animate-spin text-xl text-gray-300" />
+        <span className="ml-3 text-gray-500 text-sm">Loading jobs...</span>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <div className="p-6 text-red-500 text-sm">Failed to load jobs for this employer.</div>;
+  }
+
+  if (jobs.length === 0) {
+    return <div className="p-6 text-gray-500 text-sm italic">No jobs posted by this employer yet.</div>;
+  }
+
+  return (
+    <div className="p-6 bg-gray-50 border-t border-gray-100 animate-fade-in-up">
+      <h4 className="font-bold text-[#121212] text-md mb-4">Posted Jobs:</h4>
+      <ul className="space-y-3">
+        {jobs.map((job: any) => (
+          <li key={job._id} className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm flex justify-between items-center text-sm font-medium">
+            <span className="text-[#121212]">{job.title}</span>
+            <span className="text-gray-500 text-xs">{new Date(job.createdAt).toLocaleDateString()}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};

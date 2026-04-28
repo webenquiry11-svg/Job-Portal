@@ -20,6 +20,7 @@ export interface IJob extends Document {
   applicantDetails?: {
     candidateId: mongoose.Types.ObjectId;
     status: string;
+    appliedAt: Date;
     interviewDate?: Date;
     interviewLink?: string;
     interviewDescription?: string;
@@ -46,6 +47,7 @@ const jobSchema = new mongoose.Schema({
   applicantDetails: [{
     candidateId: { type: mongoose.Schema.Types.ObjectId, ref: 'Auth' },
     status: { type: String, default: 'Applied' },
+    appliedAt: { type: Date, default: Date.now },
     interviewDate: { type: Date },
     
     interviewLink: { type: String },
