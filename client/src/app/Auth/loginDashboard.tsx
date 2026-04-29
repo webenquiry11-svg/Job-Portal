@@ -378,7 +378,7 @@ const LoginDashboard = () => {
             {/* For Employers Section */}
             <div className="relative">
                 {/* Connecting background line */}
-                <div className="hidden md:block absolute top-[55%] left-[10%] right-[10%] h-[2px] border-t-2 border-dashed border-gray-200 -z-10"></div>
+                <div className="hidden md:block absolute top-[55%] left-[10%] right-[10%] h-0.5 border-t-2 border-dashed border-gray-200 -z-10"></div>
                 
                 <h3 className="text-2xl font-black text-[#121212] mb-10 text-center flex items-center justify-center gap-3">
                   <span className="bg-[#121212] text-[#e49d04] px-5 py-2.5 rounded-xl shadow-md border border-[#121212]">For Employers</span>
@@ -386,7 +386,7 @@ const LoginDashboard = () => {
                 </h3>
                 
                 <div className="grid md:grid-cols-3 gap-8">
-                    <div className="bg-white p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-[#e49d04]/50 relative group overflow-hidden hover:-translate-y-2">
+                    <div className="bg-white p-8 rounded-4xl shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-[#e49d04]/50 relative group overflow-hidden hover:-translate-y-2">
                         <div className="absolute -right-4 -top-6 text-[120px] font-black text-gray-50 group-hover:text-[#e49d04]/5 transition-colors z-0 select-none">1</div>
                         <div className="relative z-10">
                             <div className="w-16 h-16 bg-[#e49d04]/10 text-[#e49d04] rounded-2xl flex items-center justify-center mb-6 shadow-sm transform group-hover:scale-110 transition-transform duration-300">

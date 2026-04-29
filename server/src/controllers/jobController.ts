@@ -108,7 +108,7 @@ export const updateApplicantStatus = async (req: Request, res: Response) => {
     let detail = job.applicantDetails?.find((d: any) => d.candidateId.toString() === candidateId);
     if (!detail) {
       if (!job.applicantDetails) job.applicantDetails = [];
-      job.applicantDetails.push({ candidateId: candidateId as any, status });
+      job.applicantDetails.push({ candidateId: candidateId as any, status, appliedAt: new Date() });
     } else {
       detail.status = status;
     }
@@ -143,7 +143,7 @@ export const scheduleInterview = async (req: Request, res: Response) => {
     let detail = job.applicantDetails?.find((d: any) => d.candidateId.toString() === candidateId);
     if (!detail) {
       if (!job.applicantDetails) job.applicantDetails = [];
-      const newDetail = { candidateId: candidateId as any, status: 'Interview' };
+      const newDetail = { candidateId: candidateId as any, status: 'Interview', appliedAt: new Date() };
       job.applicantDetails.push(newDetail);
       detail = job.applicantDetails[job.applicantDetails.length - 1];
     }

@@ -337,8 +337,8 @@ const AdminDashboard = () => {
                 <table className="w-full text-sm text-left whitespace-nowrap lg:whitespace-normal">
                   <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
                     <tr>
-                      <th className="p-5 rounded-tl-xl">Candidate Name</th>
-                      <th className="p-5">Current Role</th>
+                      <th className="p-5 rounded-tl-xl">{activeTab === 'employers' ? 'Company Name' : 'Candidate Name'}</th>
+                      <th className="p-5">{activeTab === 'employers' ? 'Email Address' : 'Current Role'}</th>
                       <th className="p-5">Joined On</th>
                       <th className="p-5">Verifications</th>
                       <th className="p-5">Account Status</th>
@@ -347,9 +347,14 @@ const AdminDashboard = () => {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {(activeTab === 'employers' ? employers : candidates).map((u: any) => (
-                      <tr key={u._id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="p-5 font-bold text-[#121212]">{u.companyName || u.name}</td>
-                        <td className="p-5 text-gray-600 font-medium">{u.email}</td>
+                      <React.Fragment key={u._id}>
+                      <tr className="hover:bg-gray-50/50 transition-colors">
+                        <td className="p-5 font-bold text-[#121212]">
+                          {u.companyName || u.name}
+                          {activeTab === 'candidates' && <span className="block font-medium text-xs text-gray-500 mt-1">{u.email}</span>}
+                        </td>
+                        <td className="p-5 text-gray-600 font-medium">{activeTab === 'employers' ? u.email : (u.headline || 'N/A')}</td>
+                        <td className="p-5 text-gray-600 font-medium">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}</td>
                         <td className="p-5">
                           {u.role === 'employer' ? (
                             <span className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded-md border ${u.gstVerificationStatus === 'approved' ? 'bg-green-50 text-green-600 border-green-200' : 'bg-gray-50 text-gray-500 border-gray-200'}`}>{u.gstVerificationStatus || 'Unverified'}</span>
@@ -361,11 +366,39 @@ const AdminDashboard = () => {
                           {u.isDeleted ? <span className="px-3 py-1.5 font-bold text-red-700 bg-red-50 border border-red-200 rounded-full text-[10px] uppercase">Deleted</span> : <span className="px-3 py-1.5 font-bold text-green-700 bg-green-50 border border-green-200 rounded-full text-[10px] uppercase">Active</span>}
                         </td>
                         <td className="p-5 text-right">
-                          <button onClick={() => handleDeleteUser(u._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete Fake Data">
-                            <FaTrash size={16} />
-                          </button>
+                          <div className="flex justify-end items-center gap-2">
+                            {activeTab === 'employers' ? (
+                              <button 
+                                onClick={() => setExpandedEmployerId(expandedEmployerId === u._id ? null : u._id)} 
+                                className="px-4 py-2 bg-gray-50 text-gray-600 text-xs font-bold rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-1"
+                              >
+                                View Jobs <FaChevronDown className={`ml-1 transition-transform ${expandedEmployerId === u._id ? 'rotate-180' : ''}`} size={10} />
+                              </button>
+                            ) : (
+                              <button 
+                                onClick={() => setExpandedCandidateId(expandedCandidateId === u._id ? null : u._id)} 
+                                className="px-4 py-2 bg-gray-50 text-gray-600 text-xs font-bold rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-1"
+                              >
+                                View Applications <FaChevronDown className={`ml-1 transition-transform ${expandedCandidateId === u._id ? 'rotate-180' : ''}`} size={10} />
+                              </button>
+                            )}
+                            <button onClick={() => handleDeleteUser(u._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete Data">
+                              <FaTrash size={16} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
+                      {activeTab === 'employers' && expandedEmployerId === u._id && (
+                        <tr className="bg-white/50">
+                          <td colSpan={6} className="p-0"><EmployerJobsList employerId={u._id} /></td>
+                        </tr>
+                      )}
+                      {activeTab === 'candidates' && expandedCandidateId === u._id && (
+                        <tr className="bg-white/50">
+                          <td colSpan={6} className="p-0"><CandidateApplicationsList candidateId={u._id} allJobs={jobs} /></td>
+                        </tr>
+                      )}
+                      </React.Fragment>
                     ))}
                   </tbody>
                 </table>
