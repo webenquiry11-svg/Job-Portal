@@ -339,6 +339,7 @@ const AdminDashboard = () => {
                     <tr>
                       <th className="p-5 rounded-tl-xl">{activeTab === 'employers' ? 'Company Name' : 'Candidate Name'}</th>
                       <th className="p-5">{activeTab === 'employers' ? 'Email Address' : 'Current Role'}</th>
+                      <th className="p-5">Location</th>
                       <th className="p-5">Joined On</th>
                       <th className="p-5">Verifications</th>
                       <th className="p-5">Account Status</th>
@@ -354,6 +355,7 @@ const AdminDashboard = () => {
                           {activeTab === 'candidates' && <span className="block font-medium text-xs text-gray-500 mt-1">{u.email}</span>}
                         </td>
                         <td className="p-5 text-gray-600 font-medium">{activeTab === 'employers' ? u.email : (u.headline || 'N/A')}</td>
+                        <td className="p-5 text-gray-600 font-medium">{u.location || 'N/A'}</td>
                         <td className="p-5 text-gray-600 font-medium">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}</td>
                         <td className="p-5">
                           {u.role === 'employer' ? (
@@ -390,12 +392,12 @@ const AdminDashboard = () => {
                       </tr>
                       {activeTab === 'employers' && expandedEmployerId === u._id && (
                         <tr className="bg-white/50">
-                          <td colSpan={6} className="p-0"><EmployerJobsList employerId={u._id} /></td>
+                          <td colSpan={7} className="p-0"><EmployerJobsList employerId={u._id} /></td>
                         </tr>
                       )}
                       {activeTab === 'candidates' && expandedCandidateId === u._id && (
                         <tr className="bg-white/50">
-                          <td colSpan={6} className="p-0"><CandidateApplicationsList candidateId={u._id} allJobs={jobs} /></td>
+                          <td colSpan={7} className="p-0"><CandidateApplicationsList candidateId={u._id} allJobs={jobs} /></td>
                         </tr>
                       )}
                       </React.Fragment>
