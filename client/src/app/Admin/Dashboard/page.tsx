@@ -442,13 +442,20 @@ const CandidateApplicationsList = ({ candidateId, allJobs }: { candidateId: stri
       <h4 className="font-bold text-[#121212] text-md mb-4">Application History:</h4>
       <ul className="space-y-3">
         {applications.map((app: any) => (
-          <li key={app._id} className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm grid grid-cols-1 md:grid-cols-4 items-center text-sm font-medium gap-4">
-            <span className="text-[#121212] font-bold col-span-1">{app.jobTitle}</span>
-            <span className="text-gray-600 col-span-1">at {app.companyName}</span>
-            <span className="text-gray-500 text-xs col-span-1">Applied on: {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : 'N/A'}</span>
-            <span className={`px-3 py-1.5 text-xs font-bold rounded-full justify-self-start md:justify-self-end ${app.status === 'Applied' ? 'bg-blue-50 border border-blue-200 text-blue-700' : app.status === 'Rejected' ? 'bg-red-50 border border-red-200 text-red-700' : app.status === 'Selected' || app.status === 'Offered' ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-yellow-50 border border-yellow-200 text-yellow-700'}`}>
-              {app.status}
-            </span>
+          <li key={app._id} className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm grid grid-cols-1 md:grid-cols-4 items-center text-sm font-medium gap-4 hover:border-[#FACC15]/50 transition-colors">
+            <div className="col-span-1 md:col-span-2">
+               <span className="text-[#121212] font-bold block text-base">{app.jobTitle}</span>
+               <span className="text-gray-500 text-xs block mt-0.5">Company: <span className="font-bold text-gray-700">{app.companyName}</span></span>
+            </div>
+            <div className="col-span-1">
+               <span className="text-gray-400 text-[10px] uppercase tracking-wider block mb-0.5 font-bold">Applied On</span>
+               <span className="text-[#121212] text-sm font-semibold">{app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : 'N/A'}</span>
+            </div>
+            <div className="justify-self-start md:justify-self-end">
+              <span className={`px-3 py-1.5 text-xs font-bold rounded-full ${app.status === 'Applied' ? 'bg-blue-50 border border-blue-200 text-blue-700' : app.status === 'Rejected' ? 'bg-red-50 border border-red-200 text-red-700' : app.status === 'Selected' || app.status === 'Offered' ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-yellow-50 border border-yellow-200 text-yellow-700'}`}>
+                {app.status}
+              </span>
+            </div>
           </li>
         ))}
       </ul>
@@ -498,9 +505,18 @@ const EmployerJobsList = ({ employerId }: { employerId: string }) => {
       <h4 className="font-bold text-[#121212] text-md mb-4">Posted Jobs:</h4>
       <ul className="space-y-3">
         {jobs.map((job: any) => (
-          <li key={job._id} className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm flex justify-between items-center text-sm font-medium">
-            <span className="text-[#121212]">{job.title}</span>
-            <span className="text-gray-500 text-xs">{new Date(job.createdAt).toLocaleDateString()}</span>
+          <li key={job._id} className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col md:flex-row md:justify-between md:items-center text-sm font-medium gap-3 hover:border-[#FACC15]/50 transition-colors">
+            <div>
+              <span className="text-[#121212] font-bold block text-base">{job.title}</span>
+              <span className="text-xs text-gray-500 mt-0.5 block">{job.location || 'Location N/A'} • {job.workMode || 'Work Mode N/A'}</span>
+            </div>
+            <div className="flex items-center gap-6 mt-2 md:mt-0">
+              <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100">{job.applicants?.length || 0} Applicants</span>
+              <div className="text-right">
+                 <span className="text-gray-400 text-[10px] uppercase tracking-wider block mb-0.5 font-bold">Posted On</span>
+                 <span className="text-[#121212] text-sm font-semibold">{new Date(job.createdAt).toLocaleDateString()}</span>
+              </div>
+            </div>
           </li>
         ))}
       </ul>
