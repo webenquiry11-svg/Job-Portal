@@ -316,6 +316,7 @@ const LoginDashboard = () => {
             <div className="space-y-6 text-lg text-gray-600 leading-relaxed text-left">
                 <p>Welcome to Click4Jobs, India’s most efficient and transparent hiring ecosystem. We recognize that the traditional job search process—for both candidates and employers—is often time-consuming and fragmented. Our mission is to bridge the gap between incredible talent and top-tier companies across the entire country, from bustling metropolitan hubs to rapidly growing Tier-2 and Tier-3 cities.</p>
                 <p>We operate on a simple philosophy: <span className="font-bold text-[#121212]">Skills matter most.</span> By leveraging advanced AI-driven matching technology, Click4Jobs moves beyond keyword-stuffed resumes to connect employers with candidates who possess the exact verified skills they need. Whether you are a fresh graduate entering the workforce, a skilled tradesperson, or an executive seeking a national leadership role, our platform is built to accelerate your success.</p>
+                  <p className="mt-6 p-6 bg-gray-50 rounded-2xl border border-gray-100 text-gray-800 font-medium text-center shadow-sm">Built and backed by the technical excellence of <span className="font-black text-[#e49d04]">Volga Infosys Pvt Ltd</span>, Click4Jobs combines years of IT innovation with modern recruitment needs.</p>
             </div>
           </div>
         </div>
