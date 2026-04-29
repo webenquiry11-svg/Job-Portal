@@ -30,6 +30,7 @@ import {
   FaPaperPlane,
   FaEnvelope,
   FaPhone,
+  FaCoins,
 } from "react-icons/fa";
 import {
   MdDashboard,
@@ -81,6 +82,8 @@ const EmployerDashboard = () => {
   const { data: unreadChatData } = useGetUnreadMessageCountQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
   const unreadMessageCount = unreadChatData?.count || 0;
 
+  const isTrialActive = user?.trialStartedAt && (new Date().getTime() - new Date(user.trialStartedAt).getTime()) <= 15 * 24 * 60 * 60 * 1000;
+
   const handleBellClick = () => {
     setIsNotificationOpen(!isNotificationOpen);
     if (!isNotificationOpen && unreadCount > 0) {
@@ -89,10 +92,12 @@ const EmployerDashboard = () => {
   };
 
   const handlePostJobClick = () => {
-    const trialDaysLeft = user?.trialStartedAt ? 15 - Math.floor((new Date().getTime() - new Date(user.trialStartedAt).getTime()) / (1000 * 60 * 60 * 24)) : 0;
-    if (trialDaysLeft < 0 && user?.credits > 0) { user.credits = 0; } // Client failsafe sync
+    let currentCredits = user?.credits || 0;
+    if (!isTrialActive && currentCredits > 0) { 
+      currentCredits = 0; // Local failsafe
+    }
     
-    if ((user?.credits || 0) < 5) {
+    if (currentCredits < 5) {
       toast.error('Credits exhausted or trial expired. Redirecting to Pricing...', { icon: '🔒' });
       router.push('/Subscription/Pricing');
     } else {
@@ -231,6 +236,18 @@ const EmployerDashboard = () => {
             badge={unreadMessageCount > 0 ? unreadMessageCount.toString() : undefined}
             collapsed={isSidebarCollapsed}
           />
+        {(!isTrialActive || (user?.credits || 0) < 5) && (
+          <SidebarItem
+            icon={<FaCoins />}
+            label="Pricing & Plans"
+            active={false}
+            onClick={() => {
+              router.push("/Subscription/Pricing");
+              setIsSidebarOpen(false);
+            }}
+            collapsed={isSidebarCollapsed}
+          />
+        )}
 
           <p
             className={`px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-8 transition-all duration-300 ${isSidebarCollapsed ? "md:hidden" : ""}`}

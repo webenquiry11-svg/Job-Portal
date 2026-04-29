@@ -9,10 +9,13 @@ export const createJob = async (req: Request, res: Response) => {
     if (!employer) return res.status(404).json({ message: "Employer not found" });
 
     // Failsafe: Wipe credits if trial expired
+    let trialExpired = false;
     if (employer.trialStartedAt && ((Date.now() - new Date(employer.trialStartedAt).getTime()) / (1000 * 60 * 60 * 24)) > 15 && (employer.credits || 0) > 0) {
       employer.credits = 0; 
+      trialExpired = true;
     }
     if ((employer.credits || 0) < 5) {
+      if (trialExpired) await employer.save();
       return res.status(403).json({ message: "Insufficient credits to post a job. Please upgrade your plan." });
     }
     employer.credits = (employer.credits || 0) - 5;

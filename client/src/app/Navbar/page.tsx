@@ -119,7 +119,7 @@ const Navbar = () => {
     
   const isEmployer = user?.role === 'employer';
   const isTrialActive = user?.trialStartedAt && (new Date().getTime() - new Date(user.trialStartedAt).getTime()) <= 15 * 24 * 60 * 60 * 1000;
-  const hasCredits = (user?.credits || 0) > 0;
+  const hasCredits = (user?.credits || 0) >= 5;
   const showPricing = (!user) || (isEmployer && (!isTrialActive || !hasCredits));
 
   const navLinks = [
