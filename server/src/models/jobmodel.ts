@@ -25,6 +25,7 @@ export interface IJob extends Document {
     interviewLink?: string;
     interviewDescription?: string;
   }[];
+  expiresAt?: Date;
 }
 
 const jobSchema = new mongoose.Schema({
@@ -52,7 +53,8 @@ const jobSchema = new mongoose.Schema({
     
     interviewLink: { type: String },
     interviewDescription: { type: String }
-  }]
+  }],
+  expiresAt: { type: Date }
 }, { timestamps: true });
 
 export default mongoose.model<IJob>('Job', jobSchema);

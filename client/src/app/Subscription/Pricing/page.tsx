@@ -1,8 +1,25 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { FaEnvelope, FaClock, FaShieldAlt, FaCoins } from 'react-icons/fa';
 
 export default function PricingPage() {
+  const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const profile = localStorage.getItem('profile');
+    if (profile) {
+      const parsed = JSON.parse(profile);
+      setUser(parsed.result || parsed.user || parsed);
+    }
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading) return <div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>;
+  if (user?.role === 'seeker') return <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50"><h2 className="text-2xl font-bold text-gray-800 mb-4">Access Denied</h2><p className="text-gray-600 mb-6">Pricing and plans are exclusively available for Employers.</p><Link href="/" className="px-6 py-3 bg-[#e49d04] text-[#0B0C10] font-bold rounded-xl hover:bg-[#cc8c03] transition-colors">Return to Dashboard</Link></div>;
+
   return (
     <div className="bg-gray-50 min-h-screen py-20">
       <div className="container mx-auto px-6 md:px-12 max-w-6xl space-y-12">

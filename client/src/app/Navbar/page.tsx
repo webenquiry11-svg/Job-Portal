@@ -117,11 +117,22 @@ const Navbar = () => {
     return null;
   }
     
+  const isEmployer = user?.role === 'employer';
+  const isTrialActive = user?.trialStartedAt && (new Date().getTime() - new Date(user.trialStartedAt).getTime()) <= 15 * 24 * 60 * 60 * 1000;
+  const hasCredits = (user?.credits || 0) > 0;
+  const showPricing = (!user) || (isEmployer && (!isTrialActive || !hasCredits));
+
+  const navLinks = [
+    { name: 'Find Jobs', path: '/#jobs-section', show: true },
+    { name: 'Job Categories', path: '/#categories-section', show: true },
+    { name: 'Pricing', path: '/Subscription/Pricing', show: showPricing }
+  ].filter(link => link.show);
+
   return (
     <div className={`fixed w-full z-40 transition-all duration-500 ${scrolled ? 'top-0 sm:top-4 sm:px-6 lg:px-8' : 'top-0'}`}>
       <nav className={`mx-auto relative transition-all duration-500 ${scrolled ? 'max-w-7xl w-full bg-white/90 backdrop-blur-2xl border-b sm:border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.06)] sm:rounded-full' : 'w-full bg-white/70 backdrop-blur-xl border-b border-gray-200/50'}`}>
         <div className={`px-6 md:px-8 flex justify-between items-center transition-all duration-500 ${scrolled ? 'py-2.5' : 'py-4'}`}>
-          <Link href="/" className="flex items-center gap-2 group h-14">
+          <Link href="/" className="flex items-center gap-2 group h-10 md:h-14">
             <div className="relative w-40 h-full group-hover:scale-105 transition-transform duration-300 origin-left z-50 hidden sm:block">
               <img src="/Click4Jobs Logo.png" alt="Click4Jobs" className="absolute top-1/2 left-0 -translate-y-1/2 h-[200px] w-auto max-w-none object-contain" />
             </div>
@@ -132,11 +143,7 @@ const Navbar = () => {
           
           {/* Animated Underline Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {[
-              { name: 'Find Jobs', path: '/#jobs-section' },
-              { name: 'Job Categories', path: '/#categories-section' },
-              { name: 'Pricing', path: '/Subscription/Pricing' }
-            ].map((item) => (
+            {navLinks.map((item) => (
               <Link key={item.name} href={item.path} className="text-sm font-bold text-[#121212]/70 hover:text-[#121212] transition-colors relative group py-2">
                 {item.name}
                 <span className="absolute bottom-0 left-0 w-full h-[2.5px] bg-[#e49d04] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full"></span>
@@ -205,11 +212,7 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden absolute top-full left-0 w-full bg-white/98 backdrop-blur-3xl sm:rounded-[1.5rem] sm:mt-2 border border-gray-100 shadow-2xl animate-fade-in-up origin-top overflow-hidden">
             <div className="px-6 py-4 space-y-3">
-              {[
-                { name: 'Find Jobs', path: '/#jobs-section' },
-                { name: 'Job Categories', path: '/#categories-section' },
-                { name: 'Pricing', path: '/Subscription/Pricing' }
-              ].map((item) => (
+              {navLinks.map((item) => (
                 <Link key={item.name} href={item.path} onClick={() => setIsMenuOpen(false)} className="block text-base font-bold text-gray-600 hover:text-[#0B0C10] py-3 px-4 rounded-xl hover:bg-gray-50 transition-colors">
                   {item.name}
                 </Link>

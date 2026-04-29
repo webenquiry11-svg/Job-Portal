@@ -16,11 +16,16 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'User already exists' });
     }
     const hashedPassword = await bcrypt.hash(password, 12);
-    const result = await AuthModel.create({ 
+    const authData: any = { 
       email, password: hashedPassword, name, role, 
       headline, location, phone, experience, education, skills, 
       companyName, companySize, industry, website, yourRole, description 
-    });
+    };
+    if (role === 'employer') {
+      authData.credits = 15;
+      authData.trialStartedAt = new Date();
+    }
+    const result = await AuthModel.create(authData);
     
     // Trigger Welcome Email asynchronously
     try {

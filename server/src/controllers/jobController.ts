@@ -5,7 +5,21 @@ import NotificationModel from '../models/NotificationModel';
 
 export const createJob = async (req: Request, res: Response) => {
   try {
-    const newJob = new JobModel(req.body);
+    const employer = await AuthModel.findById(req.body.employerId);
+    if (!employer) return res.status(404).json({ message: "Employer not found" });
+
+    // Failsafe: Wipe credits if trial expired
+    if (employer.trialStartedAt && ((Date.now() - new Date(employer.trialStartedAt).getTime()) / (1000 * 60 * 60 * 24)) > 15 && (employer.credits || 0) > 0) {
+      employer.credits = 0; 
+    }
+    if ((employer.credits || 0) < 5) {
+      return res.status(403).json({ message: "Insufficient credits to post a job. Please upgrade your plan." });
+    }
+    employer.credits = (employer.credits || 0) - 5;
+    await employer.save();
+
+    const expiresAt = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000); // 15 Days Validity Independent Clock
+    const newJob = new JobModel({ ...req.body, expiresAt });
     await newJob.save();
 
     // Notify followers

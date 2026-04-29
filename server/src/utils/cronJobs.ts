@@ -48,5 +48,21 @@ export const startCronJobs = () => {
     } catch (error) {
       console.error('❌ Error processing Job Alerts:', error);
     }
+
+    // --- 15-Day Trial and Job Lifecycle Cleanup ---
+    try {
+      const JobModel = mongoose.model('Job');
+      // Close jobs that have passed their 15-day validity
+      await JobModel.updateMany(
+        { status: 'Active', expiresAt: { $lte: new Date() } },
+        { $set: { status: 'Closed' } }
+      );
+      // Wipe unused credits for employers whose 15-day trial has expired
+      const fifteenDaysAgo = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000);
+      await AuthModel.updateMany(
+        { role: 'employer', trialStartedAt: { $lte: fifteenDaysAgo }, credits: { $gt: 0 } },
+        { $set: { credits: 0 } }
+      );
+    } catch (cleanupErr) { console.error('❌ Error during expiration cleanup:', cleanupErr); }
   });
 };

@@ -36,6 +36,8 @@ export interface IAuth extends Document {
   gstNumber?: string;
   googleId?: string;
   microsoftId?: string;
+  credits?: number;
+  trialStartedAt?: Date;
 }
 
 const authSchema = new mongoose.Schema({
@@ -88,6 +90,8 @@ const authSchema = new mongoose.Schema({
   // Social Login fields
   googleId: { type: String },
   microsoftId: { type: String },
+  credits: { type: Number, default: 0 },
+  trialStartedAt: { type: Date },
 }, { timestamps: true });
 
 export default mongoose.model<IAuth>('Auth', authSchema);

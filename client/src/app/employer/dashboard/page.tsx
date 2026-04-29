@@ -88,6 +88,18 @@ const EmployerDashboard = () => {
     }
   };
 
+  const handlePostJobClick = () => {
+    const trialDaysLeft = user?.trialStartedAt ? 15 - Math.floor((new Date().getTime() - new Date(user.trialStartedAt).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+    if (trialDaysLeft < 0 && user?.credits > 0) { user.credits = 0; } // Client failsafe sync
+    
+    if ((user?.credits || 0) < 5) {
+      toast.error('Credits exhausted or trial expired. Redirecting to Pricing...', { icon: '🔒' });
+      router.push('/Subscription/Pricing');
+    } else {
+      setIsPostJobModalOpen(true);
+    }
+  };
+
   useEffect(() => {
     const profile = localStorage.getItem("profile");
     if (profile) {
@@ -287,7 +299,7 @@ const EmployerDashboard = () => {
 
             <div className="flex items-center gap-4">
               <button
-                onClick={() => setIsPostJobModalOpen(true)}
+              onClick={handlePostJobClick}
                 className="flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-[#e49d04] text-[#0B0C10] font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-[#e49d04]/20 hover:bg-[#cc8c03] transition-all"
               >
                 <FaPlus /> <span className="hidden sm:inline">Post New Job</span><span className="sm:hidden">Post Job</span>
@@ -420,6 +432,7 @@ const EmployerDashboard = () => {
       {isPostJobModalOpen && (
         <PostJobModal 
           user={user} 
+            setUser={setUser}
           onClose={() => setIsPostJobModalOpen(false)} 
         />
       )}
@@ -588,6 +601,9 @@ const DashboardOverview = ({ user }: { user: any }) => {
     return acc + pendingInJob;
   }, 0);
   const profileViews = companyData?.profileViews ?? user?.profileViews ?? 0;
+  
+  const isTrialActive = user?.trialStartedAt && (new Date().getTime() - new Date(user.trialStartedAt).getTime()) <= 15 * 24 * 60 * 60 * 1000;
+  const trialDaysLeft = Math.max(0, 15 - Math.floor((new Date().getTime() - new Date(user?.trialStartedAt || Date.now()).getTime()) / (1000 * 60 * 60 * 24)));
 
   return (
     <div className="space-y-8 animate-fade-in-up">
@@ -600,7 +616,7 @@ const DashboardOverview = ({ user }: { user: any }) => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         <StatCard
           icon={<FaBriefcase />}
           label="Active Jobs"
@@ -624,6 +640,12 @@ const DashboardOverview = ({ user }: { user: any }) => {
           label="Profile Views"
           value={isLoadingCompany ? "..." : profileViews.toLocaleString()}
           color="bg-slate-100 text-slate-600"
+        />
+        <StatCard
+          icon={<FaCoins />}
+          label={isTrialActive ? `Trial Ends in ${trialDaysLeft} Days` : 'Credits Available'}
+          value={user?.credits || 0}
+          color="bg-blue-100 text-blue-600"
         />
       </div>
 
@@ -1376,7 +1398,7 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
   );
 };
 
-const PostJobModal = ({ user, onClose }: any) => {
+const PostJobModal = ({ user, setUser, onClose }: any) => {
   const [postJob, { isLoading }] = usePostJobMutation();
   const [currentStep, setCurrentStep] = useState(1);
   const [skillInput, setSkillInput] = useState("");
@@ -1421,6 +1443,10 @@ const PostJobModal = ({ user, onClose }: any) => {
         salaryMax: Number(formData.salaryMax) || 0,
       }).unwrap();
       toast.success("Job posted successfully!");
+      const updatedUser = { ...user, credits: (user.credits || 0) - 5 };
+      setUser(updatedUser);
+      const profile = JSON.parse(localStorage.getItem('profile') || '{}');
+      localStorage.setItem('profile', JSON.stringify({ ...profile, result: updatedUser }));
       onClose();
     } catch (error) { toast.error("Failed to post job"); }
   };
