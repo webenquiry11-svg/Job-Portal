@@ -83,6 +83,7 @@ const EmployerDashboard = () => {
   const unreadMessageCount = unreadChatData?.count || 0;
 
   const isTrialActive = user?.trialStartedAt && (new Date().getTime() - new Date(user.trialStartedAt).getTime()) <= 15 * 24 * 60 * 60 * 1000;
+  const trialDaysLeft = Math.max(0, 15 - Math.floor((new Date().getTime() - new Date(user?.trialStartedAt || Date.now()).getTime()) / (1000 * 60 * 60 * 24)));
 
   const handleBellClick = () => {
     setIsNotificationOpen(!isNotificationOpen);
@@ -424,7 +425,31 @@ const EmployerDashboard = () => {
         </header>
 
         <div className="p-6 lg:p-10 flex-1">
-          {activeTab === "dashboard" && <DashboardOverview user={user} />}
+          {isTrialActive && (
+            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-5 rounded-2xl mb-8 shadow-lg flex flex-col sm:flex-row justify-between items-center gap-4 animate-fade-in-up">
+              <div className="flex items-center gap-4">
+                <FaCoins className="text-4xl text-yellow-300" />
+                <div>
+                  <h3 className="font-bold text-lg">Free Trial Active</h3>
+                  <p className="text-sm opacity-90">You have <span className="font-black">{user?.credits || 0}</span> credits remaining. Your trial ends in <span className="font-black">{trialDaysLeft}</span> days.</p>
+                </div>
+              </div>
+              <button onClick={handlePostJobClick} className="bg-white text-blue-600 font-bold px-6 py-2 rounded-full shadow-md hover:bg-gray-100 transition-colors shrink-0">Post a Job</button>
+            </div>
+          )}
+          {!isTrialActive && (user?.credits || 0) < 5 && (
+            <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black p-5 rounded-2xl mb-8 shadow-lg flex flex-col sm:flex-row justify-between items-center gap-4 animate-fade-in-up">
+              <div className="flex items-center gap-4">
+                <FaCoins className="text-4xl text-white" />
+                <div>
+                  <h3 className="font-bold text-lg">Credits Exhausted</h3>
+                  <p className="text-sm opacity-80">Your free trial has ended or you've used all your credits. Purchase a plan to continue posting jobs.</p>
+                </div>
+              </div>
+              <Link href="/Subscription/Pricing" className="bg-black text-white font-bold px-6 py-2 rounded-full shadow-md hover:bg-gray-800 transition-colors shrink-0">View Plans</Link>
+            </div>
+          )}
+          {activeTab === "dashboard" && <DashboardOverview user={user} isTrialActive={isTrialActive} trialDaysLeft={trialDaysLeft} />}
           {activeTab === "myJobs" && (
             <MyJobsSection
               employerId={user._id}
@@ -599,7 +624,7 @@ const StatCard = ({ icon, label, value, color }: any) => (
   </div>
 );
 
-const DashboardOverview = ({ user }: { user: any }) => {
+const DashboardOverview = ({ user, isTrialActive, trialDaysLeft }: { user: any, isTrialActive: boolean, trialDaysLeft: number }) => {
   const { data: jobs = [], isLoading: isLoadingJobs } = useGetJobsByEmployerQuery(user._id, {
     skip: !user._id,
     pollingInterval: 5000
@@ -619,9 +644,6 @@ const DashboardOverview = ({ user }: { user: any }) => {
   }, 0);
   const profileViews = companyData?.profileViews ?? user?.profileViews ?? 0;
   
-  const isTrialActive = user?.trialStartedAt && (new Date().getTime() - new Date(user.trialStartedAt).getTime()) <= 15 * 24 * 60 * 60 * 1000;
-  const trialDaysLeft = Math.max(0, 15 - Math.floor((new Date().getTime() - new Date(user?.trialStartedAt || Date.now()).getTime()) / (1000 * 60 * 60 * 24)));
-
   return (
     <div className="space-y-8 animate-fade-in-up">
       <div>
