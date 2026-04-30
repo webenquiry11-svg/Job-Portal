@@ -99,8 +99,8 @@ const EmployerDashboard = () => {
     }
     
     if (currentCredits < 5) {
-      toast.error('Credits exhausted or trial expired. Redirecting to Pricing...', { icon: '🔒' });
-      router.push('/Subscription/Pricing');
+      toast.error('Credits exhausted or trial expired. Please view plans.', { icon: '🔒' });
+      setActiveTab('pricing');
     } else {
       setIsPostJobModalOpen(true);
     }
@@ -241,9 +241,9 @@ const EmployerDashboard = () => {
           <SidebarItem
             icon={<FaCoins />}
             label="Pricing & Plans"
-            active={false}
+            active={activeTab === 'pricing'}
             onClick={() => {
-              router.push("/Subscription/Pricing");
+              setActiveTab('pricing');
               setIsSidebarOpen(false);
             }}
             collapsed={isSidebarCollapsed}
@@ -446,7 +446,7 @@ const EmployerDashboard = () => {
                   <p className="text-sm opacity-80">Your free trial has ended or you've used all your credits. Purchase a plan to continue posting jobs.</p>
                 </div>
               </div>
-              <Link href="/Subscription/Pricing" className="bg-black text-white font-bold px-6 py-2 rounded-full shadow-md hover:bg-gray-800 transition-colors shrink-0">View Plans</Link>
+              <button onClick={() => setActiveTab('pricing')} className="bg-black text-white font-bold px-6 py-2 rounded-full shadow-md hover:bg-gray-800 transition-colors shrink-0">View Plans</button>
             </div>
           )}
           {activeTab === "dashboard" && <DashboardOverview user={user} isTrialActive={isTrialActive} trialDaysLeft={trialDaysLeft} />}
@@ -463,6 +463,7 @@ const EmployerDashboard = () => {
           {activeTab === "messages" && <MessagesSection user={user} />}
           {activeTab === "applicants" && <ApplicantsSection employerId={user._id} />}
           {activeTab === "settings" && <SettingsSection user={user} />}
+          {activeTab === "pricing" && <PricingSection />}
         </div>
       </main>
       {selectedJob && (
@@ -1680,3 +1681,45 @@ const PostJobModal = ({ user, setUser, onClose }: any) => {
 };
 
 export default EmployerDashboard;
+
+const PricingSection = () => {
+  return (
+    <div className="space-y-8 animate-fade-in-up max-w-5xl mx-auto">
+      <div className="bg-[#0B0C10] p-8 md:p-12 rounded-3xl shadow-xl text-center relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#e49d04] to-[#cc8c03]"></div>
+        <h2 className="text-3xl md:text-4xl font-black text-white mb-4">Hire Verified Talent. Pay Only for Results.</h2>
+        <p className="text-gray-300 max-w-2xl mx-auto leading-relaxed text-sm md:text-base">
+          Stop wasting budget on flat-fee job boards and unqualified clicks. Click4Jobs operates on a transparent, credit-based system. Use credits only when you post your jobs across India, and when you are ready to unlock, assess, and hire elite talent.
+        </p>
+      </div>
+      
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+          <h3 className="text-xl font-bold text-[#121212] mb-3 flex items-center gap-3"><FaCoins className="text-[#e49d04]" /> Zero Wasted Spend</h3>
+          <p className="text-gray-600 text-sm leading-relaxed">Browsing AI-matched profiles is free. You only spend credits to reveal contact information or trigger technical audits.</p>
+        </div>
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+          <h3 className="text-xl font-bold text-[#121212] mb-3 flex items-center gap-3"><FaClock className="text-[#e49d04]" /> Speed to Hire</h3>
+          <p className="text-gray-600 text-sm leading-relaxed">Burn credits to activate our Priority Match protocol, pushing your open role to the top of the queue for the best candidates.</p>
+        </div>
+      </div>
+
+      <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-gray-100">
+        <h2 className="text-2xl font-black text-[#121212] mb-2">Upgrade Your Plan</h2>
+        <h3 className="text-lg font-bold text-[#e49d04] mb-8">Contact our team to purchase credits</h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+            <h4 className="font-bold text-[#121212] mb-2 flex items-center gap-2"><FaEnvelope className="text-[#e49d04]"/> Employer Support</h4>
+            <p className="text-sm mb-3">For billing inquiries, ATS integration, or enterprise plans.</p>
+            <a href="mailto:enterprise@click4jobs.in" className="text-[#e49d04] font-bold hover:underline">enterprise@click4jobs.in</a>
+          </div>
+          <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+            <h4 className="font-bold text-[#121212] mb-2 flex items-center gap-2"><FaPhone className="text-[#e49d04]"/> Sales Team</h4>
+            <p className="text-sm mb-3">Speak directly with our enterprise accounts team to get customized pricing.</p>
+            <a href="tel:+919876543210" className="text-[#e49d04] font-bold hover:underline">+91 98765 43210</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

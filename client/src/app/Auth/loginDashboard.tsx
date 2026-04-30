@@ -790,9 +790,6 @@ const LoginDashboard = () => {
                     <button onClick={() => handleProtectedAction()} className="w-full sm:w-auto bg-[#0B0C10] hover:bg-[#1f2833] text-[#e49d04] shadow-lg shadow-black/10 font-bold py-4 px-10 rounded-full transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3">
                         {user ? 'Go to Dashboard' : 'Get Started Now'} <FaArrowRight />
                     </button>
-                    <Link href="/Subscription/Pricing" className="w-full sm:w-auto bg-white text-gray-700 border border-gray-200 font-bold py-4 px-10 rounded-full shadow-sm hover:shadow-md hover:border-[#e49d04]/30 hover:text-[#e49d04] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
-                        View Pricing Plans
-                    </Link>
                 </div>
             </div>
           </div>

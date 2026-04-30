@@ -18,7 +18,9 @@ import {
   requestAccountDeletionOtp,
   deleteAccount,
   getAllUsersForAdmin,
-  deleteUserByAdmin
+  deleteUserByAdmin,
+  forgotPassword,
+  resetPassword
 } from '../controllers/AuthController';
 import upload from '../middleware/uploadMiddleware';
 import passport from 'passport';
@@ -53,6 +55,10 @@ router.post('/verify-otp', verifyOtp);
 // Account Deletion Routes
 router.post('/request-delete-otp', requestAccountDeletionOtp);
 router.post('/delete-account', deleteAccount);
+
+// Password Reset Routes
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
 
 // Admin Routes
 router.post('/admin/send-otp', sendAdminOtp);

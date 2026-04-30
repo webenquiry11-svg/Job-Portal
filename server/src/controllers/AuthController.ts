@@ -389,3 +389,45 @@ export const deleteUserByAdmin = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Failed to delete user' });
   }
 };
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    const user = await AuthModel.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found with this email" });
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires = new Date(Date.now() + 10 * 60 * 1000);
+
+    await AuthModel.findByIdAndUpdate(user._id, { $set: { emailOtp: String(otp), emailOtpExpires: expires } }, { strict: false });
+    await sendOtpEmail(email, otp);
+
+    res.status(200).json({ message: "OTP sent to your email." });
+  } catch (error: any) {
+    console.error("Error in forgotPassword:", error);
+    res.status(500).json({ message: "Failed to send OTP", error: error.message });
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    const user = await AuthModel.findOne({ email }).lean();
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const emailOtp = (user as any).emailOtp;
+    const emailExpires = (user as any).emailOtpExpires;
+
+    if (!emailOtp || String(emailOtp) !== String(otp).trim() || !emailExpires || new Date(emailExpires) < new Date()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    await AuthModel.findByIdAndUpdate(user._id, { $set: { password: hashedPassword }, $unset: { emailOtp: 1, emailOtpExpires: 1 } }, { strict: false });
+
+    res.status(200).json({ message: "Password reset successfully." });
+  } catch (error: any) {
+    console.error("Error in resetPassword:", error);
+    res.status(500).json({ message: "Failed to reset password", error: error.message });
+  }
+};

@@ -120,12 +120,10 @@ const Navbar = () => {
   const isEmployer = user?.role === 'employer';
   const isTrialActive = user?.trialStartedAt && (new Date().getTime() - new Date(user.trialStartedAt).getTime()) <= 15 * 24 * 60 * 60 * 1000;
   const hasCredits = (user?.credits || 0) >= 5;
-  const showPricing = isEmployer && (!isTrialActive || !hasCredits);
 
   const navLinks = [
     { name: 'Find Jobs', path: '/#jobs-section', show: true },
     { name: 'Job Categories', path: '/#categories-section', show: true },
-    { name: 'Pricing', path: '/Subscription/Pricing', show: showPricing }
   ].filter(link => link.show);
 
   return (
