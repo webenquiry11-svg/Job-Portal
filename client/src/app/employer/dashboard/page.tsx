@@ -425,7 +425,7 @@ const EmployerDashboard = () => {
         </header>
 
         <div className="p-6 lg:p-10 flex-1">
-          {isTrialActive && (
+          {activeTab === "dashboard" && isTrialActive && (
             <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-5 rounded-2xl mb-8 shadow-lg flex flex-col sm:flex-row justify-between items-center gap-4 animate-fade-in-up">
               <div className="flex items-center gap-4">
                 <FaCoins className="text-4xl text-yellow-300" />
@@ -437,7 +437,7 @@ const EmployerDashboard = () => {
               <button onClick={handlePostJobClick} className="bg-white text-blue-600 font-bold px-6 py-2 rounded-full shadow-md hover:bg-gray-100 transition-colors shrink-0">Post a Job</button>
             </div>
           )}
-          {!isTrialActive && (user?.credits || 0) < 5 && (
+          {activeTab === "dashboard" && !isTrialActive && (user?.credits || 0) < 5 && (
             <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black p-5 rounded-2xl mb-8 shadow-lg flex flex-col sm:flex-row justify-between items-center gap-4 animate-fade-in-up">
               <div className="flex items-center gap-4">
                 <FaCoins className="text-4xl text-white" />
