@@ -34,13 +34,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
       const result = await login(formData).unwrap();
       localStorage.setItem('profile', JSON.stringify({ ...result }));
       toast.success('Login successful! Welcome back.');
-      console.log('Login success:', result);
       setTimeout(() => {
         onClose();
-        if (result?.result?.role === 'employer' && result?.result?._id) {
-          router.push('/employer/dashboard');
+        if (result?.result?.role === 'employer') {
+          window.location.href = '/employer/dashboard';
         } else {
-          router.push('/Candidate/Dashboard');
+          window.location.href = '/Candidate/Dashboard';
         } 
       }, 1500);
     } catch (error: any) {

@@ -129,9 +129,9 @@ const LoginDashboard = () => {
           window.history.replaceState({}, document.title, window.location.pathname);
           
           if (user.role === 'employer') {
-            router.push('/employer/dashboard');
+            window.location.href = '/employer/dashboard';
           } else {
-            router.push('/Candidate/Dashboard');
+            window.location.href = '/Candidate/Dashboard';
           }
         } catch (error) {
           console.error('Failed to parse social login data', error);
