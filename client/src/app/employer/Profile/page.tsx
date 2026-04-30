@@ -199,7 +199,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                             <div key={job._id} className="bg-gray-50 rounded-2xl p-5 border border-gray-100 hover:border-gray-300 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
                               <div>
                                 <h4 className="font-bold text-[#121212]">{job.title}</h4>
-                                <p className="text-xs text-gray-500 mt-1">{job.location} • {job.workMode} • ${job.salaryMin}-${job.salaryMax}</p>
+                                <p className="text-xs text-gray-500 mt-1">{job.location} • {job.workMode} • ₹{job.salaryMin}-₹{job.salaryMax}</p>
                               </div>
                               <button 
                                 onClick={() => setSelectedJob(job)}
@@ -560,7 +560,7 @@ const JobDetailsModal = ({ job, onClose }: any) => {
             </div>
             <div>
               <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Salary ({job.salaryType})</p>
-              <p className="font-bold text-[#121212] text-base">${job.salaryMin || '0'} - ${job.salaryMax || '0'}</p>
+              <p className="font-bold text-[#121212] text-base">₹{job.salaryMin || '0'} - ₹{job.salaryMax || '0'}</p>
             </div>
           </div>
           

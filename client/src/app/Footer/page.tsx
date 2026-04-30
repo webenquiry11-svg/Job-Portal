@@ -73,7 +73,7 @@ const Footer = () => {
             </div>
             <p className="text-gray-500 text-lg leading-relaxed mb-8 pr-4">
               Click4Jobs is India's most trusted recruitment ecosystem, utilizing AI-driven matching to connect top-tier talent with industry leaders.
-              <span className="block mt-4 text-sm font-medium text-gray-600">Built and backed by the technical excellence of <span className="font-bold text-[#121212]">Volga Infosys Pvt Ltd</span>, Click4Jobs combines years of IT innovation with modern recruitment needs.</span>
+              <span className="block mt-4 text-sm font-medium text-gray-600">Built and backed by the technical excellence of <a href="https://volgainfosys.com/" target="_blank" rel="noopener noreferrer" className="font-bold text-[#121212] hover:text-[#e49d04] hover:underline transition-colors">Volga Infosys Pvt Ltd</a>, Click4Jobs combines years of IT innovation with modern recruitment needs.</span>
             </p>
             <div className="flex gap-4">
               {[

@@ -660,7 +660,7 @@ const DashboardOverview = ({ user }: { user: any }) => {
         />
         <StatCard
           icon={<FaCoins />}
-          label={isTrialActive ? `Trial Ends in ${trialDaysLeft} Days` : 'Credits Available'}
+          label={isTrialActive ? 'Free Credits' : 'Credits Available'}
           value={user?.credits || 0}
           color="bg-blue-100 text-blue-600"
         />
@@ -907,7 +907,7 @@ const JobDetailsModal = ({ job, onClose }: any) => {
                 Salary ({job.salaryType})
               </p>
               <p className="font-bold text-[#121212] text-base">
-                ${job.salaryMin || "0"} - ${job.salaryMax || "0"}
+                ₹{job.salaryMin || "0"} - ₹{job.salaryMax || "0"}
               </p>
             </div>
           </div>
@@ -1611,11 +1611,11 @@ const PostJobModal = ({ user, setUser, onClose }: any) => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="group">
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Minimum Salary ($)</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Minimum Salary (₹)</label>
                   <input type="number" value={formData.salaryMin} onChange={e => setFormData({...formData, salaryMin: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#e49d04]/20 focus:border-[#e49d04] transition-all" placeholder="e.g. 80000" />
                 </div>
                 <div className="group">
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Maximum Salary ($)</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#121212] transition-colors">Maximum Salary (₹)</label>
                   <input type="number" value={formData.salaryMax} onChange={e => setFormData({...formData, salaryMax: e.target.value})} className="w-full px-5 py-4 bg-gray-50/50 border border-gray-200/80 rounded-2xl text-base font-medium text-[#121212] placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#e49d04]/20 focus:border-[#e49d04] transition-all" placeholder="e.g. 120000" />
                 </div>
               </div>

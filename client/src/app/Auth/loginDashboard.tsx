@@ -316,7 +316,7 @@ const LoginDashboard = () => {
             <div className="space-y-6 text-lg text-gray-600 leading-relaxed text-left">
                 <p>Welcome to Click4Jobs, India’s most efficient and transparent hiring ecosystem. We recognize that the traditional job search process—for both candidates and employers—is often time-consuming and fragmented. Our mission is to bridge the gap between incredible talent and top-tier companies across the entire country, from bustling metropolitan hubs to rapidly growing Tier-2 and Tier-3 cities.</p>
                 <p>We operate on a simple philosophy: <span className="font-bold text-[#121212]">Skills matter most.</span> By leveraging advanced AI-driven matching technology, Click4Jobs moves beyond keyword-stuffed resumes to connect employers with candidates who possess the exact verified skills they need. Whether you are a fresh graduate entering the workforce, a skilled tradesperson, or an executive seeking a national leadership role, our platform is built to accelerate your success.</p>
-                  <p className="mt-6 p-6 bg-gray-50 rounded-2xl border border-gray-100 text-gray-800 font-medium text-center shadow-sm">Built and backed by the technical excellence of <span className="font-black text-[#e49d04]">Volga Infosys Pvt Ltd</span>, Click4Jobs combines years of IT innovation with modern recruitment needs.</p>
+                  <p className="mt-6 p-6 bg-gray-50 rounded-2xl border border-gray-100 text-gray-800 font-medium text-center shadow-sm">Built and backed by the technical excellence of <a href="https://volgainfosys.com/" target="_blank" rel="noopener noreferrer" className="font-black text-[#e49d04] hover:underline cursor-pointer">Volga Infosys Pvt Ltd</a>, Click4Jobs combines years of IT innovation with modern recruitment needs.</p>
             </div>
           </div>
         </div>
@@ -606,7 +606,7 @@ const LoginDashboard = () => {
 
                             <div className="grid grid-cols-2 gap-4 mb-6">
                                     <div className="flex items-center text-gray-500 text-sm truncate"><FaMapMarkerAlt className="mr-2 text-[#e49d04] shrink-0" /> <span className="truncate">{job.location || 'Remote'}</span></div>
-                                <div className="flex items-center text-gray-500 text-sm truncate"><FaMoneyBillWave className="mr-2 text-green-500 shrink-0" /> <span className="truncate">${job.salaryMin || 0} - ${job.salaryMax || 0}</span></div>
+                                <div className="flex items-center text-gray-500 text-sm truncate"><FaMoneyBillWave className="mr-2 text-green-500 shrink-0" /> <span className="truncate">₹{job.salaryMin || 0} - ₹{job.salaryMax || 0}</span></div>
                                 <div className="flex items-center text-gray-500 text-sm truncate"><FaClock className="mr-2 text-blue-500 shrink-0" /> <span className="truncate">{new Date(job.createdAt).toLocaleDateString()}</span></div>
                             </div>
 
@@ -841,7 +841,7 @@ const JobDetailsModal = ({ job, onClose, onApply }: any) => {
         </div>
         <div className="mt-8 pt-6 border-t border-gray-100 grid grid-cols-2 gap-6 text-sm">
           <div><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Experience</p><p className="font-bold text-[#121212] text-base">{job.experience || 'Not specified'}</p></div>
-          <div><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Salary ({job.salaryType})</p><p className="font-bold text-[#121212] text-base">${job.salaryMin || '0'} - ${job.salaryMax || '0'}</p></div>
+          <div><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Salary ({job.salaryType})</p><p className="font-bold text-[#121212] text-base">₹{job.salaryMin || '0'} - ₹{job.salaryMax || '0'}</p></div>
         </div>
         <div className="mt-8 pt-6 border-t border-gray-100"><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-2">Job Description</p><p className="text-gray-700 whitespace-pre-wrap text-sm leading-relaxed">{job.description}</p></div>
         {job.screeningQuestion && <div className="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100"><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Screening Question</p><p className="font-semibold text-[#121212] text-sm">{job.screeningQuestion}</p></div>}

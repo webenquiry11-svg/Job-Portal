@@ -933,7 +933,7 @@ const RecommendedJobCard = ({ job, onViewDetails, isSaved, onToggleSave, onViewC
   const employerId = job?.employerId;
   const company = job ? (employerId?.companyName || employerId?.name || 'Company') : propCompany;
   const logo = job ? company.charAt(0).toUpperCase() : propLogo;
-  const salary = job ? `$${job.salaryMin} - $${job.salaryMax}` : propSalary;
+  const salary = job ? `₹${job.salaryMin} - ₹${job.salaryMax}` : propSalary;
   const tags = job ? (job.skills?.slice(0, 3) || []) : propTags;
   const verified = job ? (employerId?.gstVerificationStatus === 'approved') : isVerifiedEmployer;
   const location = job?.location || propLocation;
@@ -1009,7 +1009,7 @@ const JobDetailsModal = ({ job, onClose, user, onApply }: any) => {
         </div>
         <div className="mt-8 pt-6 border-t border-gray-100 grid grid-cols-2 gap-6 text-sm">
           <div><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Experience</p><p className="font-bold text-[#121212] text-base">{job.experience || 'Not specified'}</p></div>
-          <div><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Salary ({job.salaryType})</p><p className="font-bold text-[#121212] text-base">${job.salaryMin || '0'} - ${job.salaryMax || '0'}</p></div>
+          <div><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Salary ({job.salaryType})</p><p className="font-bold text-[#121212] text-base">₹{job.salaryMin || '0'} - ₹{job.salaryMax || '0'}</p></div>
         </div>
         <div className="mt-8 pt-6 border-t border-gray-100"><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-2">Job Description</p><p className="text-gray-700 whitespace-pre-wrap text-sm leading-relaxed">{job.description}</p></div>
         {job.screeningQuestion && <div className="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100"><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Screening Question</p><p className="font-semibold text-[#121212] text-sm">{job.screeningQuestion}</p></div>}
