@@ -199,7 +199,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                             <div key={job._id} className="bg-gray-50 rounded-2xl p-5 border border-gray-100 hover:border-gray-300 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
                               <div>
                                 <h4 className="font-bold text-[#121212]">{job.title}</h4>
-                                <p className="text-xs text-gray-500 mt-1">{job.location} • {job.workMode} • ₹{job.salaryMin}-₹{job.salaryMax}</p>
+                                <p className="text-xs text-gray-500 mt-1">{job.location} • {job.workMode} • ${job.salaryMin}-${job.salaryMax}</p>
                               </div>
                               <button 
                                 onClick={() => setSelectedJob(job)}
@@ -320,24 +320,30 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                             <span className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-md"><FaEye className="text-[#0B0C10]" /> {profileViews} Views</span>
                         </div>
                     </div>
-                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
+                    <div className="flex flex-row items-center justify-end gap-2 sm:gap-3 w-full xl:w-auto mt-2 sm:mt-0">
                         {successMessage && (
-                            <span className="text-green-600 text-sm font-bold flex items-center justify-center gap-2 bg-green-50 px-3 py-1.5 rounded-lg animate-fade-in-up w-full sm:w-auto">
-                                <FaCheckCircle /> Saved
+                            <span className="text-green-600 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 sm:gap-2 bg-green-50 px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg animate-fade-in-up whitespace-nowrap">
+                                <FaCheckCircle className="shrink-0" /> <span className="hidden sm:inline">Saved</span>
                             </span>
                         )}
                         <button 
                             onClick={() => setIsPublicView(true)}
-                            className="w-full sm:w-auto justify-center px-4 py-3 bg-white border border-gray-200 text-gray-600 font-bold rounded-xl transition-all text-sm flex items-center gap-2 hover:bg-slate-50 hover:text-[#0B0C10]"
+                            title="View as Public"
+                            className="flex-1 sm:flex-none justify-center px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-gray-200 text-gray-600 font-bold rounded-xl transition-all text-sm flex items-center gap-1.5 sm:gap-2 hover:bg-slate-50 hover:text-[#0B0C10]"
                         >
-                            <FaEye /> View as Public
+                            <FaEye className="text-lg sm:text-base shrink-0" /> 
+                            <span className="hidden lg:inline whitespace-nowrap">View as Public</span>
+                            <span className="hidden sm:inline lg:hidden whitespace-nowrap">Public</span>
                         </button>
                         <button 
                             onClick={handleSubmit} 
                             disabled={isLoading}
-                            className="w-full sm:w-auto justify-center px-6 py-3 bg-[#FACC15] hover:bg-[#EAB308] text-[#0B0C10] font-bold rounded-xl transition-all shadow-lg shadow-[#FACC15]/20 text-sm flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:translate-y-0"
+                            title="Save Changes"
+                            className="flex-1 sm:flex-none justify-center px-3 sm:px-6 py-2.5 sm:py-3 bg-[#FACC15] hover:bg-[#EAB308] text-[#0B0C10] font-bold rounded-xl transition-all shadow-lg shadow-[#FACC15]/20 text-sm flex items-center gap-1.5 sm:gap-2 disabled:opacity-70 disabled:cursor-not-allowed transform hover:-translate-y-0.5 active:translate-y-0"
                         >
-                            {isLoading ? 'Saving...' : <><FaSave /> Save Changes</>}
+                            {isLoading ? <FaSpinner className="animate-spin text-lg sm:text-base shrink-0" /> : <FaSave className="text-lg sm:text-base shrink-0" />}
+                            <span className="hidden lg:inline whitespace-nowrap">{isLoading ? 'Saving...' : 'Save Changes'}</span>
+                            <span className="hidden sm:inline lg:hidden whitespace-nowrap">{isLoading ? 'Saving...' : 'Save'}</span>
                         </button>
                     </div>
                 </div>
@@ -560,7 +566,7 @@ const JobDetailsModal = ({ job, onClose }: any) => {
             </div>
             <div>
               <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Salary ({job.salaryType})</p>
-              <p className="font-bold text-[#121212] text-base">₹{job.salaryMin || '0'} - ₹{job.salaryMax || '0'}</p>
+              <p className="font-bold text-[#121212] text-base">${job.salaryMin || '0'} - ${job.salaryMax || '0'}</p>
             </div>
           </div>
           
