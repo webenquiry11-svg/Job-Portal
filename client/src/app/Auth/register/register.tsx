@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaTimes, FaUser, FaBuilding, FaArrowLeft, FaCloudUploadAlt, FaCheck, FaCheckCircle } from 'react-icons/fa';
 import { useRegisterMutation, useUpdateProfileMutation } from '@/features/authApi';
 import { useRouter } from 'next/navigation';
@@ -222,10 +222,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
       <form className="space-y-4" onSubmit={(e) => { 
         e.preventDefault(); 
         if (!isPhoneVerified) {
-          toast.error("Please verify your phone number using OTP to continue.");
-          return;
+          handleVerifyPhoneAndProceed(() => handleNext());
+        } else {
+          handleNext(); 
         }
-        handleNext(); 
       }}>
         <div>
           <label htmlFor="headline" className={labelClass}>Professional Headline</label>
@@ -239,16 +239,15 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
           <label htmlFor="phone" className={labelClass}>Phone Number</label>
           <div className="flex items-center gap-2">
             <input id="phone" name="phone" type="tel" required placeholder="+91 9999999999" className={inputClass.replace('mt-1', 'mt-0')} value={formData.phone} onChange={handleChange} disabled={isPhoneVerified} />
-            {isPhoneVerified ? (
+            {isPhoneVerified && (
               <span className="text-green-600 font-bold flex items-center gap-1 px-4 py-3 bg-green-50 rounded-xl whitespace-nowrap border border-green-200"><FaCheckCircle /> Verified</span>
-            ) : (
-              <button type="button" onClick={handleVerifyPhone} className="px-5 py-3 bg-[#121212] text-[#e49d04] font-bold rounded-xl whitespace-nowrap hover:bg-[#1F2833] transition-colors shadow-md">Send OTP</button>
             )}
           </div>
+          {!isPhoneVerified && <p className="text-xs text-gray-500 mt-2">You will be asked to verify this number via OTP on the next step.</p>}
         </div>
         <div className="pt-4">
           <button type="submit" className={btnPrimary}>
-            Next Step
+            {isPhoneVerified ? 'Next Step' : 'Verify Phone & Next'}
           </button>
         </div>
       </form>
@@ -339,10 +338,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
       <form className="space-y-4" onSubmit={(e) => { 
         e.preventDefault(); 
         if (!isPhoneVerified) {
-          toast.error("Please verify your phone number using OTP to continue.");
-          return;
+          handleVerifyPhoneAndProceed((verifiedOverride) => handleSubmit(verifiedOverride));
+        } else {
+          handleSubmit(); 
         }
-        handleSubmit(); 
       }}>
         <div>
           <label htmlFor="company-name" className={labelClass}>Company Name</label>
@@ -362,12 +361,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
           <label htmlFor="phone-employer" className={labelClass}>Phone Number</label>
           <div className="flex items-center gap-2">
             <input id="phone-employer" name="phone" type="tel" required placeholder="+91 9999999999" className={inputClass.replace('mt-1', 'mt-0')} value={formData.phone} onChange={handleChange} disabled={isPhoneVerified} />
-            {isPhoneVerified ? (
+            {isPhoneVerified && (
               <span className="text-green-600 font-bold flex items-center gap-1 px-4 py-3 bg-green-50 rounded-xl whitespace-nowrap border border-green-200"><FaCheckCircle /> Verified</span>
-            ) : (
-              <button type="button" onClick={handleVerifyPhone} className="px-5 py-3 bg-[#121212] text-[#e49d04] font-bold rounded-xl whitespace-nowrap hover:bg-[#1F2833] transition-colors shadow-md">Send OTP</button>
             )}
           </div>
+          {!isPhoneVerified && <p className="text-xs text-gray-500 mt-2">You will be asked to verify this number via OTP to complete registration.</p>}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -406,7 +404,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
         </div>
         <div className="pt-4">
           <button type="submit" disabled={!isRobotChecked || isLoading} className={isRobotChecked && !isLoading ? btnPrimary : btnDisabled}>
-            {isLoading ? 'Registering...' : 'Complete Registration'}
+            {isLoading ? 'Processing...' : (!isPhoneVerified ? 'Verify Phone & Complete Registration' : 'Complete Registration')}
           </button>
         </div>
       </form>
