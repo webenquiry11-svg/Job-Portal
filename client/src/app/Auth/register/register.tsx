@@ -54,8 +54,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
     }
   }, []);
 
-  const handleVerifyPhone = () => {
-    if (!formData.phone) return toast.error("Please enter a phone number first.");
+  const handleVerifyPhoneAndProceed = (onSuccess: (verifiedOverride?: boolean) => void) => {
+    if (!formData.phone) {
+      toast.error("Please enter a phone number first.");
+      return;
+    }
     let cleanPhone = formData.phone.replace(/\D/g, '');
     if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
     
@@ -67,6 +70,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
         success: (data: any) => {
           toast.success("Phone verified successfully!");
           setIsPhoneVerified(true);
+          onSuccess(true); // Automatically proceed to next step / submit
         },
         failure: (error: any) => {
           toast.error(error?.message || "Failed to verify OTP via MSG91");
@@ -77,7 +81,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleVerifyPhone = () => {
+    handleVerifyPhoneAndProceed(() => {});
+  };
+
+  const handleSubmit = async (verifiedOverride: boolean = false) => {
     if (!isRobotChecked) return;
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
@@ -85,7 +93,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
     }
 
     try {
-      const result = await register({ ...formData, role, isPhoneVerified }).unwrap();
+      const result = await register({ ...formData, role, isPhoneVerified: isPhoneVerified || verifiedOverride }).unwrap();
       
       // Normalize backend response to always have the 'result' key for consistency
       const normalizedUser = result.result || result.user || result;
