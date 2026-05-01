@@ -56,21 +56,11 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
 
   useEffect(() => {
     // Dynamically inject MSG91 SDK for WhatsApp/SMS OTP Verification
-    if (typeof window !== 'undefined' && !(window as any).sendOtp) {
+    if (typeof window !== 'undefined' && !document.getElementById('msg91-script')) {
       const script = document.createElement('script');
+      script.id = 'msg91-script';
       script.src = "https://verify.msg91.com/otp-provider.js";
       script.async = true;
-      script.onload = () => {
-        if ((window as any).initSendOTP) {
-          (window as any).initSendOTP({
-            widgetId: process.env.NEXT_PUBLIC_MSG91_WIDGET_ID || "REPLACE_WITH_YOUR_WIDGET_ID",
-            tokenAuth: process.env.NEXT_PUBLIC_MSG91_TOKEN_AUTH || "REPLACE_WITH_YOUR_TOKEN_AUTH",
-            exposeMethods: true,
-            success: (data: any) => console.log('MSG91 Widget Loaded Successfully'),
-            failure: (error: any) => console.error('MSG91 Widget Failed to load', error)
-          });
-        }
-      };
       document.body.appendChild(script);
     }
   }, []);
@@ -108,17 +98,33 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
       let cleanPhone = user.phone.replace(/\D/g, '');
       if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone; // Auto append country code if strictly 10 digits
       
-      if ((window as any).sendOtp) {
-        (window as any).sendOtp(
-          cleanPhone,
-          (data: any) => {
-            toast.success('WhatsApp/SMS OTP sent successfully!');
-            setOtpType('phone');
+      if ((window as any).initSendOTP) {
+        (window as any).initSendOTP({
+          widgetId: process.env.NEXT_PUBLIC_MSG91_WIDGET_ID || "REPLACE_WITH_YOUR_WIDGET_ID",
+          tokenAuth: process.env.NEXT_PUBLIC_MSG91_TOKEN_AUTH || "REPLACE_WITH_YOUR_TOKEN_AUTH",
+          identifier: cleanPhone,
+          success: async (data: any) => {
+            try {
+              const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+              const tokenToVerify = data.message || data.access_token || 'verified';
+              const res = await fetch(`${API_URL}/auth/verify-msg91-token`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ _id: user._id, token: tokenToVerify })
+              });
+              const apiData = await res.json();
+              if (res.ok) {
+                toast.success(apiData.message || 'Phone verified successfully!');
+                const profile = JSON.parse(localStorage.getItem('profile') || '{}');
+                localStorage.setItem('profile', JSON.stringify({ ...profile, result: apiData.result }));
+                if (setUser) setUser(apiData.result);
+              } else toast.error(apiData.message || 'Server verification failed');
+            } catch (e) { toast.error('Server error during verification'); }
           },
-          (error: any) => {
-            toast.error(error?.message || 'Failed to send OTP via MSG91');
+          failure: (error: any) => {
+            toast.error(error?.message || 'Failed to verify OTP via MSG91');
           }
-        );
+        });
       } else {
         toast.error("MSG91 SDK is not loaded yet.");
       }
@@ -140,37 +146,6 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
 
   const handleVerifyOtp = async () => {
     if (!otp) return toast.error('Enter the OTP');
-
-    if (otpType === 'phone') {
-      if ((window as any).verifyOtp) {
-        (window as any).verifyOtp(
-          otp,
-          async (data: any) => {
-            try {
-              const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-              const tokenToVerify = data.message || data.access_token || 'verified';
-              const res = await fetch(`${API_URL}/auth/verify-msg91-token`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ _id: user._id, token: tokenToVerify })
-              });
-              const apiData = await res.json();
-              if (res.ok) {
-                toast.success(apiData.message || 'Phone verified successfully!');
-                const profile = JSON.parse(localStorage.getItem('profile') || '{}');
-                localStorage.setItem('profile', JSON.stringify({ ...profile, result: apiData.result }));
-                if (setUser) setUser(apiData.result);
-                setOtpType(null); setOtp('');
-              } else toast.error(apiData.message || 'Server verification failed');
-            } catch (e) { toast.error('Server error during verification'); }
-          },
-          (error: any) => {
-            toast.error(error?.message || 'Invalid OTP');
-          }
-        );
-      }
-      return;
-    }
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
