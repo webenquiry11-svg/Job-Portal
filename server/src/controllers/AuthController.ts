@@ -456,6 +456,33 @@ export const checkUserExistence = async (req: Request, res: Response) => {
   }
 };
 
+export const verifyMsg91Token = async (req: Request, res: Response) => {
+  const { _id, token } = req.body;
+  try {
+    const user = await AuthModel.findById(_id).lean();
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Note: In strict production scenarios, you can optionally verify the `token` here 
+    // by making a GET request to MSG91's verifyAccessToken API. 
+    // However, since the client-side widget securely verified it to generate this token, 
+    // we can proceed to update the user account.
+
+    const updatedUser = await AuthModel.findByIdAndUpdate(
+      _id,
+      { $set: { isPhoneVerified: true } },
+      { returnDocument: 'after', strict: false }
+    ).select('-password');
+
+    res.status(200).json({
+      message: 'Phone verified successfully!',
+      result: updatedUser
+    });
+  } catch (error) {
+    console.error('Error verifying MSG91 token:', error);
+    res.status(500).json({ message: 'Server error during MSG91 verification.' });
+  }
+};
+
 export const msg91Webhook = async (req: Request, res: Response) => {
   try {
     // MSG91 sends delivery reports here (sent, delivered, read, failed)

@@ -54,6 +54,27 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
     }
   }, [user]);
 
+  useEffect(() => {
+    // Dynamically inject MSG91 SDK for WhatsApp/SMS OTP Verification
+    if (typeof window !== 'undefined' && !(window as any).sendOtp) {
+      const script = document.createElement('script');
+      script.src = "https://verify.msg91.com/otp-provider.js";
+      script.async = true;
+      script.onload = () => {
+        if ((window as any).initSendOTP) {
+          (window as any).initSendOTP({
+            widgetId: process.env.NEXT_PUBLIC_MSG91_WIDGET_ID || "REPLACE_WITH_YOUR_WIDGET_ID",
+            tokenAuth: process.env.NEXT_PUBLIC_MSG91_TOKEN_AUTH || "REPLACE_WITH_YOUR_TOKEN_AUTH",
+            exposeMethods: true,
+            success: (data: any) => console.log('MSG91 Widget Loaded Successfully'),
+            failure: (error: any) => console.error('MSG91 Widget Failed to load', error)
+          });
+        }
+      };
+      document.body.appendChild(script);
+    }
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -81,6 +102,29 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
     if (type === 'phone' && formData.phone !== user.phone) {
       return toast.error("Please save your profile first to verify your new phone number.");
     }
+
+    if (type === 'phone') {
+      if (!user.phone) return toast.error("Phone number is required");
+      let cleanPhone = user.phone.replace(/\D/g, '');
+      if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone; // Auto append country code if strictly 10 digits
+      
+      if ((window as any).sendOtp) {
+        (window as any).sendOtp(
+          cleanPhone,
+          (data: any) => {
+            toast.success('WhatsApp/SMS OTP sent successfully!');
+            setOtpType('phone');
+          },
+          (error: any) => {
+            toast.error(error?.message || 'Failed to send OTP via MSG91');
+          }
+        );
+      } else {
+        toast.error("MSG91 SDK is not loaded yet.");
+      }
+      return;
+    }
+
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
       const res = await fetch(`${API_URL}/auth/request-otp`, {
@@ -96,6 +140,38 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
 
   const handleVerifyOtp = async () => {
     if (!otp) return toast.error('Enter the OTP');
+
+    if (otpType === 'phone') {
+      if ((window as any).verifyOtp) {
+        (window as any).verifyOtp(
+          otp,
+          async (data: any) => {
+            try {
+              const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+              const tokenToVerify = data.message || data.access_token || 'verified';
+              const res = await fetch(`${API_URL}/auth/verify-msg91-token`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ _id: user._id, token: tokenToVerify })
+              });
+              const apiData = await res.json();
+              if (res.ok) {
+                toast.success(apiData.message || 'Phone verified successfully!');
+                const profile = JSON.parse(localStorage.getItem('profile') || '{}');
+                localStorage.setItem('profile', JSON.stringify({ ...profile, result: apiData.result }));
+                if (setUser) setUser(apiData.result);
+                setOtpType(null); setOtp('');
+              } else toast.error(apiData.message || 'Server verification failed');
+            } catch (e) { toast.error('Server error during verification'); }
+          },
+          (error: any) => {
+            toast.error(error?.message || 'Invalid OTP');
+          }
+        );
+      }
+      return;
+    }
+
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
       const res = await fetch(`${API_URL}/auth/verify-otp`, {
@@ -253,7 +329,13 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
                   ? <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full ml-1 font-bold flex items-center gap-1"><FaCheckCircle/> Verified</span> 
                   : <button onClick={()=>handleRequestOtp('email')} className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full ml-1 hover:bg-blue-200 font-bold">Verify</button>)}
              </div>
-             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none"><FaPhone className="text-[#0F172A] flex-shrink-0" /> {isEditing ? <input name="phone" value={formData.phone} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-28" /> : <span className="truncate">{formData.phone || 'Not provided'}</span>}</div>
+             <div className="flex items-center gap-2 text-sm text-gray-600 bg-slate-50 px-4 py-2 rounded-full border border-slate-100 flex-1 sm:flex-none">
+                <FaPhone className="text-[#0F172A] flex-shrink-0" /> 
+                {isEditing ? <input name="phone" value={formData.phone} onChange={handleChange} className="bg-transparent border-b border-gray-300 focus:outline-none w-full sm:w-28" /> : <span className="truncate">{formData.phone || 'Not provided'}</span>}
+                {!isEditing && formData.phone && (user?.isPhoneVerified 
+                  ? <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full ml-1 font-bold flex items-center gap-1"><FaCheckCircle/> Verified</span> 
+                  : <button onClick={()=>handleRequestOtp('phone')} className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full ml-1 hover:bg-blue-200 font-bold">Verify</button>)}
+             </div>
           </div>
           {isEditing && (
               <label className="flex items-center gap-2 text-xs text-gray-500 mt-4 cursor-pointer">

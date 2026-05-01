@@ -22,7 +22,8 @@ import {
   forgotPassword,
   resetPassword,
   checkUserExistence,
-  msg91Webhook
+  msg91Webhook,
+  verifyMsg91Token
 } from '../controllers/AuthController';
 import upload from '../middleware/uploadMiddleware';
 import passport from 'passport';
@@ -65,6 +66,7 @@ router.post('/reset-password', resetPassword);
 // MSG91 Webhook Route for User Existence
 router.get('/validate-user', checkUserExistence);
 router.post('/msg91-webhook', msg91Webhook);
+router.post('/verify-msg91-token', verifyMsg91Token);
 
 // Admin Routes
 router.post('/admin/send-otp', sendAdminOtp);
