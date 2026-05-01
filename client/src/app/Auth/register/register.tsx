@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaTimes, FaUser, FaBuilding, FaArrowLeft, FaCloudUploadAlt, FaCheck, FaCheckCircle } from 'react-icons/fa';
 import { useRegisterMutation, useUpdateProfileMutation } from '@/features/authApi';
 import { useRouter } from 'next/navigation';
