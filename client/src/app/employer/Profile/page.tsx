@@ -457,9 +457,14 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Phone Number</label>
-                        <div className="relative group">
-                            <FaPhone className="absolute left-4 top-4 text-gray-400 group-focus-within:text-[#FACC15] transition-colors" />
-                            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium" placeholder="+1 (555) 000-0000" />
+                        <div className="relative flex items-center gap-2">
+                            <div className="relative flex-1 group">
+                                <FaPhone className="absolute left-4 top-4 text-gray-400 group-focus-within:text-[#FACC15] transition-colors" />
+                                <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium" placeholder="+91 9999999999" disabled={user?.isPhoneVerified} />
+                            </div>
+                            {user?.isPhoneVerified && (
+                                <span className="px-4 py-3.5 bg-green-50 text-green-700 border border-green-200 rounded-xl text-sm font-bold flex items-center gap-1.5 shrink-0"><FaCheckCircle /> Verified</span>
+                            )}
                         </div>
                     </div>
                     <div className="space-y-2">

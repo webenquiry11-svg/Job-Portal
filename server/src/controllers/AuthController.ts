@@ -19,7 +19,8 @@ export const register = async (req: Request, res: Response) => {
     const authData: any = { 
       email, password: hashedPassword, name, role, 
       headline, location, phone, experience, education, skills, 
-      companyName, companySize, industry, website, yourRole, description 
+      companyName, companySize, industry, website, yourRole, description,
+      isPhoneVerified: req.body.isPhoneVerified || false
     };
     if (role === 'employer') {
       authData.credits = 15;

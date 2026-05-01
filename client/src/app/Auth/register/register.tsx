@@ -18,6 +18,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
   const [register, { isLoading }] = useRegisterMutation();
   const [updateProfile] = useUpdateProfileMutation();
   const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -43,6 +44,39 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
     setFormData({ ...formData, [e.target.name]: e.target.name === 'gstNumber' ? e.target.value.toUpperCase() : e.target.value });
   };
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !document.getElementById('msg91-script-register')) {
+      const script = document.createElement('script');
+      script.id = 'msg91-script-register';
+      script.src = "https://verify.msg91.com/otp-provider.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  const handleVerifyPhone = () => {
+    if (!formData.phone) return toast.error("Please enter a phone number first.");
+    let cleanPhone = formData.phone.replace(/\D/g, '');
+    if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
+    
+    if ((window as any).initSendOTP) {
+      (window as any).initSendOTP({
+        widgetId: process.env.NEXT_PUBLIC_MSG91_WIDGET_ID || "",
+        tokenAuth: process.env.NEXT_PUBLIC_MSG91_TOKEN_AUTH || "",
+        identifier: cleanPhone,
+        success: (data: any) => {
+          toast.success("Phone verified successfully!");
+          setIsPhoneVerified(true);
+        },
+        failure: (error: any) => {
+          toast.error(error?.message || "Failed to verify OTP via MSG91");
+        }
+      });
+    } else {
+      toast.error("MSG91 SDK is not loaded yet.");
+    }
+  };
+
   const handleSubmit = async () => {
     if (!isRobotChecked) return;
     if (formData.password !== formData.confirmPassword) {
@@ -51,7 +85,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
     }
 
     try {
-      const result = await register({ ...formData, role }).unwrap();
+      const result = await register({ ...formData, role, isPhoneVerified }).unwrap();
       
       // Normalize backend response to always have the 'result' key for consistency
       const normalizedUser = result.result || result.user || result;
@@ -177,7 +211,14 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
 
   const renderSeekerStep3 = () => (
     <>
-      <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleNext(); }}>
+      <form className="space-y-4" onSubmit={(e) => { 
+        e.preventDefault(); 
+        if (!isPhoneVerified) {
+          toast.error("Please verify your phone number using OTP to continue.");
+          return;
+        }
+        handleNext(); 
+      }}>
         <div>
           <label htmlFor="headline" className={labelClass}>Professional Headline</label>
           <input id="headline" name="headline" type="text" placeholder="e.g., Senior Software Engineer" required className={inputClass} value={formData.headline} onChange={handleChange} />
@@ -188,7 +229,14 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
         </div>
         <div>
           <label htmlFor="phone" className={labelClass}>Phone Number</label>
-          <input id="phone" name="phone" type="tel" placeholder="+1 (555) 000-0000" className={inputClass} value={formData.phone} onChange={handleChange} />
+          <div className="flex items-center gap-2">
+            <input id="phone" name="phone" type="tel" required placeholder="+91 9999999999" className={inputClass.replace('mt-1', 'mt-0')} value={formData.phone} onChange={handleChange} disabled={isPhoneVerified} />
+            {isPhoneVerified ? (
+              <span className="text-green-600 font-bold flex items-center gap-1 px-4 py-3 bg-green-50 rounded-xl whitespace-nowrap border border-green-200"><FaCheckCircle /> Verified</span>
+            ) : (
+              <button type="button" onClick={handleVerifyPhone} className="px-5 py-3 bg-[#121212] text-[#e49d04] font-bold rounded-xl whitespace-nowrap hover:bg-[#1F2833] transition-colors shadow-md">Send OTP</button>
+            )}
+          </div>
         </div>
         <div className="pt-4">
           <button type="submit" className={btnPrimary}>
@@ -280,7 +328,14 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
 
   const renderEmployerStep3 = () => (
     <>
-      <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+      <form className="space-y-4" onSubmit={(e) => { 
+        e.preventDefault(); 
+        if (!isPhoneVerified) {
+          toast.error("Please verify your phone number using OTP to continue.");
+          return;
+        }
+        handleSubmit(); 
+      }}>
         <div>
           <label htmlFor="company-name" className={labelClass}>Company Name</label>
           <input id="company-name" name="companyName" type="text" placeholder="e.g., TechCorp Inc." required className={inputClass} value={formData.companyName} onChange={handleChange} />
@@ -297,7 +352,14 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
         </div>
         <div>
           <label htmlFor="phone-employer" className={labelClass}>Phone Number</label>
-          <input id="phone-employer" name="phone" type="tel" placeholder="+1 (555) 000-0000" className={inputClass} value={formData.phone} onChange={handleChange} />
+          <div className="flex items-center gap-2">
+            <input id="phone-employer" name="phone" type="tel" required placeholder="+91 9999999999" className={inputClass.replace('mt-1', 'mt-0')} value={formData.phone} onChange={handleChange} disabled={isPhoneVerified} />
+            {isPhoneVerified ? (
+              <span className="text-green-600 font-bold flex items-center gap-1 px-4 py-3 bg-green-50 rounded-xl whitespace-nowrap border border-green-200"><FaCheckCircle /> Verified</span>
+            ) : (
+              <button type="button" onClick={handleVerifyPhone} className="px-5 py-3 bg-[#121212] text-[#e49d04] font-bold rounded-xl whitespace-nowrap hover:bg-[#1F2833] transition-colors shadow-md">Send OTP</button>
+            )}
+          </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
