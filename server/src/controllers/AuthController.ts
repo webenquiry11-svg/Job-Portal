@@ -431,3 +431,27 @@ export const resetPassword = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Failed to reset password", error: error.message });
   }
 };
+
+export const checkUserExistence = async (req: Request, res: Response) => {
+  try {
+    const { identifier } = req.query;
+    if (!identifier) {
+      return res.status(200).json({ user_found: false, message: "Identifier is required" });
+    }
+
+    // MSG91 will send email or phone number in 'identifier'
+    const user = await AuthModel.findOne({
+      $or: [
+        { email: String(identifier).trim() },
+        { phone: String(identifier).trim() }
+      ]
+    }).lean();
+
+    // MSG91 strictly expects status 200 with this exact JSON format
+    return res.status(200).json({ user_found: !!user, identifier: String(identifier) });
+
+  } catch (error: any) {
+    console.error("Error in checkUserExistence:", error);
+    return res.status(200).json({ user_found: false, identifier: String(req.query.identifier) });
+  }
+};

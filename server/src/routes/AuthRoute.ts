@@ -20,7 +20,8 @@ import {
   getAllUsersForAdmin,
   deleteUserByAdmin,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  checkUserExistence
 } from '../controllers/AuthController';
 import upload from '../middleware/uploadMiddleware';
 import passport from 'passport';
@@ -59,6 +60,9 @@ router.post('/delete-account', deleteAccount);
 // Password Reset Routes
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
+
+// MSG91 Webhook Route for User Existence
+router.get('/validate-user', checkUserExistence);
 
 // Admin Routes
 router.post('/admin/send-otp', sendAdminOtp);
