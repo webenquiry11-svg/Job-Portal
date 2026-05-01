@@ -455,3 +455,17 @@ export const checkUserExistence = async (req: Request, res: Response) => {
     return res.status(200).json({ user_found: false, identifier: String(req.query.identifier) });
   }
 };
+
+export const msg91Webhook = async (req: Request, res: Response) => {
+  try {
+    // MSG91 sends delivery reports here (sent, delivered, read, failed)
+    // You can check req.body to see the status of the WhatsApp message
+    console.log("📩 MSG91 WhatsApp Webhook Received:", req.body);
+
+    // Always return 200 OK so MSG91 knows we received it successfully
+    return res.status(200).json({ message: "Webhook received successfully" });
+  } catch (error) {
+    console.error("Error in msg91Webhook:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
