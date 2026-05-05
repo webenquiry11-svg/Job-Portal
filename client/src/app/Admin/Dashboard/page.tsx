@@ -424,6 +424,7 @@ const AdminDashboard = () => {
 const TrafficStatsSection = ({ employers, candidates }: { employers: any[], candidates: any[] }) => {
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
+  const todayString = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
   const newEmployersToday = employers.filter(e => e.createdAt && new Date(e.createdAt).getTime() >= todayStart.getTime()).length;
   const newCandidatesToday = candidates.filter(c => c.createdAt && new Date(c.createdAt).getTime() >= todayStart.getTime()).length;
@@ -438,14 +439,15 @@ const TrafficStatsSection = ({ employers, candidates }: { employers: any[], cand
           <FaChartLine className="text-[#FACC15]" /> Platform Traffic & Analytics
         </h2>
         <p className="text-gray-500 text-sm mt-2 leading-relaxed">
-          Track daily user acquisition and overall platform engagement. Logins are aggregated globally.
+          Track daily user acquisition and overall platform engagement. Logins are aggregated globally.<br />
+          <span className="font-semibold text-gray-700">Date:</span> {todayString}
         </p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard icon={<FaCheckCircle />} label="Total Successful Logins" value={totalLogins.toLocaleString()} color="text-purple-600 bg-purple-100" />
-        <StatCard icon={<FaUser />} label="New Candidates Today" value={newCandidatesToday.toLocaleString()} color="text-green-600 bg-green-100" />
-        <StatCard icon={<FaBuilding />} label="New Employers Today" value={newEmployersToday.toLocaleString()} color="text-blue-600 bg-blue-100" />
+        <StatCard icon={<FaUser />} label="Candidates Registered Today" value={newCandidatesToday.toLocaleString()} color="text-green-600 bg-green-100" />
+        <StatCard icon={<FaBuilding />} label="Employers Registered Today" value={newEmployersToday.toLocaleString()} color="text-blue-600 bg-blue-100" />
       </div>
     </div>
   );
