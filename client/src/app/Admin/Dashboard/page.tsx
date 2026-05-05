@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGetAllUsersForAdminQuery, useGetAllJobsQuery, useGetPendingGstVerificationsQuery, useUpdateGstVerificationStatusMutation, useGetJobsByEmployerQuery } from '@/features/jobapi';
-import { FaSpinner, FaUserShield, FaBuilding, FaUser, FaCheckCircle, FaTimesCircle, FaBriefcase, FaSignOutAlt, FaChartPie, FaFileInvoiceDollar, FaDownload, FaTrash, FaChevronDown } from 'react-icons/fa';
+import { FaSpinner, FaUserShield, FaBuilding, FaUser, FaCheckCircle, FaTimesCircle, FaBriefcase, FaSignOutAlt, FaChartPie, FaFileInvoiceDollar, FaDownload, FaTrash, FaChevronDown, FaChartLine } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 const AdminDashboard = () => {
@@ -190,6 +190,7 @@ const AdminDashboard = () => {
         </div>
         <nav className="flex-1 px-4 space-y-2 py-6 overflow-y-auto custom-scrollbar">
           <SidebarItem icon={<FaChartPie />} label="Overview" active={activeTab === 'overview'} onClick={() => { setActiveTab('overview'); setIsSidebarOpen(false); }} />
+          <SidebarItem icon={<FaChartLine />} label="Traffic & Stats" active={activeTab === 'traffic'} onClick={() => { setActiveTab('traffic'); setIsSidebarOpen(false); }} />
           <SidebarItem icon={<FaBuilding />} label="Employers" active={activeTab === 'employers'} onClick={() => { setActiveTab('employers'); setIsSidebarOpen(false); }} />
           <SidebarItem icon={<FaUser />} label="Candidates" active={activeTab === 'candidates'} onClick={() => { setActiveTab('candidates'); setIsSidebarOpen(false); }} />
           <SidebarItem icon={<FaBriefcase />} label="Applications" active={activeTab === 'applications'} onClick={() => { setActiveTab('applications'); setIsSidebarOpen(false); }} />
@@ -243,6 +244,11 @@ const AdminDashboard = () => {
                 <p className="text-gray-500 text-sm leading-relaxed">Select an option from the sidebar to manage your platform's users, review active job applications, and manually approve GST certificates to grant premium verified tags to employers. You can also download beautiful excel sheets for each respective category.</p>
               </div>
             </div>
+          )}
+
+          {/* Traffic & Stats Section */}
+          {activeTab === 'traffic' && (
+            <TrafficStatsSection employers={employers} candidates={candidates} />
           )}
 
           {/* GST Approvals Section */}
@@ -410,6 +416,37 @@ const AdminDashboard = () => {
 
         </div>
       </main>
+    </div>
+  );
+};
+
+// New component for tracking traffic and today's registrations
+const TrafficStatsSection = ({ employers, candidates }: { employers: any[], candidates: any[] }) => {
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const newEmployersToday = employers.filter(e => e.createdAt && new Date(e.createdAt).getTime() >= todayStart.getTime()).length;
+  const newCandidatesToday = candidates.filter(c => c.createdAt && new Date(c.createdAt).getTime() >= todayStart.getTime()).length;
+
+  // Aggregates total logins globally. Fallbacks to 1 per registered user if 'loginCount' is not explicitly tracked in DB yet.
+  const totalLogins = [...employers, ...candidates].reduce((acc, user) => acc + (user.loginCount || 1), 0);
+
+  return (
+    <div className="space-y-8 animate-fade-in-up">
+      <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm">
+        <h2 className="text-xl font-bold text-[#121212] flex items-center gap-3">
+          <FaChartLine className="text-[#FACC15]" /> Platform Traffic & Analytics
+        </h2>
+        <p className="text-gray-500 text-sm mt-2 leading-relaxed">
+          Track daily user acquisition and overall platform engagement. Logins are aggregated globally.
+        </p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <StatCard icon={<FaCheckCircle />} label="Total Successful Logins" value={totalLogins.toLocaleString()} color="text-purple-600 bg-purple-100" />
+        <StatCard icon={<FaUser />} label="New Candidates Today" value={newCandidatesToday.toLocaleString()} color="text-green-600 bg-green-100" />
+        <StatCard icon={<FaBuilding />} label="New Employers Today" value={newEmployersToday.toLocaleString()} color="text-blue-600 bg-blue-100" />
+      </div>
     </div>
   );
 };
