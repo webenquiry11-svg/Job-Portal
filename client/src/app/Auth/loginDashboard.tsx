@@ -584,7 +584,12 @@ const LoginDashboard = () => {
                     <FaSpinner className="animate-spin text-4xl text-gray-300" />
                   </div>
                 ) : displayJobs.length > 0 ? (
-                    displayJobs.map((job: any) => (
+                    displayJobs.map((job: any) => {
+                      const profilePic = job.employerId?.profilePicture;
+                      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+                      const getImageUrl = (path: string) => path.startsWith('http') ? path : `${API_URL}/${path.replace(/\\/g, '/')}`;
+                      
+                      return (
                     <div key={job._id} onClick={() => setSelectedJob(job)} className="bg-white rounded-2xl p-8 border border-gray-100 hover:border-slate-200 hover:shadow-2xl transition-all duration-300 group cursor-pointer relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity transform translate-x-4 -translate-y-4">
                            <div className={`text-9xl font-bold text-[#121212]`}>{(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()}</div>
@@ -593,8 +598,8 @@ const LoginDashboard = () => {
                         <div className="relative z-10">
                             <div className="flex items-start justify-between mb-6">
                                 <div className="flex items-center gap-5 min-w-0">
-                                    <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center font-bold text-2xl shadow-lg transform group-hover:scale-105 transition-transform duration-300 bg-[#0B0C10] text-[#e49d04]`}>
-                                        {(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()}
+                                    <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center font-bold text-2xl shadow-lg transform group-hover:scale-105 transition-transform duration-300 bg-white text-[#e49d04] overflow-hidden border border-gray-100`}>
+                                        {profilePic ? <img src={getImageUrl(profilePic)} alt={job.employerId?.companyName} className="w-full h-full object-contain p-1" /> : (job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()}
                                     </div>
                                     <div className="min-w-0">
                                         <h3 className="font-bold text-xl text-[#121212] group-hover:text-[#cc8c03] transition-colors mb-1 truncate">{job.title}</h3>
@@ -622,7 +627,7 @@ const LoginDashboard = () => {
                             </div>
                         </div>
                     </div>
-                ))) : (
+                )})) : (
                   <div className="col-span-full text-center py-12 text-gray-500">
                     No jobs found matching your criteria. Try adjusting your search.
                   </div>
@@ -818,12 +823,18 @@ const LoginDashboard = () => {
 };
 
 const JobDetailsModal = ({ job, onClose, onApply }: any) => {
+  const profilePic = job.employerId?.profilePicture;
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const getImageUrl = (path: string) => path.startsWith('http') ? path : `${API_URL}/${path.replace(/\\/g, '/')}`;
+
   return (
   <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-all duration-300" onClick={onClose}>
     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
       <div className="p-6 md:px-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
         <h2 className="text-2xl font-bold text-[#121212] flex items-center gap-3">
-          <div className="bg-[#e49d04] p-2 rounded-xl shadow-md"><FaBriefcase className="text-[#0B0C10] text-sm" /></div>
+          <div className="bg-[#e49d04] p-1.5 rounded-xl shadow-md w-10 h-10 flex items-center justify-center overflow-hidden shrink-0">
+            {profilePic ? <img src={getImageUrl(profilePic)} alt="logo" className="w-full h-full object-contain p-0.5 bg-white rounded-lg" /> : <FaBriefcase className="text-[#0B0C10] text-sm" />}
+          </div>
           Job Details
         </h2>
         <button onClick={onClose} className="text-gray-400 hover:text-gray-800 transition-colors bg-white p-2 rounded-full border border-gray-200 shadow-sm hover:shadow-md"><FaTimes size={18} /></button>

@@ -243,7 +243,7 @@ const CandidateDashboard = () => {
           <div className={`relative w-40 h-full z-50 transition-all duration-300 ${isSidebarCollapsed ? "md:hidden" : "block"}`}>
             <img src="/Click4Jobs Logo.png" alt="Click4Jobs" className="absolute top-1/2 left-0 -translate-y-1/2 h-[220px] w-auto max-w-none object-contain" />
           </div>
-          <div className={`flex-shrink-0 hidden transition-all duration-300 ${isSidebarCollapsed ? "md:flex" : ""}`}>
+          <div className={`shrink-0 hidden transition-all duration-300 ${isSidebarCollapsed ? "md:flex" : ""}`}>
             <img src="/Fav Icon.png" alt="Click4Jobs Icon" className="w-14 h-14 object-contain drop-shadow-md" />
           </div>
         </div>
@@ -436,7 +436,7 @@ const CandidateDashboard = () => {
                       appliedJobs.slice(0, 4).map((job: any) => {
                         const detail = job.applicantDetails?.find((d: any) => d.candidateId === user._id);
                         return (
-                          <ApplicationRow key={job._id} title={job.title} company={job.employerId?.companyName || job.employerId?.name || 'Company'} logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} status={detail?.status || 'Applied'} date={new Date(job.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} detail={detail} />
+                          <ApplicationRow key={job._id} title={job.title} company={job.employerId?.companyName || job.employerId?.name || 'Company'} profilePicture={job.employerId?.profilePicture} logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} status={detail?.status || 'Applied'} date={new Date(job.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} detail={detail} />
                         )
                       })
                     ) : (
@@ -650,7 +650,7 @@ const CandidateDashboard = () => {
                         return filtered.map((job: any) => {
                           const detail = job.applicantDetails?.find((d: any) => d.candidateId === user._id);
                           return (
-                            <ApplicationRow key={job._id} title={job.title} company={job.employerId?.companyName || job.employerId?.name || 'Company'} isVerifiedEmployer={job.employerId?.gstVerificationStatus === 'approved'} logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} status={detail?.status || 'Applied'} date={new Date(job.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} detail={detail} />
+                            <ApplicationRow key={job._id} title={job.title} company={job.employerId?.companyName || job.employerId?.name || 'Company'} isVerifiedEmployer={job.employerId?.gstVerificationStatus === 'approved'} profilePicture={job.employerId?.profilePicture} logo={(job.employerId?.companyName || job.employerId?.name || 'C').charAt(0).toUpperCase()} status={detail?.status || 'Applied'} date={new Date(job.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} detail={detail} />
                           )
                         });
                       })()}
@@ -886,7 +886,7 @@ const CountdownTimer = ({ targetDate }: any) => {
   return <div className="flex items-center gap-3 sm:gap-4">{timerComponents.length ? timerComponents : <span className="text-sm font-bold text-red-500">Time's up!</span>}</div>;
 };
 
-const ApplicationRow = ({ title, company, logo, status, date, detail, isVerifiedEmployer }: any) => {
+const ApplicationRow = ({ title, company, logo, status, date, detail, isVerifiedEmployer, profilePicture }: any) => {
   let statusConfig = { color: 'text-gray-500 bg-gray-100 border-gray-200', icon: <FaSpinner className="animate-spin" /> };
   if (status === 'Applied') statusConfig = { color: 'text-yellow-600 bg-yellow-50 border-yellow-200', icon: <FaCheckCircle /> };
   if (status === 'Reviewing') statusConfig = { color: 'text-blue-600 bg-blue-50 border-blue-200', icon: <FaEye /> };
@@ -894,11 +894,17 @@ const ApplicationRow = ({ title, company, logo, status, date, detail, isVerified
   if (status === 'Interview') statusConfig = { color: 'text-amber-600 bg-amber-50 border-amber-200', icon: <FaClock /> };
   if (status === 'Rejected') statusConfig = { color: 'text-red-600 bg-red-50 border-red-200', icon: <FaTimesCircle /> };
   if (status === 'Offered') statusConfig = { color: 'text-green-600 bg-green-50 border-green-200', icon: <FaCheckCircle /> };
+  
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const getImageUrl = (path: string) => path.startsWith('http') ? path : `${API_URL}/${path.replace(/\\/g, '/')}`;
+
   return (
       <div className="flex flex-col p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow group">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-xl font-bold text-[#0B0C10] group-hover:bg-[#0B0C10] group-hover:text-[#e49d04] transition-colors">{logo}</div>
+              <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-xl font-bold text-[#0B0C10] group-hover:bg-[#0B0C10] group-hover:text-[#e49d04] transition-colors overflow-hidden border border-gray-100 shrink-0">
+                {profilePicture ? <img src={getImageUrl(profilePicture)} alt={company} className="w-full h-full object-contain p-0.5 bg-white" /> : logo}
+              </div>
               <div>
                   <h4 className="font-bold text-[#121212] text-sm md:text-base group-hover:text-[#cc8c03] transition-colors">{title}</h4>
                   <p className="text-xs font-medium text-gray-500">{company}</p>
@@ -937,12 +943,19 @@ const RecommendedJobCard = ({ job, onViewDetails, isSaved, onToggleSave, onViewC
   const tags = job ? (job.skills?.slice(0, 3) || []) : propTags;
   const verified = job ? (employerId?.gstVerificationStatus === 'approved') : isVerifiedEmployer;
   const location = job?.location || propLocation;
+  
+  const profilePic = job?.employerId?.profilePicture;
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const getImageUrl = (path: string) => path.startsWith('http') ? path : `${API_URL}/${path.replace(/\\/g, '/')}`;
+  
   const handleCompanyClick = (e: React.MouseEvent) => { e.stopPropagation(); if (employerId?._id && onViewCompany) onViewCompany(employerId._id); };
   return (
   <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
       <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-lg font-bold text-[#0B0C10] flex-shrink-0">{logo}</div>
+              <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-lg font-bold text-[#0B0C10] flex-shrink-0 overflow-hidden border border-gray-100">
+                {profilePic ? <img src={getImageUrl(profilePic)} alt={company} className="w-full h-full object-contain p-0.5 bg-white" /> : logo}
+              </div>
               <div className="min-w-0">
                   <h4 className="font-bold text-[#121212] text-sm group-hover:text-[#0B0C10] transition-colors truncate">{title}</h4>
                   <span onClick={handleCompanyClick} className="text-xs font-medium text-gray-500 hover:underline hover:text-[#e49d04] transition-colors truncate block cursor-pointer">{company}</span>
@@ -994,7 +1007,9 @@ const JobDetailsModal = ({ job, onClose, user, onApply }: any) => {
     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
       <div className="p-6 md:px-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
         <h2 className="text-2xl font-bold text-[#121212] flex items-center gap-3">
-          <div className="bg-[#e49d04] p-2 rounded-xl shadow-md"><FaBriefcase className="text-[#0B0C10] text-sm" /></div>
+          <div className="bg-[#e49d04] p-1.5 rounded-xl shadow-md w-10 h-10 flex items-center justify-center overflow-hidden shrink-0">
+            {profilePic ? <img src={getImageUrl(profilePic)} alt="logo" className="w-full h-full object-contain bg-white rounded-lg p-0.5" /> : <FaBriefcase className="text-[#0B0C10] text-sm" />}
+          </div>
           Job Details
         </h2>
         <button onClick={onClose} className="text-gray-400 hover:text-gray-800 transition-colors bg-white p-2 rounded-full border border-gray-200 shadow-sm hover:shadow-md"><FaTimes size={18} /></button>
@@ -1223,7 +1238,7 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser, on
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-8 -mt-12 relative z-10">
               <div className="flex flex-col md:flex-row gap-6 items-start justify-between">
                 <div className="flex flex-col md:flex-row gap-6 items-start flex-1">
-                  <div className="w-24 h-24 md:w-28 md:h-28 bg-white rounded-2xl p-1.5 shadow-lg -mt-16 flex-shrink-0 border border-gray-100"><div className="w-full h-full bg-slate-50 rounded-xl flex items-center justify-center text-4xl font-bold text-[#0B0C10] overflow-hidden">{company.profilePicture ? <img src={company.profilePicture} alt={company.companyName} className="w-full h-full object-cover" /> : company.companyName?.charAt(0).toUpperCase() || 'C'}</div></div>
+                  <div className="w-24 h-24 md:w-28 md:h-28 bg-white rounded-2xl p-1.5 shadow-lg -mt-16 flex-shrink-0 border border-gray-100"><div className="w-full h-full bg-white rounded-xl flex items-center justify-center text-4xl font-bold text-[#0B0C10] overflow-hidden">{company.profilePicture ? <img src={company.profilePicture} alt={company.companyName} className="w-full h-full object-contain p-1" /> : company.companyName?.charAt(0).toUpperCase() || 'C'}</div></div>
                   <div className="flex-1 mt-2 md:mt-0">
                     <h1 className="text-2xl md:text-3xl font-bold text-[#121212] flex items-center flex-wrap gap-3">
                       {company.companyName}

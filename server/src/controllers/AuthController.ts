@@ -71,6 +71,11 @@ export const updateProfile = async (req: Request, res: Response) => {
   const { _id } = req.body;
   const updates = { ...req.body };
 
+  // Safely parse commitments array if sent as a JSON string via FormData
+  if (typeof updates.commitments === 'string') {
+    try { updates.commitments = JSON.parse(updates.commitments); } catch (e) {}
+  }
+
   if (req.files) {
     const files = req.files as any;
     if (files.resume && files.resume.length > 0) {

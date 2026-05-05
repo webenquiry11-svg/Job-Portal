@@ -12,6 +12,9 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
   const [activePublicTab, setActivePublicTab] = useState('About');
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [chatUser, setChatUser] = useState<any>(null);
+  const [profileFile, setProfileFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const profileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     gstNumber: user?.gstNumber || '',
     companyName: user?.companyName || '',
@@ -41,6 +44,21 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
   const [requestGstVerification, { isLoading: isGstRequesting }] = useUpdateProfileMutation(); // Reusing updateProfile for now, will create a dedicated mutation later
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setProfileFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const getImageUrl = (path: string | null | undefined) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    return `${API_URL}/${path.replace(/\\/g, '/')}`;
   };
 
   const handleCommitmentChange = (index: number, field: string, value: string) => {
@@ -77,7 +95,22 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
   };
   const handleSubmit = async () => {
     try {
-      const result = await updateProfile({ ...formData, _id: user._id }).unwrap();
+      let result;
+      if (profileFile) {
+        const formDataToSend = new FormData();
+        formDataToSend.append('_id', user._id);
+        formDataToSend.append('profilePicture', profileFile);
+        Object.entries(formData).forEach(([key, value]) => {
+          if (key === 'commitments') {
+            formDataToSend.append(key, JSON.stringify(value));
+          } else {
+            formDataToSend.append(key, String(value));
+          }
+        });
+        result = await updateProfile(formDataToSend).unwrap();
+      } else {
+        result = await updateProfile({ ...formData, _id: user._id }).unwrap();
+      }
       
       // Update local storage and parent state
       const updatedProfile = { result: result.result, token: result.token };
@@ -103,7 +136,11 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
           <div className="px-8 pb-8 pt-16 relative">
               <div className="absolute -top-12 left-8 p-1.5 bg-white rounded-2xl shadow-lg">
                   <div className="w-28 h-28 bg-gray-100 rounded-xl flex items-center justify-center text-4xl font-bold text-[#0B0C10] relative overflow-hidden border border-gray-100">
-                    {formData.companyName.charAt(0).toUpperCase()}
+                    {previewUrl || user?.profilePicture ? (
+                        <img src={previewUrl || getImageUrl(user?.profilePicture)} alt="Profile" className="w-full h-full object-contain bg-white" />
+                    ) : (
+                        formData.companyName.charAt(0).toUpperCase() || 'C'
+                    )}
                   </div>
               </div>
 
@@ -300,12 +337,17 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
         <div className="px-6 sm:px-8 pb-8 relative">
             <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start md:items-end">
                 <div className="p-1.5 bg-white rounded-3xl shadow-lg -mt-12 sm:-mt-16 flex-shrink-0 z-10">
-                    <div className="w-24 h-24 sm:w-32 sm:h-32 bg-[#0B0C10] rounded-2xl flex items-center justify-center text-4xl sm:text-5xl font-bold text-[#FACC15] relative overflow-hidden group/avatar cursor-pointer border-4 border-white shadow-xl">
-                    {formData.companyName.charAt(0).toUpperCase()}
-                        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity">
+                    <div onClick={() => profileInputRef.current?.click()} className="w-24 h-24 sm:w-32 sm:h-32 bg-[#0B0C10] rounded-2xl flex items-center justify-center text-4xl sm:text-5xl font-bold text-[#FACC15] relative overflow-hidden group/avatar cursor-pointer border-4 border-white shadow-xl bg-white">
+                    {previewUrl || user?.profilePicture ? (
+                        <img src={previewUrl || getImageUrl(user?.profilePicture)} alt="Profile" className="w-full h-full object-contain p-1" />
+                    ) : (
+                        formData.companyName.charAt(0).toUpperCase() || 'C'
+                    )}
+                        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity">
                             <FaCamera className="text-white text-2xl mb-1" />
                             <span className="text-white text-[10px] font-bold">Change Logo</span>
                         </div>
+                        <input ref={profileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
                     </div>
                 </div>
 
@@ -457,14 +499,9 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Phone Number</label>
-                        <div className="relative flex items-center gap-2">
-                            <div className="relative flex-1 group">
-                                <FaPhone className="absolute left-4 top-4 text-gray-400 group-focus-within:text-[#FACC15] transition-colors" />
-                                <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium" placeholder="+91 9999999999" disabled={user?.isPhoneVerified} />
-                            </div>
-                            {user?.isPhoneVerified && (
-                                <span className="px-4 py-3.5 bg-green-50 text-green-700 border border-green-200 rounded-xl text-sm font-bold flex items-center gap-1.5 shrink-0"><FaCheckCircle /> Verified</span>
-                            )}
+                        <div className="relative group">
+                            <FaPhone className="absolute left-4 top-4 text-gray-400 group-focus-within:text-[#FACC15] transition-colors" />
+                            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full pl-10 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-[#121212] focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50 focus:border-[#FACC15] transition-all text-sm font-medium" placeholder="+1 (555) 000-0000" />
                         </div>
                     </div>
                     <div className="space-y-2">

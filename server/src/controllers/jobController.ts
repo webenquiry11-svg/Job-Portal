@@ -52,7 +52,7 @@ export const createJob = async (req: Request, res: Response) => {
 export const getJobsByEmployer = async (req: Request, res: Response) => {
   try {
     const { employerId } = req.params;
-    const jobs = await JobModel.find({ employerId }).populate('applicants').sort({ createdAt: -1 });
+    const jobs = await JobModel.find({ employerId }).populate('applicants').populate('employerId', 'companyName name profilePicture').sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error: any) {
     console.error("Error fetching jobs:", error);
@@ -63,7 +63,7 @@ export const getJobsByEmployer = async (req: Request, res: Response) => {
 export const getAllJobs = async (req: Request, res: Response) => {
   try {
     // Fetch all active jobs and populate the employer details to show the company name
-    const jobs = await JobModel.find({ status: 'Active' }).populate('employerId', 'companyName name gstVerificationStatus').sort({ createdAt: -1 });
+    const jobs = await JobModel.find({ status: 'Active' }).populate('employerId', 'companyName name gstVerificationStatus profilePicture').sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error: any) {
     console.error("Error fetching all jobs:", error);

@@ -31,6 +31,8 @@ import {
   FaEnvelope,
   FaPhone,
   FaCoins,
+  FaCopy,
+  FaTrash
 } from "react-icons/fa";
 import {
   MdDashboard,
@@ -848,6 +850,10 @@ const MyJobsSection = ({
 
 const JobDetailsModal = ({ job, onClose }: any) => {
   const [deleteJob, { isLoading: isDeleting }] = useDeleteJobMutation();
+  
+  const profilePic = job.employerId?.profilePicture;
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const getImageUrl = (path: string) => path.startsWith('http') ? path : `${API_URL}/${path.replace(/\\/g, '/')}`;
 
   const handleDelete = async () => {
     if (
@@ -877,8 +883,8 @@ const JobDetailsModal = ({ job, onClose }: any) => {
       >
         <div className="p-6 md:px-8 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
           <h2 className="text-2xl font-bold text-[#121212] flex items-center gap-3">
-            <div className="bg-[#e49d04] p-2 rounded-xl shadow-md">
-              <FaBriefcase className="text-[#0B0C10] text-sm" />
+            <div className="bg-[#e49d04] p-1.5 rounded-xl shadow-md w-10 h-10 flex items-center justify-center overflow-hidden shrink-0">
+              {profilePic ? <img src={getImageUrl(profilePic)} alt="logo" className="w-full h-full object-contain bg-white rounded-lg p-0.5" /> : <FaBriefcase className="text-[#0B0C10] text-sm" />}
             </div>
             Job Details
           </h2>
@@ -1051,7 +1057,7 @@ const MessagesSection = ({ user }: { user: any }) => {
                   <img
                     src={follower.profilePicture}
                     alt=""
-                    className="w-full h-full rounded-full object-cover"
+                    className="w-full h-full rounded-full object-contain bg-white"
                   />
                 ) : (
                   follower.name?.charAt(0).toUpperCase() || "U"
@@ -1085,7 +1091,7 @@ const MessagesSection = ({ user }: { user: any }) => {
                   <img
                     src={selectedUser.profilePicture}
                     alt=""
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain bg-white"
                   />
                 ) : (
                   selectedUser.name?.charAt(0).toUpperCase() || "U"
@@ -1440,9 +1446,11 @@ const ApplicantsSection = ({ employerId }: { employerId: string }) => {
 
 const PostJobModal = ({ user, setUser, onClose }: any) => {
   const [postJob, { isLoading }] = usePostJobMutation();
+  const { data: jobs = [] } = useGetJobsByEmployerQuery(user._id);
   const [currentStep, setCurrentStep] = useState(1);
+  const [draftStatus, setDraftStatus] = useState('');
   const [skillInput, setSkillInput] = useState("");
-  const [formData, setFormData] = useState({
+  const defaultForm = {
     title: '',
     description: '',
     industry: '', // Added new industry field
@@ -1456,7 +1464,59 @@ const PostJobModal = ({ user, setUser, onClose }: any) => {
     screeningQuestion: '',
     contactPreference: 'Email',
     immediateJoiner: false
-  });
+  };
+  const [formData, setFormData] = useState(defaultForm);
+
+  // Auto-Save Draft Logic
+  useEffect(() => {
+    const draft = localStorage.getItem(`job_draft_${user._id}`);
+    if (draft) {
+      try { 
+        const parsed = JSON.parse(draft);
+        if (parsed.title || parsed.description) setFormData(parsed); 
+      } catch(e) {}
+    }
+  }, [user._id]);
+
+  useEffect(() => {
+    if (formData.title || formData.description) {
+      localStorage.setItem(`job_draft_${user._id}`, JSON.stringify(formData));
+      setDraftStatus('Draft Saved');
+      const timer = setTimeout(() => setDraftStatus(''), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [formData, user._id]);
+
+  const handleCopyLastJob = () => {
+    if (jobs && jobs.length > 0) {
+      const lastJob = jobs[0]; // Gets the most recent job
+      setFormData({
+        title: lastJob.title || '',
+        description: lastJob.description || '',
+        industry: lastJob.industry || '',
+        location: lastJob.location || '',
+        workMode: lastJob.workMode || 'On-site',
+        experience: lastJob.experience || 'Entry Level (0-2 Yrs)',
+        salaryType: lastJob.salaryType || 'Yearly',
+        salaryMin: lastJob.salaryMin?.toString() || '',
+        salaryMax: lastJob.salaryMax?.toString() || '',
+        skills: lastJob.skills || [],
+        screeningQuestion: lastJob.screeningQuestion || '',
+        contactPreference: lastJob.contactPreference || 'Email',
+        immediateJoiner: lastJob.immediateJoiner || false
+      });
+      toast.success("Copied details from your last job!");
+    } else {
+      toast.error("No previous jobs found to copy.");
+    }
+  };
+
+  const handleClearDraft = () => {
+    localStorage.removeItem(`job_draft_${user._id}`);
+    setFormData(defaultForm);
+    setSkillInput("");
+    toast.success("Draft cleared");
+  };
 
   const handleNext = () => {
     if (currentStep === 1) {
@@ -1487,6 +1547,7 @@ const PostJobModal = ({ user, setUser, onClose }: any) => {
       setUser(updatedUser);
       const profile = JSON.parse(localStorage.getItem('profile') || '{}');
       localStorage.setItem('profile', JSON.stringify({ ...profile, result: updatedUser }));
+      localStorage.removeItem(`job_draft_${user._id}`);
       onClose();
     } catch (error) { toast.error("Failed to post job"); }
   };
@@ -1516,7 +1577,15 @@ const PostJobModal = ({ user, setUser, onClose }: any) => {
             <h2 className="text-2xl font-black text-[#121212] tracking-tight">Post a New Job</h2>
             <p className="text-sm font-medium text-gray-500 mt-1">Attract the best talent with a great job description.</p>
           </div>
-          <button onClick={onClose} className="w-10 h-10 bg-gray-50 text-gray-400 rounded-full flex justify-center items-center hover:bg-gray-100 hover:text-[#121212] transition-colors"><FaTimes size={18}/></button>
+          <div className="flex items-center gap-2 sm:gap-3">
+            {jobs.length > 0 && (
+              <button type="button" onClick={handleCopyLastJob} title="Copy Previous Job" className="flex px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 text-xs font-bold rounded-lg transition-colors items-center gap-1.5 shadow-sm border border-blue-100"><FaCopy /> <span className="hidden sm:inline">Copy Previous Job</span></button>
+            )}
+            <button type="button" onClick={handleClearDraft} title="Clear Draft" className="flex px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 text-xs font-bold rounded-lg transition-colors items-center gap-1.5">
+                <FaTrash /> <span className="hidden sm:inline">Clear</span>
+            </button>
+            <button type="button" onClick={onClose} className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-50 text-gray-400 rounded-full flex justify-center items-center hover:bg-gray-100 hover:text-[#121212] transition-colors"><FaTimes size={18}/></button>
+          </div>
         </div>
 
         {/* Steps Tracker */}
@@ -1660,7 +1729,10 @@ const PostJobModal = ({ user, setUser, onClose }: any) => {
         </form>
 
         {/* Footer */}
-        <div className="px-8 py-5 border-t border-gray-100/50 bg-white/50 flex items-center justify-between">
+        <div className="px-8 py-5 border-t border-gray-100/50 bg-white/50 flex items-center justify-between relative">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full mb-2">
+            <span className={`text-[10px] font-bold text-gray-400 bg-white px-2 py-1 rounded-md shadow-sm border border-gray-100 transition-opacity duration-300 ${draftStatus ? 'opacity-100' : 'opacity-0'}`}>{draftStatus}</span>
+          </div>
           <button type="button" onClick={currentStep > 1 ? handleBack : onClose} className="px-6 py-3 text-sm font-bold text-gray-500 hover:text-[#121212] transition-colors flex items-center gap-2">
             {currentStep > 1 ? <><FaChevronLeft size={12}/> Back</> : "Cancel"}
           </button>

@@ -11,6 +11,9 @@ export interface IAuth extends Document {
   experience?: string;
   education?: string;
   skills?: string;
+  preferredRoles?: string;
+  preferredLocations?: string;
+  expectedSalary?: string;
   companyName?: string;
   companySize?: string;
   tagline?: string;
@@ -55,6 +58,9 @@ const authSchema = new mongoose.Schema({
   experience: { type: String },
   education: { type: String },
   skills: { type: String },
+  preferredRoles: { type: String },
+  preferredLocations: { type: String },
+  expectedSalary: { type: String },
   
   // Employer specific
   companyName: { type: String },

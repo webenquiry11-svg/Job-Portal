@@ -31,7 +31,10 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
     skills: '',
     experience: '',
     education: '',
-    showContact: true
+    showContact: true,
+    preferredRoles: '',
+    preferredLocations: '',
+    expectedSalary: ''
   });
 
   const { data: freshUserData } = useGetCompanyByIdQuery(user?._id, { skip: !user?._id, pollingInterval: 30000 });
@@ -49,7 +52,10 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
         skills: user.skills || '', // Used empty default to avoid confusing the user
         experience: user.experience || '',
         education: user.education || '',
-        showContact: user.showContact !== false
+        showContact: user.showContact !== false,
+        preferredRoles: user.preferredRoles || '',
+        preferredLocations: user.preferredLocations || '',
+        expectedSalary: user.expectedSalary || ''
       });
     }
   }, [user]);
@@ -308,6 +314,36 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
                    <input name="education" value={formData.education} onChange={handleChange} className={inputClass} placeholder="e.g., B.S. Computer Science" />
                  ) : (
                    <p className="text-[#121212] font-medium text-sm">{formData.education || 'Not specified'}</p>
+                 )}
+               </div>
+             </div>
+          </div>
+
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8">
+             <h3 className="text-lg font-bold text-[#121212] mb-6 flex items-center gap-2"><FaMapMarkerAlt className="text-gray-400"/> Job Preferences</h3>
+             <div className="space-y-6">
+               <div>
+                 <label className={labelClass}>Preferred Job Roles</label>
+                 {isEditing ? (
+                   <input name="preferredRoles" value={formData.preferredRoles} onChange={handleChange} className={inputClass} placeholder="e.g. Frontend Developer, UI Designer" />
+                 ) : (
+                   <p className="text-[#121212] font-medium text-sm">{formData.preferredRoles || 'Not specified'}</p>
+                 )}
+               </div>
+               <div>
+                 <label className={labelClass}>Preferred Locations</label>
+                 {isEditing ? (
+                   <input name="preferredLocations" value={formData.preferredLocations} onChange={handleChange} className={inputClass} placeholder="e.g. Remote, Bangalore, New York" />
+                 ) : (
+                   <p className="text-[#121212] font-medium text-sm">{formData.preferredLocations || 'Not specified'}</p>
+                 )}
+               </div>
+               <div>
+                 <label className={labelClass}>Expected Salary</label>
+                 {isEditing ? (
+                   <input name="expectedSalary" value={formData.expectedSalary} onChange={handleChange} className={inputClass} placeholder="e.g. ₹12,00,000 / year" />
+                 ) : (
+                   <p className="text-[#121212] font-medium text-sm">{formData.expectedSalary || 'Not specified'}</p>
                  )}
                </div>
              </div>
