@@ -977,10 +977,13 @@ const RecommendedJobCard = ({ job, onViewDetails, isSaved, onToggleSave, onViewC
 )};
 
 const JobDetailsModal = ({ job, onClose, user, onApply }: any) => {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const getImageUrl = (path: string) => path.startsWith('http') ? path : `${API_URL}/${path.replace(/\\/g, '/')}`;
+  const profilePic = job?.employerId?.profilePicture;
   const [applyForJob, { isLoading: isApplying }] = useApplyForJobMutation();
   const handleApply = async () => {
     if (!user?.resume) {
-      onApply();
+      onApply(); 
     } else {
       try {
         await applyForJob({ jobId: job._id, candidateId: user._id }).unwrap();
