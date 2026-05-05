@@ -426,8 +426,11 @@ const TrafficStatsSection = ({ employers, candidates }: { employers: any[], cand
   todayStart.setHours(0, 0, 0, 0);
   const todayString = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-  const newEmployersToday = employers.filter(e => e.createdAt && new Date(e.createdAt).getTime() >= todayStart.getTime()).length;
-  const newCandidatesToday = candidates.filter(c => c.createdAt && new Date(c.createdAt).getTime() >= todayStart.getTime()).length;
+  const newEmployersToday = employers.filter(e => e.createdAt && new Date(e.createdAt).getTime() >= todayStart.getTime());
+  const newCandidatesToday = candidates.filter(c => c.createdAt && new Date(c.createdAt).getTime() >= todayStart.getTime());
+
+  // Sort today's users by time (newest first)
+  const todayUsers = [...newEmployersToday, ...newCandidatesToday].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   // Aggregates total logins globally. Fallbacks to 1 per registered user if 'loginCount' is not explicitly tracked in DB yet.
   const totalLogins = [...employers, ...candidates].reduce((acc, user) => acc + (user.loginCount || 1), 0);
@@ -446,8 +449,47 @@ const TrafficStatsSection = ({ employers, candidates }: { employers: any[], cand
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard icon={<FaCheckCircle />} label="Total Successful Logins" value={totalLogins.toLocaleString()} color="text-purple-600 bg-purple-100" />
-        <StatCard icon={<FaUser />} label="Candidates Registered Today" value={newCandidatesToday.toLocaleString()} color="text-green-600 bg-green-100" />
-        <StatCard icon={<FaBuilding />} label="Employers Registered Today" value={newEmployersToday.toLocaleString()} color="text-blue-600 bg-blue-100" />
+        <StatCard icon={<FaUser />} label="Candidates Registered Today" value={newCandidatesToday.length.toLocaleString()} color="text-green-600 bg-green-100" />
+        <StatCard icon={<FaBuilding />} label="Employers Registered Today" value={newEmployersToday.length.toLocaleString()} color="text-blue-600 bg-blue-100" />
+      </div>
+
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-4 md:p-8 animate-fade-in-up">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <h2 className="text-xl font-bold text-[#121212] flex items-center gap-3">
+            <FaUser className="text-[#FACC15]" /> Today's Detailed Registrations
+          </h2>
+        </div>
+        <div className="overflow-x-auto pb-4">
+          <table className="w-full text-sm text-left whitespace-nowrap lg:whitespace-normal">
+            <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+              <tr>
+                <th className="p-5 rounded-tl-xl">User Info</th>
+                <th className="p-5">Email</th>
+                <th className="p-5">Role</th>
+                <th className="p-5 rounded-tr-xl">Time Registered</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {todayUsers.map((u: any) => (
+                <tr key={u._id} className="hover:bg-gray-50/50 transition-colors">
+                  <td className="p-5 font-bold text-[#121212]">{u.companyName || u.name}</td>
+                  <td className="p-5 text-gray-600 font-medium">{u.email}</td>
+                  <td className="p-5">
+                    <span className={`px-3 py-1.5 text-[10px] font-bold uppercase rounded-full border ${u.role === 'employer' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-green-50 text-green-700 border-green-200'}`}>
+                      {u.role}
+                    </span>
+                  </td>
+                  <td className="p-5 text-gray-600 font-medium">
+                    {new Date(u.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </td>
+                </tr>
+              ))}
+              {todayUsers.length === 0 && (
+                <tr><td colSpan={4} className="p-8 text-center text-gray-500 font-medium">No new registrations today yet.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
