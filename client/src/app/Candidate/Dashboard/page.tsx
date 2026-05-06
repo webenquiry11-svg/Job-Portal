@@ -84,6 +84,14 @@ const CandidateDashboard = () => {
   const [pendingSmartApplyPin, setPendingSmartApplyPin] = useState<{name: string, jobs: number} | null>(null);
   
   const [isClient, setIsClient] = useState(false);
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const getImageUrl = (path: string | null | undefined) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return `${API_URL}/${path.replace(/\\/g, '/')}`;
+  };
+
   const { data: allJobs = [], isLoading: isLoadingJobs } = useGetAllJobsQuery();
   const { data: notifications = [] } = useGetNotificationsQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
   const { data: freshUserData, isLoading: isLoadingFreshUser } = useGetCompanyByIdQuery(user?._id, {
@@ -383,7 +391,7 @@ const CandidateDashboard = () => {
             <div className="relative">
               <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)} className="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group focus:outline-none focus:ring-2 focus:ring-[#e49d04]">
                  <div className="w-9 h-9 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#e49d04] font-bold text-sm shadow-inner overflow-hidden">
-                   {user?.profilePicture ? <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" /> : user?.name?.charAt(0).toUpperCase() || 'U'}
+                   {user?.profilePicture ? <img src={getImageUrl(user?.profilePicture)} alt="Profile" className="w-full h-full object-cover bg-white" /> : user?.name?.charAt(0).toUpperCase() || 'U'}
                  </div>
                  <div className="hidden sm:block text-left">
                    <p className="text-sm font-bold text-[#121212] leading-none group-hover:text-[#0B0C10] transition-colors">{user?.name || 'Candidate'}</p>
@@ -1046,6 +1054,13 @@ const JobDetailsModal = ({ job, onClose, user, onApply }: any) => {
 const SmartApplyConfirmationModal = ({ user, data, onConfirm, onCancel, onEditProfile }: any) => {
     const [isAgreed, setIsAgreed] = useState(false);
 
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    const getImageUrl = (path: string | null | undefined) => {
+      if (!path) return '';
+      if (path.startsWith('http')) return path;
+      return `${API_URL}/${path.replace(/\\/g, '/')}`;
+    };
+
     if (!data || !user) return null;
 
     return (
@@ -1063,7 +1078,7 @@ const SmartApplyConfirmationModal = ({ user, data, onConfirm, onCancel, onEditPr
                     <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 mb-6 relative group">
                         <div className="flex items-center gap-4 mb-4 border-b border-gray-200 pb-4">
                             <div className="w-12 h-12 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#e49d04] font-bold shadow-inner shrink-0 overflow-hidden">
-                                {user?.profilePicture ? <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" /> : user?.name?.charAt(0).toUpperCase() || 'U'}
+                            {user?.profilePicture ? <img src={getImageUrl(user?.profilePicture)} alt="Profile" className="w-full h-full object-cover bg-white" /> : user?.name?.charAt(0).toUpperCase() || 'U'}
                             </div>
                             <div className="min-w-0">
                                 <h3 className="font-bold text-[#121212] truncate">{user?.name}</h3>
@@ -1211,6 +1226,13 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser, on
   const [toggleFollow, { isLoading: isFollowingLoading }] = useToggleFollowCompanyMutation();
   const [incrementProfileView] = useIncrementProfileViewMutation();
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const getImageUrl = (path: string | null | undefined) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return `${API_URL}/${path.replace(/\\/g, '/')}`;
+  };
+
   useEffect(() => {
     if (companyId && user?._id) {
       incrementProfileView({ id: companyId, viewerId: user._id });
@@ -1236,12 +1258,12 @@ const CompanyProfileModal = ({ companyId, onClose, onJobClick, user, setUser, on
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4 transition-all duration-300" onClick={onClose}>
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl relative animate-fade-in-up overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
         <div className="overflow-y-auto custom-scrollbar flex-1 bg-gray-50 pb-8">
-          <div className="h-48 md:h-64 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] relative bg-cover bg-center flex-shrink-0" style={{ backgroundImage: company.coverImage ? `url(${company.coverImage})` : undefined }}><div className="absolute inset-0 bg-black/30"></div><button onClick={onClose} className="absolute top-4 right-4 bg-black/20 hover:bg-black/40 text-white p-2.5 rounded-full backdrop-blur-md transition-colors z-10"><FaTimes size={18} /></button></div>
+          <div className="h-48 md:h-64 bg-gradient-to-r from-[#0B0C10] to-[#1F2833] relative bg-cover bg-center flex-shrink-0" style={{ backgroundImage: company.coverImage ? `url(${getImageUrl(company.coverImage)})` : undefined }}><div className="absolute inset-0 bg-black/30"></div><button onClick={onClose} className="absolute top-4 right-4 bg-black/20 hover:bg-black/40 text-white p-2.5 rounded-full backdrop-blur-md transition-colors z-10"><FaTimes size={18} /></button></div>
           <div className="px-6 md:px-10">
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-8 -mt-12 relative z-10">
               <div className="flex flex-col md:flex-row gap-6 items-start justify-between">
                 <div className="flex flex-col md:flex-row gap-6 items-start flex-1">
-                  <div className="w-24 h-24 md:w-28 md:h-28 bg-white rounded-2xl p-1.5 shadow-lg -mt-16 flex-shrink-0 border border-gray-100"><div className="w-full h-full bg-white rounded-xl flex items-center justify-center text-4xl font-bold text-[#0B0C10] overflow-hidden">{company.profilePicture ? <img src={company.profilePicture} alt={company.companyName} className="w-full h-full object-contain p-1" /> : company.companyName?.charAt(0).toUpperCase() || 'C'}</div></div>
+                  <div className="w-24 h-24 md:w-28 md:h-28 bg-white rounded-2xl p-1.5 shadow-lg -mt-16 flex-shrink-0 border border-gray-100"><div className="w-full h-full bg-white rounded-xl flex items-center justify-center text-4xl font-bold text-[#0B0C10] overflow-hidden">{company.profilePicture ? <img src={getImageUrl(company.profilePicture)} alt={company.companyName} className="w-full h-full object-contain p-1 bg-white" /> : company.companyName?.charAt(0).toUpperCase() || 'C'}</div></div>
                   <div className="flex-1 mt-2 md:mt-0">
                     <h1 className="text-2xl md:text-3xl font-bold text-[#121212] flex items-center flex-wrap gap-3">
                       {company.companyName}
@@ -1302,6 +1324,13 @@ const CandidateMessagesSection = ({ user, allJobs, initialSelectedUser }: any) =
   );
   const [sendMessage, { isLoading: isSending }] = useSendMessageMutation();  const [markAsSeen] = useMarkAsSeenMutation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const getImageUrl = (path: string | null | undefined) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return `${API_URL}/${path.replace(/\\/g, '/')}`;
+  };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -1377,7 +1406,7 @@ const CandidateMessagesSection = ({ user, allJobs, initialSelectedUser }: any) =
             >
               <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center font-bold text-[#0B0C10] flex-shrink-0 overflow-hidden shadow-sm">
                 {company.profilePicture ? (
-                  <img src={company.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/>
+                  <img src={getImageUrl(company.profilePicture)} alt="" className="w-full h-full rounded-full object-contain bg-white"/>
                 ) : (
                   (company.companyName?.charAt(0) || company.name?.charAt(0) || 'C').toUpperCase()
                 )}
@@ -1406,7 +1435,7 @@ const CandidateMessagesSection = ({ user, allJobs, initialSelectedUser }: any) =
                  <FaChevronLeft size={18} />
                </button>
                <div className="w-11 h-11 bg-[#0B0C10] text-[#e49d04] rounded-full flex items-center justify-center font-bold shadow-md overflow-hidden shrink-0">
-                 {selectedUser.profilePicture ? <img src={selectedUser.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/> : (selectedUser.companyName?.charAt(0) || selectedUser.name?.charAt(0) || 'C').toUpperCase()}
+               {selectedUser.profilePicture ? <img src={getImageUrl(selectedUser.profilePicture)} alt="" className="w-full h-full rounded-full object-contain bg-white"/> : (selectedUser.companyName?.charAt(0) || selectedUser.name?.charAt(0) || 'C').toUpperCase()}
                </div>
                <div>
                  <h3 className="font-bold text-base text-[#121212] leading-tight">{selectedUser.companyName || selectedUser.name}</h3>

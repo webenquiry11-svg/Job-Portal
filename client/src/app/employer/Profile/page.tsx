@@ -262,7 +262,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                             <div key={follower._id} className="flex items-center gap-3 bg-gray-50 p-4 rounded-xl border border-gray-100">
                               <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-[#0B0C10] overflow-hidden flex-shrink-0">
                                 {follower.profilePicture ? (
-                                  <img src={follower.profilePicture} alt={follower.name} className="w-full h-full object-cover" />
+                              <img src={getImageUrl(follower.profilePicture)} alt={follower.name} className="w-full h-full object-contain bg-white" />
                                 ) : (
                                   follower.name?.charAt(0).toUpperCase() || 'U'
                                 )}
@@ -548,7 +548,7 @@ const CompanyProfile = ({ user, setUser }: { user: any, setUser: any }) => {
                     <div key={follower._id} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
                       <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-[#0F172A] overflow-hidden flex-shrink-0">
                         {follower.profilePicture ? (
-                          <img src={follower.profilePicture} alt={follower.name} className="w-full h-full object-cover" />
+                      <img src={getImageUrl(follower.profilePicture)} alt={follower.name} className="w-full h-full object-contain bg-white" />
                         ) : (
                           follower.name?.charAt(0).toUpperCase() || 'U'
                         )}
@@ -645,6 +645,13 @@ const ChatBox = ({ currentUser, otherUser, onClose }: any) => {
   const [sendMessage, { isLoading: isSending }] = useSendMessageMutation();  const [markAsSeen] = useMarkAsSeenMutation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const getImageUrl = (path: string | null | undefined) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return `${API_URL}/${path.replace(/\\/g, '/')}`;
+  };
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -673,7 +680,7 @@ const ChatBox = ({ currentUser, otherUser, onClose }: any) => {
       <div className="bg-[#0B0C10] p-4 flex items-center justify-between text-[#FACC15] shadow-md z-10">
         <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center font-bold text-sm">
-              {otherUser.profilePicture ? <img src={otherUser.profilePicture} alt="" className="w-full h-full rounded-full object-cover"/> : (otherUser.name?.charAt(0) || 'U')}
+            {otherUser.profilePicture ? <img src={getImageUrl(otherUser.profilePicture)} alt="" className="w-full h-full rounded-full object-contain bg-white"/> : (otherUser.name?.charAt(0) || 'U')}
             </div>
             <div className="font-bold text-sm truncate">{otherUser.name || otherUser.companyName}</div>
         </div>

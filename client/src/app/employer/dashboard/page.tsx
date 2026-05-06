@@ -77,6 +77,13 @@ const EmployerDashboard = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isPostJobModalOpen, setIsPostJobModalOpen] = useState(false);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const getImageUrl = (path: string | null | undefined) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return `${API_URL}/${path.replace(/\\/g, '/')}`;
+  };
+
   const { data: notifications = [] } = useGetNotificationsQuery(user?._id, { skip: !user?._id, pollingInterval: 5000 });
   const [markNotificationsAsRead] = useMarkNotificationsAsReadMutation();
   const unreadCount = notifications.filter((n: any) => !n.isRead).length;
@@ -359,9 +366,9 @@ const EmployerDashboard = () => {
                   <div className="w-9 h-9 bg-[#0B0C10] rounded-full flex items-center justify-center text-[#e49d04] font-bold text-sm shadow-inner overflow-hidden">
                     {user?.profilePicture ? (
                       <img
-                        src={user.profilePicture}
+                    src={getImageUrl(user?.profilePicture)}
                         alt="Profile"
-                        className="w-full h-full object-cover"
+                    className="w-full h-full object-contain bg-white p-0.5"
                       />
                     ) : (
                       user?.companyName?.charAt(0).toUpperCase() || "E"
@@ -998,6 +1005,13 @@ const MessagesSection = ({ user }: { user: any }) => {
   const [markAsSeen] = useMarkAsSeenMutation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const getImageUrl = (path: string | null | undefined) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return `${API_URL}/${path.replace(/\\/g, '/')}`;
+  };
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -1055,7 +1069,7 @@ const MessagesSection = ({ user }: { user: any }) => {
               <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center font-bold text-[#0B0C10] flex-shrink-0 overflow-hidden shadow-sm">
                 {follower.profilePicture ? (
                   <img
-                    src={follower.profilePicture}
+                src={getImageUrl(follower.profilePicture)}
                     alt=""
                     className="w-full h-full rounded-full object-contain bg-white"
                   />
@@ -1089,7 +1103,7 @@ const MessagesSection = ({ user }: { user: any }) => {
               <div className="w-11 h-11 bg-[#0B0C10] text-[#e49d04] rounded-full flex items-center justify-center font-bold shadow-md overflow-hidden shrink-0">
                 {selectedUser.profilePicture ? (
                   <img
-                    src={selectedUser.profilePicture}
+                src={getImageUrl(selectedUser.profilePicture)}
                     alt=""
                     className="w-full h-full object-contain bg-white"
                   />
