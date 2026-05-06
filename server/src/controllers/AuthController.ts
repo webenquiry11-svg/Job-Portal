@@ -38,6 +38,8 @@ export const register = async (req: Request, res: Response) => {
 
     // Trigger automated Welcome WhatsApp Message if phone exists, verified, and it's a seeker
     if (result.isPhoneVerified && result.phone && result.role === 'seeker') {
+      let mobile = result.phone.replace(/\D/g, '');
+      if (mobile.length === 10) mobile = '91' + mobile;
       const options = {
         method: 'POST',
         headers: {
@@ -46,7 +48,7 @@ export const register = async (req: Request, res: Response) => {
         },
         body: JSON.stringify({
           integrated: {
-            number: result.phone,
+            number: mobile,
             template_name: "welcome_verified_profile",
             fallback: { channel: "whatsapp" }
           }
@@ -220,6 +222,8 @@ export const verifyOtp = async (req: Request, res: Response) => {
 
     // Trigger automated Welcome WhatsApp Message if phone exists and it's a seeker verifying their phone
     if (type === 'phone' && updatedUser && (updatedUser as any).phone && (updatedUser as any).role === 'seeker') {
+      let mobile = (updatedUser as any).phone.replace(/\D/g, '');
+      if (mobile.length === 10) mobile = '91' + mobile;
       const options = {
         method: 'POST',
         headers: {
@@ -228,7 +232,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
         },
         body: JSON.stringify({
           integrated: {
-            number: (updatedUser as any).phone,
+            number: mobile,
             template_name: "welcome_verified_profile",
             fallback: { channel: "whatsapp" }
           }
@@ -551,6 +555,8 @@ export const verifyMsg91Token = async (req: Request, res: Response) => {
 
     // Trigger automated Welcome WhatsApp Message if phone exists and it's a seeker
     if (updatedUser && (updatedUser as any).phone && (updatedUser as any).role === 'seeker') {
+      let mobile = (updatedUser as any).phone.replace(/\D/g, '');
+      if (mobile.length === 10) mobile = '91' + mobile;
       const options = {
         method: 'POST',
         headers: {
@@ -559,7 +565,7 @@ export const verifyMsg91Token = async (req: Request, res: Response) => {
         },
         body: JSON.stringify({
           integrated: {
-            number: (updatedUser as any).phone,
+            number: mobile,
             template_name: "welcome_verified_profile",
             fallback: { channel: "whatsapp" }
           }

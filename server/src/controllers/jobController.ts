@@ -37,6 +37,34 @@ export const createJob = async (req: Request, res: Response) => {
         if (notifications.length > 0) {
           await NotificationModel.insertMany(notifications);
         }
+
+        // Trigger WhatsApp Job Alerts for followers who opted in
+        const whatsappSubscribers = followers.filter(f => f.whatsappAlerts && f.phone);
+        if (whatsappSubscribers.length > 0) {
+          const phoneNumbers = whatsappSubscribers.map(sub => {
+            let mobile = (sub.phone as string).replace(/\D/g, '');
+            if (mobile.length === 10) mobile = '91' + mobile;
+            return mobile;
+          });
+          const options = {
+            method: 'POST',
+            headers: {
+              'authkey': process.env.MSG91_AUTH_KEY || '',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              integrated: {
+                number: phoneNumbers, // MSG91 accepts an array of numbers for bulk sending
+                template_name: "new_job_alert",
+                fallback: { channel: "whatsapp" }
+              }
+            })
+          };
+          fetch('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', options)
+            .then(res => res.json())
+            .then(data => console.log('[MSG91] Job Alert WhatsApp Success:', data))
+            .catch(err => console.error('[MSG91] Job Alert WhatsApp Error:', err));
+        }
       }
     } catch (notifErr) {
       console.error("Failed to send job notifications:", notifErr);
