@@ -40,6 +40,7 @@ export interface IAuth extends Document {
   googleId?: string;
   microsoftId?: string;
   credits?: number;
+  whatsappAlerts?: boolean;
   trialStartedAt?: Date;
 }
 
@@ -92,6 +93,7 @@ const authSchema = new mongoose.Schema({
   showContact: { type: Boolean, default: true },
   emailOtp: { type: String },
   phoneOtp: { type: String },
+  whatsappAlerts: { type: Boolean, default: false },
 
   // Social Login fields
   googleId: { type: String },

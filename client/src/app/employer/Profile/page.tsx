@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { FaBuilding, FaGlobe, FaMapMarkerAlt, FaUsers, FaEnvelope, FaPhone, FaCamera, FaPen, FaSave, FaCheckCircle, FaEye, FaEdit, FaPlus, FaTrash, FaHourglassHalf, FaTimesCircle, FaSpinner, FaBriefcase, FaTimes, FaCheck, FaCheckDouble } from 'react-icons/fa';
+import { FaBuilding, FaGlobe, FaMapMarkerAlt, FaUsers, FaEnvelope, FaPhone, FaCamera, FaPen, FaSave, FaCheckCircle, FaEye, FaEdit, FaPlus, FaTrash, FaHourglassHalf, FaTimesCircle, FaSpinner, FaBriefcase, FaTimes, FaCheck, FaCheckDouble, FaWhatsapp } from 'react-icons/fa';
 import { useUpdateProfileMutation } from '@/features/authApi';
 import { useGetCompanyByIdQuery, useGetJobsByEmployerQuery } from '@/features/jobapi';
 import { useGetMessagesQuery, useSendMessageMutation, useMarkAsSeenMutation } from '@/features/chatApi';
@@ -625,9 +625,12 @@ const JobDetailsModal = ({ job, onClose }: any) => {
           )}
         </div>
 
-        <div className="p-6 border-t border-gray-100 flex items-center justify-end bg-gray-50/50 rounded-b-3xl">
+        <div className="p-6 border-t border-gray-100 flex items-center justify-between bg-gray-50/50 rounded-b-3xl">
+          <a href={`https://wa.me/?text=${encodeURIComponent(`Check out this job opportunity on Click4Jobs: ${typeof window !== 'undefined' ? window.location.origin : ''}/job/${job._id}`)}`} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 bg-green-50 text-green-600 font-bold rounded-xl hover:bg-green-100 transition-all flex items-center gap-2 text-sm">
+             <FaWhatsapp className="text-lg" /> Share
+          </a>
           <button onClick={onClose} className="px-8 py-3 bg-[#0B0C10] text-[#FACC15] font-black rounded-xl hover:bg-[#1F2833] shadow-lg shadow-black/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
-             Close Preview
+             Close
           </button>
         </div>
 

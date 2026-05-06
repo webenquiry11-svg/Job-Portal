@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import { sendOtpEmail, sendWelcomeEmail } from '../utils/mailer';
 
 export const register = async (req: Request, res: Response) => {
-  const { email, password, name, role, headline, location, phone, experience, education, skills, companyName, companySize, industry, website, yourRole, description } = req.body;
+  const { email, password, name, role, headline, location, phone, experience, education, skills, companyName, companySize, industry, website, yourRole, description, whatsappAlerts } = req.body;
   try {
     if (!password) {
       return res.status(400).json({ message: 'Password is required for manual registration.' });
@@ -20,7 +20,8 @@ export const register = async (req: Request, res: Response) => {
       email, password: hashedPassword, name, role, 
       headline, location, phone, experience, education, skills, 
       companyName, companySize, industry, website, yourRole, description,
-      isPhoneVerified: req.body.isPhoneVerified || false
+      isPhoneVerified: req.body.isPhoneVerified || false,
+      whatsappAlerts: whatsappAlerts || false
     };
     if (role === 'employer') {
       authData.credits = 15;
@@ -478,6 +479,29 @@ export const verifyMsg91Token = async (req: Request, res: Response) => {
       { $set: { isPhoneVerified: true } },
       { returnDocument: 'after', strict: false }
     ).select('-password');
+
+    // Trigger automated Welcome WhatsApp Message if phone exists and it's a seeker
+    if (updatedUser && (updatedUser as any).phone && (updatedUser as any).role === 'seeker') {
+      const options = {
+        method: 'POST',
+        headers: {
+          'authkey': process.env.MSG91_AUTH_KEY || '', // Make sure to add this to your .env file
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          integrated: {
+            number: (updatedUser as any).phone,
+            template_name: "welcome_verified_profile",
+            fallback: { channel: "whatsapp" }
+          }
+        })
+      };
+
+      fetch('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', options)
+        .then(response => response.json())
+        .then(data => console.log('[MSG91] WhatsApp Success:', data))
+        .catch(err => console.error('[MSG91] WhatsApp Error:', err));
+    }
 
     res.status(200).json({
       message: 'Phone verified successfully!',

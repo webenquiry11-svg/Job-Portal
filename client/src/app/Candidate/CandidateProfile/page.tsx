@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaEdit, FaSave, FaFileAlt, FaPen, FaCheckCircle, FaEye } from 'react-icons/fa';
+import { FaUserCircle, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaEdit, FaSave, FaFileAlt, FaPen, FaCheckCircle, FaEye, FaWhatsapp } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { useUpdateProfileMutation } from '@/features/authApi';
 import { useGetCompanyByIdQuery } from '@/features/jobapi';
@@ -34,7 +34,8 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
     showContact: true,
     preferredRoles: '',
     preferredLocations: '',
-    expectedSalary: ''
+    expectedSalary: '',
+    whatsappAlerts: false
   });
 
   const { data: freshUserData } = useGetCompanyByIdQuery(user?._id, { skip: !user?._id, pollingInterval: 30000 });
@@ -55,7 +56,8 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
         showContact: user.showContact !== false,
         preferredRoles: user.preferredRoles || '',
         preferredLocations: user.preferredLocations || '',
-        expectedSalary: user.expectedSalary || ''
+        expectedSalary: user.expectedSalary || '',
+        whatsappAlerts: user.whatsappAlerts || false
       });
     }
   }, [user]);
@@ -270,10 +272,16 @@ const CandidateProfile = ({ user, setUser }: { user?: any, setUser?: any }) => {
              </div>
           </div>
           {isEditing && (
-              <label className="flex items-center gap-2 text-xs text-gray-500 mt-4 cursor-pointer">
-                  <input type="checkbox" name="showContact" checked={formData.showContact} onChange={(e) => setFormData({...formData, showContact: e.target.checked})} className="rounded text-[#0F172A] focus:ring-[#0F172A] w-4 h-4" />
-                  Make my phone number visible to recruiters
-              </label>
+              <>
+                <label className="flex items-center gap-2 text-xs text-gray-500 mt-4 cursor-pointer">
+                    <input type="checkbox" name="showContact" checked={formData.showContact} onChange={(e) => setFormData({...formData, showContact: e.target.checked})} className="rounded text-[#0F172A] focus:ring-[#0F172A] w-4 h-4" />
+                    Make my phone number visible to recruiters
+                </label>
+                <label className="flex items-center gap-2 text-xs text-gray-500 mt-2 cursor-pointer">
+                    <input type="checkbox" name="whatsappAlerts" checked={formData.whatsappAlerts} onChange={(e) => setFormData({...formData, whatsappAlerts: e.target.checked})} className="rounded text-green-500 focus:ring-green-500 w-4 h-4 border-gray-300" />
+                    <FaWhatsapp className="text-green-500 text-sm" /> Get instant job alerts on WhatsApp
+                </label>
+              </>
           )}
         </div>
       </div>

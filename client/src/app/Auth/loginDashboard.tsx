@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
-import { FaEnvelope, FaSearch, FaFileAlt, FaBell, FaBuilding, FaQuoteLeft, FaBriefcase, FaUsers, FaUser, FaHeadset, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaArrowRight, FaTimes, FaFilter, FaSpinner, FaQuestionCircle, FaShieldAlt, FaLock, FaFileContract, FaCoins, FaUnlock, FaChevronDown, FaCheckCircle } from 'react-icons/fa';
+import { FaEnvelope, FaSearch, FaFileAlt, FaBell, FaBuilding, FaQuoteLeft, FaBriefcase, FaUsers, FaUser, FaHeadset, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaArrowRight, FaTimes, FaFilter, FaSpinner, FaQuestionCircle, FaShieldAlt, FaLock, FaFileContract, FaCoins, FaUnlock, FaChevronDown, FaCheckCircle, FaWhatsapp } from 'react-icons/fa';
 import LoginModal from './login/login';
 import Link from 'next/link';
 import { useGetAllJobsQuery } from '@/features/jobapi';
@@ -855,7 +855,10 @@ const JobDetailsModal = ({ job, onClose, onApply }: any) => {
         {job.screeningQuestion && <div className="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100"><p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Screening Question</p><p className="font-semibold text-[#121212] text-sm">{job.screeningQuestion}</p></div>}
         <div className="mt-6 flex items-center gap-4">{job.immediateJoiner && <span className="px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg text-xs font-bold">Immediate Joiner Required</span>}<span className="text-xs font-medium text-gray-500">Contact via: <span className="font-bold text-gray-700">{job.contactPreference}</span></span></div>
       </div>
-      <div className="p-6 border-t border-gray-100 flex items-center justify-end bg-gray-50/50 rounded-b-3xl">
+      <div className="p-6 border-t border-gray-100 flex items-center justify-between bg-gray-50/50 rounded-b-3xl">
+        <a href={`https://wa.me/?text=${encodeURIComponent(`Check out this job opportunity on Click4Jobs: ${typeof window !== 'undefined' ? window.location.origin : ''}/job/${job._id}`)}`} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 bg-green-50 text-green-600 font-bold rounded-xl hover:bg-green-100 transition-all flex items-center gap-2 text-sm">
+          <FaWhatsapp className="text-lg" /> Share
+        </a>
         <button onClick={onApply} className="px-8 py-3 bg-[#e49d04] text-[#0B0C10] font-black rounded-xl hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
           Proceed to Apply <FaArrowRight />
         </button>

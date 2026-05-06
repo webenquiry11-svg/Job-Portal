@@ -32,7 +32,8 @@ import {
   FaPhone,
   FaCoins,
   FaCopy,
-  FaTrash
+  FaTrash,
+  FaWhatsapp
 } from "react-icons/fa";
 import {
   MdDashboard,
@@ -977,9 +978,14 @@ const JobDetailsModal = ({ job, onClose }: any) => {
           >
             <FaTimes /> {isDeleting ? "Deleting..." : "Delete Job"}
           </button>
-          <button className="px-8 py-3 bg-[#e49d04] text-[#0B0C10] font-bold rounded-xl hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
-            <FaEdit /> Edit Job
-          </button>
+          <div className="flex items-center gap-3">
+             <a href={`https://wa.me/?text=${encodeURIComponent(`Check out this job opportunity on Click4Jobs: ${typeof window !== 'undefined' ? window.location.origin : ''}/job/${job._id}`)}`} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 bg-green-50 text-green-600 font-bold rounded-xl hover:bg-green-100 transition-all flex items-center gap-2 text-sm shadow-sm">
+               <FaWhatsapp className="text-lg" /> Share
+             </a>
+             <button className="px-8 py-3 bg-[#e49d04] text-[#0B0C10] font-bold rounded-xl hover:bg-[#cc8c03] shadow-lg shadow-[#e49d04]/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
+               <FaEdit /> Edit Job
+             </button>
+          </div>
         </div>
       </div>
     </div>
