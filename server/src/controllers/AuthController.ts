@@ -124,8 +124,19 @@ export const requestOtp = async (req: Request, res: Response) => {
     } else if (type === 'phone') {
       if (!user.phone) return res.status(400).json({ message: "No phone number found for this user." });
       updateData = { phoneOtp: String(otp), phoneOtpExpires: expires };
-      // In a real app, you would send an SMS here
-      console.log(`OTP for ${user.phone}: ${otp}`);
+      
+      // Call MSG91 API to send OTP via WhatsApp/SMS
+      // Note: Make sure user.phone contains country code (e.g., 919876543210)
+      const msg91Url = `https://control.msg91.com/api/v5/otp?template_id=${process.env.MSG91_OTP_TEMPLATE_ID}&mobile=${user.phone}&otp=${otp}`;
+      const options = {
+        method: 'GET',
+        headers: { 'authkey': process.env.MSG91_AUTH_KEY || '' }
+      };
+
+      fetch(msg91Url, options)
+        .then(res => res.json())
+        .then(data => console.log('[MSG91 OTP] Triggered:', data))
+        .catch(err => console.error('[MSG91 OTP] Failed:', err));
     } else {
       return res.status(400).json({ message: "Invalid verification type specified." });
     }
