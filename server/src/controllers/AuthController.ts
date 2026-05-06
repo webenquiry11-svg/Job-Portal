@@ -36,6 +36,29 @@ export const register = async (req: Request, res: Response) => {
       console.error("Failed to send welcome email:", emailError);
     }
 
+    // Trigger automated Welcome WhatsApp Message if phone exists, verified, and it's a seeker
+    if (result.isPhoneVerified && result.phone && result.role === 'seeker') {
+      const options = {
+        method: 'POST',
+        headers: {
+          'authkey': process.env.MSG91_AUTH_KEY || '', // Make sure to add this to your .env file
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          integrated: {
+            number: result.phone,
+            template_name: "welcome_verified_profile",
+            fallback: { channel: "whatsapp" }
+          }
+        })
+      };
+
+      fetch('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', options)
+        .then(response => response.json())
+        .then(data => console.log('[MSG91] WhatsApp Welcome Success:', data))
+        .catch(err => console.error('[MSG91] WhatsApp Welcome Error:', err));
+    }
+
     const token = jwt.sign({ email: result.email, id: result._id, role: result.role }, 'test', { expiresIn: '7d' });
     res.status(201).json({ result: result.toObject ? result.toObject() : result, token });
   } catch (error) {
@@ -194,6 +217,29 @@ export const verifyOtp = async (req: Request, res: Response) => {
       { $set: updateQuery, $unset: { emailOtp: 1, emailOtpExpires: 1, phoneOtp: 1, phoneOtpExpires: 1 } },
       { returnDocument: 'after', strict: false }
     ).select('-password');
+
+    // Trigger automated Welcome WhatsApp Message if phone exists and it's a seeker verifying their phone
+    if (type === 'phone' && updatedUser && (updatedUser as any).phone && (updatedUser as any).role === 'seeker') {
+      const options = {
+        method: 'POST',
+        headers: {
+          'authkey': process.env.MSG91_AUTH_KEY || '', // Make sure to add this to your .env file
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          integrated: {
+            number: (updatedUser as any).phone,
+            template_name: "welcome_verified_profile",
+            fallback: { channel: "whatsapp" }
+          }
+        })
+      };
+
+      fetch('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', options)
+        .then(response => response.json())
+        .then(data => console.log('[MSG91] WhatsApp Welcome Success:', data))
+        .catch(err => console.error('[MSG91] WhatsApp Welcome Error:', err));
+    }
 
     res.status(200).json({
       message: `${type === 'email' ? 'Email' : 'Phone'} verified successfully!`,

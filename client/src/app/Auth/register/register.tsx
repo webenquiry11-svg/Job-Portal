@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { FaTimes, FaUser, FaBuilding, FaArrowLeft, FaCloudUploadAlt, FaCheck, FaCheckCircle } from 'react-icons/fa';
+import { FaTimes, FaUser, FaBuilding, FaArrowLeft, FaCloudUploadAlt, FaCheck, FaCheckCircle, FaWhatsapp } from 'react-icons/fa';
 import { useRegisterMutation, useUpdateProfileMutation } from '@/features/authApi';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -37,7 +37,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
     website: '',
     yourRole: '',
     description: '',
-    gstNumber: ''
+    gstNumber: '',
+    whatsappAlerts: false
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -328,6 +329,18 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
               )}
             </div>
           </div>
+        </div>
+        <div className="flex items-center p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-slate-300 transition-colors">
+          <input
+            id="whatsapp-alerts-seeker"
+            type="checkbox"
+            checked={formData.whatsappAlerts}
+            onChange={(e) => setFormData({...formData, whatsappAlerts: e.target.checked})}
+            className="h-5 w-5 text-green-500 focus:ring-green-500 border-gray-300 rounded cursor-pointer transition-all"
+          />
+          <label htmlFor="whatsapp-alerts-seeker" className="ml-3 block text-sm text-gray-700 cursor-pointer select-none flex items-center gap-2">
+            <FaWhatsapp className="text-green-500 text-lg" /> Get instant job alerts on WhatsApp
+          </label>
         </div>
         <div className="flex items-center p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-slate-300 transition-colors">
           <input
