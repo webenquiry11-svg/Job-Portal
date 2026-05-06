@@ -27,7 +27,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
     confirmPassword: '',
     headline: '',
     location: '',
-    phone: '',
+    phone: '+91 ',
     experience: '',
     education: '',
     skills: '',
@@ -41,7 +41,24 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.name === 'gstNumber' ? e.target.value.toUpperCase() : e.target.value });
+    let value = e.target.value;
+    if (e.target.name === 'gstNumber') {
+      value = value.toUpperCase();
+    } else if (e.target.name === 'phone') {
+      let digitsOnly = value;
+      if (digitsOnly.startsWith('+91 ')) {
+        digitsOnly = digitsOnly.substring(4);
+      } else if (digitsOnly.startsWith('+91')) {
+        digitsOnly = digitsOnly.substring(3);
+      }
+      digitsOnly = digitsOnly.replace(/\D/g, '');
+      if (digitsOnly.length > 10 && digitsOnly.startsWith('91')) {
+        digitsOnly = digitsOnly.substring(2);
+      }
+      digitsOnly = digitsOnly.substring(0, 10);
+      value = '+91 ' + digitsOnly;
+    }
+    setFormData({ ...formData, [e.target.name]: value });
   };
 
   useEffect(() => {
@@ -238,7 +255,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
         <div>
           <label htmlFor="phone" className={labelClass}>Phone Number</label>
           <div className="flex items-center gap-2">
-            <input id="phone" name="phone" type="tel" required placeholder="+91 9999999999" className={inputClass.replace('mt-1', 'mt-0')} value={formData.phone} onChange={handleChange} disabled={isPhoneVerified} />
+            <input id="phone" name="phone" type="tel" required placeholder="+91 9999999999" className={inputClass.replace('mt-1', 'mt-0')} value={formData.phone} onChange={handleChange} disabled={isPhoneVerified} maxLength={14} />
             {isPhoneVerified && (
               <span className="text-green-600 font-bold flex items-center gap-1 px-4 py-3 bg-green-50 rounded-xl whitespace-nowrap border border-green-200"><FaCheckCircle /> Verified</span>
             )}
@@ -360,7 +377,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
         <div>
           <label htmlFor="phone-employer" className={labelClass}>Phone Number</label>
           <div className="flex items-center gap-2">
-            <input id="phone-employer" name="phone" type="tel" required placeholder="+91 9999999999" className={inputClass.replace('mt-1', 'mt-0')} value={formData.phone} onChange={handleChange} disabled={isPhoneVerified} />
+            <input id="phone-employer" name="phone" type="tel" required placeholder="+91 9999999999" className={inputClass.replace('mt-1', 'mt-0')} value={formData.phone} onChange={handleChange} disabled={isPhoneVerified} maxLength={14} />
             {isPhoneVerified && (
               <span className="text-green-600 font-bold flex items-center gap-1 px-4 py-3 bg-green-50 rounded-xl whitespace-nowrap border border-green-200"><FaCheckCircle /> Verified</span>
             )}
